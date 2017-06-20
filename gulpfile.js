@@ -66,12 +66,8 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 		}
 
 		actionsToTake.push(compileStylus({
-			compress: true
+			compress: shouldMinifyFiles
 		}));
-
-		// if (shouldMinifyFiles) {
-		// 	actionsToTake.push(minifyCss());
-		// }
 
 		if (shouldBuildSourceMaps) {
 			actionsToTake.push(sourcemaps.write('.'));

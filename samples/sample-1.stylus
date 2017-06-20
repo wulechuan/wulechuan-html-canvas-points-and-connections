@@ -1,0 +1,17 @@
+canvas-margin = 6rem
+canvas-bg = rgba(blue, 0.1)
+
+html,
+body
+    margin: 0
+    bottom: 0
+
+#test-canvas
+    display: block
+    margin: 0
+    background-color: canvas-bg
+    position: fixed
+    left: canvas-margin
+    top: canvas-margin
+    width: unquote('calc(100% - 2 * ' + canvas-margin + ')')
+    height: unquote('calc(100% - 2 * ' + canvas-margin + ')')

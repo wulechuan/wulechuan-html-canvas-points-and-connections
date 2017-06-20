@@ -1,0 +1,22 @@
+{
+  "name": "wulechuan-html-canvas-points-and-connections",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "吴乐川",
+  "license": "WTFPL",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-html-minify": "^0.0.14",
+    "gulp-rename": "^1.2.2",
+    "gulp-sequence": "^0.4.6",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-stylus": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
+    "path": "^0.12.7",
+    "pump": "^1.0.2"
+  }
+}

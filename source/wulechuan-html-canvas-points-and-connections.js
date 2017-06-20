@@ -34,16 +34,362 @@
 
 
 	wulechuanCanvasPointsAndConnections.utilities = {
-		canvasPoint2D: wulechuanCanvasPoint2D
+		canvas2DVector: wulechuanCanvas2DVector,
+		canvas2DParticle: wulechuanCanvas2DParticle
 	};
 
 
 	window.wulechuanCanvasPointsAndConnections = wulechuanCanvasPointsAndConnections;
 
 
+	function wulechuanCanvas2DVector(constructorOptions) {
+		var thisVector = this;
 
-	function wulechuanCanvasPoint2D(constructorOptions) {
-		var thisPoint = this;
+		var x = 0; // component a.
+		var y = 0; // component b.
+		var length = 0;
+		var length2 = 0; // square of length; aka length * length.
+		var direction = NaN; // the theta in degrees.
+		var directionBetween0And360 = NaN; // the theta in degrees.
+		var directionRadian = NaN; // the theta in radians.
+		var directionBetween0And2Pi = NaN; // the theta in radians.
+
+
+
+		// Being public means being writable.
+		buildGettersAndSettersForPublicProperties();
+
+
+		thisVector.swapComponents = swapComponents;
+		thisVector.equalTo = equalTo;
+		thisVector.add = add;
+		thisVector.subtract = subtract;
+		thisVector.multiplyByScalar = multiplyByScalar;
+		thisVector.rotateBy = rotateBy;
+		thisVector.rotateByRadians = rotateByRadians;
+
+
+		init(constructorOptions);
+
+
+		function init(initOptions) {
+			config(initOptions);
+		}
+
+		function config(options) {
+			options = options || {};
+
+			// Obviously,
+			// later processed attribute will overwrite ealier processed ones,
+			// if their values are coupled.
+			// For example the new value of x or y or both
+			// will overwrite the new value of direction and directionRadian, if any.
+			// While the new value of directionRadian
+			// will overwrite that of the direction.
+			processAttribute('length2');
+			processAttribute('length');
+			processAttribute('direction');
+			processAttribute('directionRadian');
+			processAttribute('x');
+			processAttribute('y');
+
+			function processAttribute(attributeName) {
+				if (options.hasOwnProperty(attributeName)) {
+					thisVector[attributeName] = options[attributeName];
+				}
+			}
+		}
+
+
+
+		function buildGettersAndSettersForPublicProperties() {
+			Object.defineProperty(thisVector, 'x', {
+				enumerable: true,
+				get: function () {
+					return x;
+				},
+				set: function (newX) {
+					newX = parseFloat(newX);
+					if (!isNaN(newX)) {
+						x = newX;
+						evaluateLengthAndDirection();
+					}
+					return x;
+				}
+			});
+
+			Object.defineProperty(thisVector, 'y', {
+				enumerable: true,
+				get: function () {
+					return y;
+				},
+				set: function (newY) {
+					newY = parseFloat(newY);
+					if (!isNaN(newY)) {
+						y = newY;
+						evaluateLengthAndDirection();						
+					}
+					return y;
+				}
+			});
+
+			Object.defineProperty(thisVector, 'value', {
+				enumerable: true,
+				get: function () {
+					return [x, y];
+				},
+				set: function (newValue) {
+					var newX, newY;
+
+					if (Array.isArray(newValue) && newValue.length > 1) {
+						newX = parseFloat(newValue[0]);
+						newY = parseFloat(newValue[1]);
+
+						if (!isNaN(newX) && !isNaN(newY)) {
+							x = newX;
+							y = newY;
+							evaluateLengthAndDirection();						
+						}
+					}
+
+					return [x, y];
+				}
+			});
+
+			Object.defineProperty(thisVector, 'isZeroVector', {
+				enumerable: true,
+				get: function () {
+					return lengthIsWayTooSmall();
+				}
+			});
+
+			Object.defineProperty(thisVector, 'length', {
+				enumerable: true,
+				get: function () {
+					return length;
+				},
+				set: function (newLength) {
+					newLength = parseFloat(newLength);
+					if (newLength >= 0) {
+						length = newLength;
+						length2 = length * length;
+						dealWithTinyLength();
+						evaluateComponents();
+					}
+					return length;
+				}
+			});
+
+			Object.defineProperty(thisVector, 'length2', {
+				enumerable: true,
+				get: function () {
+					return length2;
+				},
+				set: function (newLength2) {
+					newLength2 = parseFloat(newLength2);
+					if (newLength2 >= 0) {
+						length2 = newLength2;
+						length = sqroot(length2);
+						dealWithTinyLength();
+						evaluateComponents();
+					}
+					return length2;
+				}
+			});
+
+			Object.defineProperty(thisVector, 'direction', {
+				enumerable: true,
+				get: function () {
+					return direction;
+				},
+				set: function (newDirection) {
+					if (!lengthIsWayTooSmall()) {
+						newDirection = parseFloat(newDirection);
+						if (!isNaN(newDirection)) {
+							direction = newDirection;
+							// direction = newdirection % 360;
+						}
+						evaluateDirectionRadianViaDegree();
+						evaluateComponents();
+					}
+
+					return direction;
+				}
+			});
+
+			Object.defineProperty(thisVector, 'directionRadian', {
+				enumerable: true,
+				get: function () {
+					return directionRadian;
+				},
+				set: function (newDirectionRadian) {
+					if (!lengthIsWayTooSmall()) {
+						newDirectionRadian = parseFloat(newDirectionRadian);
+						if (!isNaN(newDirectionRadian)) {
+							directionRadian = newDirectionRadian;
+							// directionRadian = newDirectionRadian % Pi2;
+						}
+						evaluateDirectionDegreeViaRadian();
+						evaluateComponents();
+					}
+
+					return directionRadian;
+				}
+			});
+		}
+
+
+		function lengthIsWayTooSmall() {
+			return length <= tooSmallAbsoluteValue;
+		}
+
+		function dealWithTinyLength() {
+			if (lengthIsWayTooSmall()) {
+				direction = NaN;
+				directionRadian = NaN;
+				directionBetween0And360 = NaN;
+				directionBetween0And2Pi = NaN;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		function evaluateDirectionRadianViaDegree() {
+			directionRadian = direction * degreeToRadianFactor;
+			evaluateDirectionBetweenZeroAnd2Pi();
+		}
+
+		function evaluateDirectionDegreeViaRadian() {
+			direction = directionRadian * radianToDegreeFactor;
+			evaluateDirectionBetweenZeroAnd2Pi();
+		}
+
+		function evaluateComponents() {
+			x = length * sin(directionRadian);
+			y = length * cos(directionRadian);
+		}
+
+		function evaluateLengthAndDirection() {
+			length2 = x * x + y * y;
+			length = sqroot(length2);
+			if (!dealWithTinyLength()) {
+				directionRadian = atan2(y, x);
+				evaluateDirectionDegreeViaRadian();
+			}
+		}
+
+		function evaluateDirectionBetweenZeroAnd2Pi() {
+			directionBetween0And360 = direction % 360;
+			directionBetween0And2Pi = directionRadian % Pi2;
+		}
+
+
+		function swapComponents() {
+			var temp = x;
+			x = y;
+			y = temp;
+			evaluateLengthAndDirection();
+
+			return thisVector;
+		}
+
+		function multiplyByScalar(scalar) {
+			scalar = parseFloat(scalar);
+			if (!isNaN(scalar)) {
+				x *= scalar;
+				y *= scalar;
+				evaluateLengthAndDirection();
+			}
+
+			return thisVector;
+		}
+
+		function add(a, b) {
+			var newX = NaN, newY = NaN;
+
+			if (a instanceof wulechuanCanvas2DVector) {
+				newX = a.x;
+				newY = a.y;
+			} else if (Array.isArray(a)) {
+				if (a.length > 1) {
+					newX = parseFloat(a[0]);
+					newY = parseFloat(a[1]);
+				}
+			} else {
+				newX = parseFloat(a);
+				newY = parseFloat(b);
+			}
+
+			if (!isNaN(newX) && !isNaN(newY)) {
+				x += newX;
+				y += newY;
+				evaluateLengthAndDirection();
+			}
+
+			return thisVector;
+		}
+
+		function subtract(a, b) {
+			var newX = NaN, newY = NaN;
+
+			if (a instanceof wulechuanCanvas2DVector) {
+				newX = a.x;
+				newY = a.y;
+			} else if (Array.isArray(a)) {
+				if (a.length > 1) {
+					newX = parseFloat(a[0]);
+					newY = parseFloat(a[1]);
+				}
+			} else {
+				newX = parseFloat(a);
+				newY = parseFloat(b);
+			}
+
+			if (!isNaN(newX) && !isNaN(newY)) {
+				x -= newX;
+				y -= newY;
+				evaluateLengthAndDirection();
+			}
+
+			return thisVector;
+		}
+
+		function equalTo(a, b) {
+			var newX = NaN, newY = NaN;
+
+			if (a instanceof wulechuanCanvas2DVector) {
+				newX = a.x;
+				newY = a.y;
+			} else if (Array.isArray(a)) {
+				if (a.length > 1) {
+					newX = parseFloat(a[0]);
+					newY = parseFloat(a[1]);
+				}
+			} else {
+				newX = parseFloat(a);
+				newY = parseFloat(b);
+			}
+
+			if (!isNaN(newX) && !isNaN(newY)) {
+				return x == newX && y === newY;
+			}
+
+			return false;
+		}
+
+		function rotateBy(degrees) {
+			this.direction += degrees;
+		}
+
+		function rotateByRadians(radians) {
+			this.directionRadian += radians;
+		}
+	}
+
+	function wulechuanCanvas2DParticle(constructorOptions) {
+		var thisParticle = this;
 
 
 		var x = 0; // x poisition
@@ -51,19 +397,8 @@
 
 		var mass = 1; // mass
 
-		var vx = 0; // x velocity
-		var vy = 0; // y velocity
-		var speed = 0; // speed scalar
-		var speed2 = 0; // squar of speed scalar, aka speed * speed
-		var speedDirection = 0; // velocity theta in degrees [0, 360)
-		var speedDirectionRadian = 0; // velocity theta in radian [0, 2*Pi)
-
-		var forceX = 0; // x force
-		var forceY = 0; // y force
-		var forceStrength = 0; // force strength scalar
-		var forceStrength2 = 0; // squar of force strength scalar
-		var forceDirection = 0; // force theta in degrees [0, 360)
-		var forceDirectionRadian = 0; // force theta in radian [0, 2*Pi)
+		var velocity = new wulechuanCanvas2DVector({ x: 0, y: 0 });
+		var force = new wulechuanCanvas2DVector({ x: 0, y: 0 });
 
 		var bornTime = NaN;
 		var age = NaN;
@@ -75,16 +410,16 @@
 
 
 		// Being public means being writable.
-		var publicState = buildGettersAndSettersForPublicProperties();
-		thisPoint.state = publicState;
+		buildGettersAndSettersForPublicProperties();
 
 
-		thisPoint.onMove = undefined;
+		thisParticle.onMove = undefined;
 
-		thisPoint.move = move.bind(thisPoint);
-		thisPoint.updateClock = evaluateAge.bind(thisPoint); // single argument, time in seconds
-		thisPoint.moveTo = moveTo.bind(thisPoint);
-		thisPoint.setPosition = thisPoint.moveTo;
+		thisParticle.config = config.bind(thisParticle);
+		thisParticle.move = move.bind(thisParticle);
+		thisParticle.updateClock = evaluateAge.bind(thisParticle); // single argument, time in seconds
+		thisParticle.moveTo = moveTo.bind(thisParticle);
+		thisParticle.setPosition = thisParticle.moveTo;
 
 		// thisPoint.setVelocity = setVelocity.bind(thisPoint);
 		// thisPoint.addVelocity = addVelocity.bind(thisPoint);
@@ -116,10 +451,6 @@
 			// Obviously,
 			// later processed attribute will overwrite ealier processed ones,
 			// if their values are coupled.
-			// For example the new value of speedDirection
-			// will overwrite the new value of vx and vy, if any.
-			// While the new value of speedDirectionRadian
-			// will overwrite that of the speedDirection.
 			processAttribute('ageRatio');
 			processAttribute('age');
 			processAttribute('ageLimitation');
@@ -127,20 +458,22 @@
 			processAttribute('m');
 			processAttribute('x');
 			processAttribute('y');
-			processAttribute('vx');
-			processAttribute('forceY');
+			processAttribute('speed2');
 			processAttribute('speed');
 			processAttribute('speedDirection');
 			processAttribute('speedDirectionRadian');
-			processAttribute('forceX');
-			processAttribute('forceY');
+			processAttribute('vx');
+			processAttribute('vy');
+			processAttribute('forceStrength2');
 			processAttribute('forceStrength');
 			processAttribute('forceDirection');
 			processAttribute('forceDirectionRadian');
+			processAttribute('forceX');
+			processAttribute('forceY');
 
 			function processAttribute(attributeName) {
 				if (options.hasOwnProperty(attributeName)) {
-					publicState[attributeName] = options[attributeName];
+					thisParticle[attributeName] = options[attributeName];
 				}
 			}
 		}

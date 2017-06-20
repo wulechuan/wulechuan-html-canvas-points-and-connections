@@ -9,6 +9,7 @@
   "author": "吴乐川",
   "license": "WTFPL",
   "devDependencies": {
+    "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-html-minify": "^0.0.14",
     "gulp-rename": "^1.2.2",

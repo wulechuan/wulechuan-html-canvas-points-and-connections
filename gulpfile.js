@@ -5,14 +5,34 @@ const shouldPreserveTempFilesForInspection = false;
 
 const chiefSourceGlobJs = ['source/**/*.js'];
 
-const samplesSourceGlobCss = ['samples/**/*.stylus', 'samples/**/*.styl'];
-const samplesSourceGlobHtml = ['samples/**/*.html'];
-const samplesSourceGlobJs = ['source/**/*.js'];
+const samplesFolder = 'samples';
+
+const samplesSourceGlobCss = [
+	samplesFolder+'/**/*.stylus',
+	samplesFolder+'/**/*.styl'
+];
+
+const samplesSourceGlobJs = [
+	samplesFolder+'/**/*.js'
+];
+
+const samplesSourceGlobHtml = [
+	samplesFolder+'/**/*.html'
+];
+
 const targetFolder = 'build';
 const buildCacheFolder = '_temp';
 
 const appSourceGlobToWatch = [
-	'source/**/*'
+	'source/**/*',
+	samplesFolder+'/**/*'
+];
+
+const globsToClearBeforeRebuild = [
+	targetFolder,
+	samplesFolder+'/**/*.min.css',
+	samplesFolder+'/**/*.min.js',
+	samplesFolder+'/**/*.min.html'
 ];
 
 
@@ -28,7 +48,6 @@ const compileStylus = require('gulp-stylus');
 const minifyJs = require('gulp-uglify');
 const minifyHtml = require('gulp-html-minify');
 const pump = require('pump');
-const pathTool = require('path');
 
 
 
@@ -62,7 +81,7 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			suffix: '.min'
 		}));
 
-		actionsToTake.push(gulp.dest('.'));
+		actionsToTake.push(gulp.dest(samplesFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
@@ -123,7 +142,7 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			suffix: '.min'
 		}));
 
-		actionsToTake.push(gulp.dest('.'));
+		actionsToTake.push(gulp.dest(samplesFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
@@ -161,14 +180,14 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			suffix: '.min'
 		}));
 
-		actionsToTake.push(gulp.dest('.'));
+		actionsToTake.push(gulp.dest(samplesFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
 
 	gulp.task('build: html: all', (onThisTaskDone) => {
 		runTasksInSequence(
-			'build: html: minify'
+			'build: html: minify-samples'
 		)(onThisTaskDone);
 	});
 })();
@@ -176,7 +195,7 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 
 (function 定义二级公共任务() {
 	gulp.task('clear old build', () => {
-		return deleteFiles(pathTool.join(targetFolder, '/**/*'));
+		return deleteFiles(globsToClearBeforeRebuild);
 	});
 
 	gulp.task('clear build cache', (onThisTaskDone) => {

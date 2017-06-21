@@ -41,10 +41,10 @@
 		lineWidthDrawingThreshold: 0.25,
 		pointsCount: particleCounts,
 		thickestLineWidth: 1,
-		pointColorRGB: '64, 64, 80',
-		lineColorRGB: '128, 128, 160',
-		speedMin: 0.1,
-		speedMax: 0.79,
+		pointColorRGB: '0, 64, 190',
+		lineColorRGB: '0, 128, 160',
+		speedMin: 6,
+		speedMax: 50,
 		// generateOnePoint: generateOnePointAroundACircle,
 		// updateOnePointOnIteration: updateOnePointOnIteration
 	});

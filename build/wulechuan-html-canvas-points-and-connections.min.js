@@ -595,8 +595,6 @@
 		var velocity = new wulechuanCanvas2DVector({ x: 0, y: 0 });
 		var force = new wulechuanCanvas2DVector({ x: 0, y: 0 });
 
-
-
 		// Being public means being writable.
 		buildGettersAndSettersForPublicProperties();
 
@@ -994,11 +992,6 @@
 				return;
 			}
 
-			if (force.strength <= tooSmallAbsoluteValue) {
-				return;
-				// console.warn('Force is too small to move a Point2D.');
-			}
-
 			durationInSeconds = parseFloat(durationInSeconds);
 
 			if (durationInSeconds <= tooSmallAbsoluteValue) {
@@ -1023,16 +1016,20 @@
 
 
 		var lineWidthDrawingThreshold = 0.2;
-		var pointSize = 6;
+		var pointSize = 2;
 		var thickestLineWidth = 2;
 		var maxDistanceToMakeConnection = 160;
 		var pointsCount = 60;
-		var speedMin = 0.8;
-		var speedMax = 2.4;
 		var pointColorRGB = '0,0,0';
 		var lineColorRGB = '0,0,0';
 		var pointsAreRounded = true;
-		var shouldBounceAtBoundary = false;
+		var shouldBounceAtBoundary = true;
+
+		var shouldLeaveTracksOfPoints = false;
+		var shouldDrawPoints = true;
+		var shouldDrawLines = true;
+		var shouldDebugVelocity = false;
+		var shouldDebugForce = false;
 
 		var activeAreaX1 = 0;
 		var activeAreaY1 = 0;
@@ -1153,7 +1150,9 @@
 		function drawFrame(localTimeInSeconds) {
 			var iterationDuration = localTimeInSeconds - lastFrameDrawnTime;
 
-			canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+			if (!shouldLeaveTracksOfPoints) {
+				canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+			}
 
 			allParticles.forEach(function (particle, particleIndex) {
 				var position = particle.position;
@@ -1164,33 +1163,43 @@
 
 				thisController.updateOneParticleOnIteration(particle, iterationDuration);
 
+				if (shouldDrawLines) {
+					var i = particleIndex + 1;
+					for ( ; i < allParticles.length; i++) {
+						comparingParticle = allParticles[i];
 
-				var i = particleIndex + 1;
-				for ( ; i < allParticles.length; i++) {
-					comparingParticle = allParticles[i];
-
-					drawLine(
-						px, py, comparingParticle.x, comparingParticle.y,
-						evaluateDistanceRatio(particle.position, comparingParticle.position)
-					);
-
-					if (!isNaN(mouseCursorLocalX)) {
 						drawLine(
-							px, py, mouseCursorLocalX, mouseCursorLocalY,
-							evaluateDistanceRatio(
-								particle.position,
-								{
-									x: mouseCursorLocalX, 
-									y: mouseCursorLocalY
-								}
-							)
+							px, py, comparingParticle.x, comparingParticle.y,
+							evaluateDistanceRatio(particle.position, comparingParticle.position)
 						);
+
+						if (!isNaN(mouseCursorLocalX)) {
+							drawLine(
+								px, py, mouseCursorLocalX, mouseCursorLocalY,
+								evaluateDistanceRatio(
+									particle.position,
+									{
+										x: mouseCursorLocalX, 
+										y: mouseCursorLocalY
+									}
+								)
+							);
+						}
 					}
 				}
 
 
-				theDrawPointMethod(px, py);
-				drawVelocity(particle);
+				if (shouldDrawPoints) {
+					theDrawPointMethod(px, py);
+				}
+
+				if (shouldDebugVelocity) {
+					drawVelocity(particle);
+				}
+
+				if (shouldDebugForce) {
+					drawForce(particle);
+				}
 
 				var velocity = particle.velocity;
 				var vx = velocity.x;
@@ -1214,7 +1223,7 @@
 			});
 
 
-			if (!isNaN(mouseCursorLocalX)) {
+			if (!isNaN(mouseCursorLocalX) && shouldDrawPoints && !shouldLeaveTracksOfPoints) {
 				theDrawPointMethod(mouseCursorLocalX, mouseCursorLocalY);
 			}
 
@@ -1259,12 +1268,27 @@
 		}
 
 		function drawVelocity(particle) {
+			var visualScale = 1;
+
 			var x = particle.position.x;
 			var y = particle.position.y;
 			var vx = particle.velocity.x;
 			var vy = particle.velocity.y;
 
-			drawLine(x, y, x+vx*30, y+vy*30, 0, 'red');
+			drawLine(x, y, x+vx*visualScale, y+vy*visualScale, 0, 'darkcyan');
+		}
+
+		function drawForce(particle) {
+			if (particle.force.length < 0.1) return;
+
+			var visualScale = 1;
+
+			var x = particle.position.x;
+			var y = particle.position.y;
+			var fx = particle.force.x;
+			var fy = particle.force.y;
+
+			drawLine(x, y, x+fx*visualScale, y+fy*visualScale, 0, 'orange');
 		}
 
 		function _generateAllPoints() {
@@ -1286,14 +1310,17 @@
 				randomBetween(activeAreaX1, activeAreaX2),
 				randomBetween(activeAreaY1, activeAreaY2)
 			];
-			particle.speed = randomBetween(speedMin, speedMax);
-			particle.velocityDirection = randomBetween(0, Pi_2);
+			// particle.speed = randomBetween(speedMin, speedMax);
+			// particle.velocityDirection = randomBetween(0, Pi_2);
 		}
 
 		function _updateOneParticleOnIterationDefaultMethod(particle, iterationDuration) {
-			particle.speed *= randomBetween(0.95, 1.05);
-			particle.velocityDirection += randomBetween(-4, 4);
-			// particle.move(iterationDuration);
+			var forceStrength = 1;
+			particle.force.value = [
+				randomBetween(-forceStrength, forceStrength),
+				randomBetween(-forceStrength, forceStrength),
+			];
+			particle.move(iterationDuration);
 		}
 
 		function evaluateDistanceRatio(position1, position2) {

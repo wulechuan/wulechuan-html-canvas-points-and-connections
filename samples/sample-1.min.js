@@ -6,10 +6,19 @@
 		requestAnimationFrame(draw);
 	}
 
+	var shoudSlowDownForTesting = true;
+	var frameRate = 30;
+	var particleCounts = 60;
+
+	if (shoudSlowDownForTesting) {
+		frameRate = 0.2;
+		particleCounts = 2; // must greater than 1, otherwise no connection is needed.
+	}
+
 
 	var canvas = document.querySelector('#test-canvas');
-	var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (func) {
-		window.setTimeout(func, 1000 / 45);
+	var requestAnimationFrame = function (func) {
+		window.setTimeout(func, 1000 / frameRate);
 	};
 
 
@@ -18,7 +27,7 @@
 		canvas: canvas,
 		maxDistanceToMakeConnection: 60,
 		lineWidthDrawingThreshold: 0.25,
-		pointsCount: 90,
+		pointsCount: particleCounts,
 		thickestLineWidth: 1,
 		pointColorRGB: '64, 64, 80',
 		lineColorRGB: '128, 128, 160',

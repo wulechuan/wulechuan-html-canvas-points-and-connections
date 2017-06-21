@@ -318,6 +318,8 @@
 			var newX = NaN;
 			var newY = NaN;
 
+			console.log('_eval', a, b);
+
 			if (a instanceof wulechuanCanvas2DVector) {
 				newX = a.x;
 				newY = a.y;
@@ -326,6 +328,10 @@
 					newX = parseFloat(a[0]);
 					newY = parseFloat(a[1]);
 				}
+			} else if (a && typeof a === 'object' && a.hasOwnProperty(x)) {
+				console.log(a);
+				newX = parseFloat(a.x);
+				newY = parseFloat(a.y);
 			} else {
 				newX = parseFloat(a);
 				newY = parseFloat(b);
@@ -361,6 +367,7 @@
 		}
 
 		function getDistance2To(a, b) {
+			console.log('distance2', a, b);
 			var comparingComponents = _evaluateArgmentsForComponents(a, b);
 			var dx = comparingComponents[0] - x;
 			var dy = comparingComponents[1] - y;
@@ -1209,12 +1216,19 @@
 		function _drawPointAsRoundedDot(px, py) {
 			canvasContext.fillStyle = 'rgba(' + pointColorRGB + ',' + 1 + ')';
 			canvasContext.beginPath();
-			canvasContext.arc(px, py, pointSize/2, 0, Math.PI * 2);
+			canvasContext.arc(
+				px, py, // center position
+				pointSize/2, // radius
+				0, Pi_2 // angle to travel
+			);
 			canvasContext.fill();
 		}
 
 		function _drawPointAsSqure(px, py) {
-			canvasContext.fillRect(px - pointSize/2, py - pointSize/2, pointSize, pointSize);
+			canvasContext.fillRect(
+				px - pointSize/2,     py - pointSize/2,
+				pointSize,            pointSize
+			);
 		}
 
 		function drawLine(p1x, p1y, p2x, p2y, distanceRatio) {
@@ -1264,10 +1278,13 @@
 		}
 
 		function evaluateDistanceRatio(position1, position2) {
-			return Math.min(
-				1, 
-				position1.getDistance2To(position2) / maxDistanceToMakeConnection2
-			);
+			if (typeof position2 === 'object' && !(position2 instanceof wulechuanCanvas2DVector)) {
+				console.log('pos2 object:', position2);
+			}
+			var distance2 = position1.getDistance2To(position2);
+			var distance2Ratio = distance2 / maxDistanceToMakeConnection2;
+			// console.log('distance2Ratio:', distance2Ratio, position2);
+			return Math.min(1, distance2Ratio);
 		}
 	}
 })();

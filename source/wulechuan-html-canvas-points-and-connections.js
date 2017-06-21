@@ -1084,8 +1084,6 @@
 			if (options.pointColorRGB) pointColorRGB = options.pointColorRGB;
 			if (options.lineColorRGB) lineColorRGB = options.lineColorRGB;
 			if (options.lineWidthDrawingThreshold) lineWidthDrawingThreshold = options.lineWidthDrawingThreshold;
-			if (options.speedMin) speedMin = options.speedMin;
-			if (options.speedMax) speedMax = options.speedMax;
 
 			maxDistanceToMakeConnection2 = maxDistanceToMakeConnection * maxDistanceToMakeConnection;
 
@@ -1254,7 +1252,7 @@
 			if (lineWidth < lineWidthDrawingThreshold) return;
 
 			if (!lineColor) {
-				lineColor =  'rgba(' + lineColorRGB + ',' + Math.min(1, lineWidthRatio + 0.5) + ')';
+				lineColor =  'rgba(' + lineColorRGB + ',' + Math.min(1, lineWidthRatio * 0.3 + 0.3) + ')';
 			}
 
 
@@ -1268,14 +1266,14 @@
 		}
 
 		function drawVelocity(particle) {
-			var visualScale = 1;
+			var visualScale = 2;
 
 			var x = particle.position.x;
 			var y = particle.position.y;
 			var vx = particle.velocity.x;
 			var vy = particle.velocity.y;
 
-			drawLine(x, y, x+vx*visualScale, y+vy*visualScale, 0, 'darkcyan');
+			drawLine(x, y, x+vx*visualScale, y+vy*visualScale, 0, 'rgba(192, 0, 0, 0.1)');
 		}
 
 		function drawForce(particle) {
@@ -1315,7 +1313,7 @@
 		}
 
 		function _updateOneParticleOnIterationDefaultMethod(particle, iterationDuration) {
-			var forceStrength = 1;
+			var forceStrength = 5;
 			particle.force.value = [
 				randomBetween(-forceStrength, forceStrength),
 				randomBetween(-forceStrength, forceStrength),

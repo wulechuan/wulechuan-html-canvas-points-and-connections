@@ -479,6 +479,7 @@
 
 		var mass = 1; // mass
 		var bornTime = NaN;
+		var localTime = NaN; // in seconds instead of milliseconds
 		var age = NaN;
 		var ageRatio = NaN;  // scalar that can be either NaN or between [0, 1]
 		var ageLimitation = NaN; // in seconds
@@ -499,7 +500,7 @@
 
 		thisParticle.config = config.bind(thisParticle);
 		thisParticle.move = move.bind(thisParticle);
-		thisParticle.updateClock = evaluateAge.bind(thisParticle); // single argument, time in seconds
+		thisParticle.updateClock = updateLocalTime.bind(thisParticle); // single argument, time in seconds
 		thisParticle.moveTo = moveTo.bind(thisParticle);
 		thisParticle.setPosition = thisParticle.moveTo;
 
@@ -509,17 +510,7 @@
 
 		function init(initOptions) {
 			config(initOptions);
-
-			var desiredBornTime = parseInt(initOptions.bornTime);
-			var now = new Date().getTime() / 1000;
-
-			if (desiredBornTime > 0) {
-				bornTime = desiredBornTime;
-			} else {
-				bornTime = now;
-			}
-
-			evaluateAge(now);
+			bearOn(initOptions.bornTime);
 		}
 
 		function config(options) {
@@ -560,8 +551,10 @@
 				set: function (newAgeRatio) {
 					if (!isNaN(ageLimitation)) {
 						newAgeRatio = parseFloat(newAgeRatio);
-						if (newAgeRatio >= 0 && newAgeRatio <= 1) ageRatio = newAgeRatio;
-						evaluateAgeInformationViaAgeRatio();
+						if (newAgeRatio >= 0 && newAgeRatio <= 1) {
+							ageRatio = newAgeRatio;
+						}
+						evaluateAgeViaValidAgeRatio();
 					}
 					return ageRatio;
 				}
@@ -572,18 +565,7 @@
 				get: function () {
 					return age;
 				},
-				set: function (newAge) {
-					newAge = parseFloat(newAge);
-					if (newAge >= 0) {
-						if (newAge > ageLimitation) {
-							age = ageLimitation;
-						} else {
-							age = newAge;
-						}
-					}
-					evaluateAgeInformationViaAge();
-					return age;
-				}
+				set: setAgeTo
 			});
 
 			Object.defineProperty(thisParticle, 'ageLimitation', {
@@ -596,7 +578,7 @@
 					if (newAgeLimitation >= tooSmallAbsoluteValue) {
 						ageLimitation = newAgeLimitation;
 					}
-					evaluateAgeInformationViaAgeLimitation();
+					evaluateAgeRatio();
 					return ageLimitation;
 				}
 			});
@@ -606,14 +588,7 @@
 				get: function () {
 					return bornTime;
 				},
-				set: function (newBornTime) {
-					newBornTime = parseInt(newBornTime);
-					if (newBornTime >= 0) {
-						bornTime = newBornTime;
-					}
-					evaluateAgeInformationViaBornTime();
-					return bornTime;
-				}
+				set: bearOn
 			});
 
 			Object.defineProperty(thisParticle, 'mass', {
@@ -789,23 +764,73 @@
 		}
 
 
-
-		function evaluateAge(localTimeInSeconds) {
-			if (localTimeInSeconds >= bornTime) {
-				age = localTimeInSeconds - bornTime;
+		function evaluateAgeInformationViaBornTimeAndLocalTime() {
+			if (localTime >= bornTime) {
 				hasBeenBorn = true;
-				if (age >= ageLimitation) {
-					age = ageLimitation;
-					isDead = true;
-				}
-				ageRatio = age / ageLimitation;
+				setAgeTo(localTime - bornTime);
 			} else {
-				age = NaN;
-				ageRatio = NaN;
 				hasBeenBorn = false;
 				isDead = false;
+				age = NaN;
+				ageRatio = NaN;
 			}
 		}
+
+		function bearOn(desiredBornTime) {
+			desiredBornTime = parseInt(desiredBornTime);
+			if (!(desiredBornTime > 0)) {
+				desiredBornTime = new Date().getTime() / 1000;
+			}
+
+			bornTime = desiredBornTime;
+			evaluateAgeInformationViaBornTimeAndLocalTime();
+		}
+
+		function updateLocalTime(newLocalTimeInSeconds) {
+			newLocalTimeInSeconds = parseInt(newLocalTimeInSeconds);
+			if (newLocalTimeInSeconds > 0 && newLocalTimeInSeconds !== localTime) {
+				localTime = newLocalTimeInSeconds;
+				evaluateAgeInformationViaBornTimeAndLocalTime();
+			}
+		}
+
+		function setAgeTo(newAge) {
+			newAge = parseFloat(newAge);
+			if (newAge >= 0) {
+				if (newAge > ageLimitation) {
+					age = ageLimitation;
+				} else {
+					age = newAge;
+				}
+			}
+			evaluateAgeRatio();
+			return age;
+		}
+
+		function detectDeath() {
+			if (age >= ageLimitation) {
+				age = ageLimitation;
+				ageRatio = 1;
+				isDead = true;
+			}
+		}
+
+		function evaluateAgeViaValidAgeRatio() {
+			age = ageLimitation * ageRatio;
+			detectDeath();
+		}
+
+		function evaluateAgeRatio() {
+			if (!isNaN(ageLimitation) && !isNaN(age)) {
+				ageRatio = age / ageLimitation;
+			} else {
+				ageRatio = NaN;
+			}
+			detectDeath();
+		}
+
+
+
 
 		function move(duration) {
 			if (!hasBeenBorn) return;

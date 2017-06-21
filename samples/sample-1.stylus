@@ -1,5 +1,5 @@
 canvas-margin = 6rem
-canvas-bg = rgba(blue, 0.1)
+canvas-bg = rgba(black, 0.8)
 
 html,
 body

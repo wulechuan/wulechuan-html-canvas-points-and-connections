@@ -1102,20 +1102,13 @@
 
 		var velocity = thisParticle[propertyName_velocity];
 		var force = thisParticle[propertyName_force];
-		var bornTime = thisParticle.bornTime;
-		var referenceTime = thisParticle.referenceTime;
-		var referenceTimeIsWallClockTime = thisParticle.referenceTimeIsWallClockTime;
-		var age = thisParticle.age;
-		var ageRatio = thisParticle.ageRatio;
-		var ageLimitation = thisParticle.ageLimitation;
-		var hasBeenBorn = thisParticle.hasBeenBorn;
-		var isDead = thisParticle.isDead;
-		var isAlive = thisParticle.isAlive;
 		var bearOn = thisParticle.bearOn;
 
 
 		constructorOptions = constructorOptions || {};
-		bearOn(constructorOptions.bornTime);
+		if (!constructorOptions.doNotBearOnInit) {
+			bearOn(constructorOptions.bornTime);
+		}
 
 
 		function init(initOptions) {
@@ -1227,8 +1220,7 @@
 
 
 		function move(durationInSeconds) {
-			if (!isAlive) return;
-
+			if (!thisParticle.isAlive) return;
 			if (mass <= tooSmallAbsoluteValue) {
 				return;
 			}
@@ -1271,6 +1263,10 @@
 		var shouldDrawLines = true;
 		var shouldDebugVelocity = false;
 		var shouldDebugForce = false;
+		var velocityDebugVisualScale = 0.5;
+		var forceDebugVisualScale = 10;
+		var velocityDebugColor = 'rgba(219, 51, 0, 0.79)';
+		var forceDebugColor = 'yellow';
 
 		var activeAreaX1 = 0;
 		var activeAreaY1 = 0;
@@ -1507,35 +1503,45 @@
 		}
 
 		function drawVelocity(particle) {
-			var visualScale = 2;
+			if (particle.speed * velocityDebugVisualScale < 2) return;
 
 			var x = particle.position.x;
 			var y = particle.position.y;
 			var vx = particle.velocity.x;
 			var vy = particle.velocity.y;
 
-			drawLine(x, y, x+vx*visualScale, y+vy*visualScale, 0, 'rgba(192, 0, 0, 0.1)');
+			drawLine(
+				x, y,
+				x+vx*velocityDebugVisualScale, y+vy*velocityDebugVisualScale,
+				0,
+				velocityDebugColor
+			);
 		}
 
 		function drawForce(particle) {
-			if (particle.force.length < 0.1) return;
-
-			var visualScale = 1;
+			if (particle.forceStrength * forceDebugVisualScale < 2) return;
 
 			var x = particle.position.x;
 			var y = particle.position.y;
 			var fx = particle.force.x;
 			var fy = particle.force.y;
 
-			drawLine(x, y, x+fx*visualScale, y+fy*visualScale, 0, 'orange');
+			drawLine(
+				x, y,
+				x+fx*forceDebugVisualScale, y+fy*forceDebugVisualScale,
+				0,
+				forceDebugColor
+			);
 		}
 
 		function _generateAllPoints() {
 			allParticles.length = 0;
 
 			for (var i = 0; i < pointsCount; i++) {
-				var particle = new wulechuan2DParticle();
-				
+				var particle = new wulechuan2DParticle({
+					// doNotBearOnInit: true
+				});
+
 				thisController.initOneParticle(
 					particle, pointsCount, activeAreaX1, activeAreaY1, activeAreaX2, activeAreaY2
 				);
@@ -1554,11 +1560,11 @@
 		}
 
 		function _updateOneParticleOnIterationDefaultMethod(particle, iterationDuration) {
-			var forceStrength = 5;
-			particle.force.value = [
+			var forceStrength = 0.1;
+			particle.force.add([
 				randomBetween(-forceStrength, forceStrength),
 				randomBetween(-forceStrength, forceStrength),
-			];
+			]);
 			particle.move(iterationDuration);
 		}
 

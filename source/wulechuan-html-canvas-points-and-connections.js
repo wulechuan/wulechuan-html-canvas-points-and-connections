@@ -561,8 +561,8 @@
 		var mass = 1; // mass
 
 		var bornTime = NaN;
-		var referenceTimeIsWallClockTime = true; // True means particle runs free mode, in which the particle does NOT need an explicit external time reference
 		var referenceTime = NaN; // in seconds instead of milliseconds
+		var referenceTimeIsWallClockTime = true; // True means particle runs free mode, in which the particle does NOT need an explicit external time reference
 		var age = NaN;
 		var ageRatio = NaN;  // scalar that can be either NaN or between [0, 1]
 		var ageLimitation = NaN; // in seconds
@@ -582,10 +582,9 @@
 		thisParticle.onMove = undefined;
 
 		// thisParticle.config = config;
-		thisParticle.setPosition = thisParticle.moveTo;
 		thisParticle.move = move;
 		thisParticle.moveTo = moveTo;
-		thisParticle.updateClock = updateReferenceTime;
+		thisParticle.setPosition = moveTo;
 
 
 		init(constructorOptions);
@@ -636,8 +635,10 @@
 						newAgeRatio = parseFloat(newAgeRatio);
 						if (newAgeRatio >= 0 && newAgeRatio <= 1) {
 							ageRatio = newAgeRatio;
+							age = ageLimitation * ageRatio;
+							evaluateBornTimeViaAge();
+							detectDeath();
 						}
-						evaluateAgeViaValidAgeRatio();
 					}
 					return ageRatio;
 				}
@@ -672,6 +673,31 @@
 					return bornTime;
 				},
 				set: bearOn
+			});
+
+			Object.defineProperty(thisParticle, 'referenceTimeIsWallClockTime', {
+				enumerable: true,
+				get: function () {
+					return referenceTimeIsWallClockTime;
+				},
+				set: function (mustBeTrueToTakeEffects) {
+					if (mustBeTrueToTakeEffects) {
+						updateReferenceTime(NaN);
+					} else {
+						// if we set "referenceTimeIsWallClockTime" to false
+						// without providing an explicit reference time,
+						// then values such as "bornTime" and "age"
+						// are not possible to evaluate any more.
+					}
+				}
+			});
+
+			Object.defineProperty(thisParticle, 'referenceTime', {
+				enumerable: true,
+				get: function () {
+					return referenceTime;
+				},
+				set: updateReferenceTime
 			});
 
 			Object.defineProperty(thisParticle, 'mass', {
@@ -883,6 +909,7 @@
 			newReferenceTimeInSeconds = parseInt(newReferenceTimeInSeconds);
 			if (isNaN(newReferenceTimeInSeconds)) {
 				referenceTimeIsWallClockTime = true;
+				referenceTime = NaN;
 				evaluateAgeInformationViaBornTimeAndReferenceTime();
 			} else {
 				if (newReferenceTimeInSeconds > 0 && newReferenceTimeInSeconds !== referenceTime) {
@@ -896,9 +923,6 @@
 			}
 		}
 
-		function evaluateBornTimeViaAge() {
-
-		}
 
 		function setAgeTo(newAge) {
 			newAge = parseFloat(newAge);
@@ -915,19 +939,6 @@
 			return age;
 		}
 
-		function detectDeath() {
-			if (age >= ageLimitation) {
-				age = ageLimitation;
-				ageRatio = 1;
-				isDead = true;
-			}
-		}
-
-		function evaluateAgeViaValidAgeRatio() {
-			age = ageLimitation * ageRatio;
-			detectDeath();
-		}
-
 		function evaluateAgeRatio() {
 			if (!isNaN(ageLimitation) && !isNaN(age)) {
 				ageRatio = age / ageLimitation;
@@ -935,6 +946,26 @@
 				ageRatio = NaN;
 			}
 			detectDeath();
+		}
+
+		function evaluateBornTimeViaAge() {
+			if (isNaN(age)) {
+				bornTime = NaN;
+			} else {
+				if (referenceTimeIsWallClockTime) {
+					bornTime = nowInSeconds() - age;
+				} else {
+					bornTime = referenceTime - age;
+				}
+			}
+		}
+
+		function detectDeath() {
+			if (age >= ageLimitation) {
+				age = ageLimitation;
+				ageRatio = 1;
+				isDead = true;
+			}
 		}
 
 
@@ -966,7 +997,7 @@
 		}
 
 		function moveTo() {
-			position.setValue.apply(arguments);
+			position.setValue.apply(position, arguments);
 		}
 	}
 

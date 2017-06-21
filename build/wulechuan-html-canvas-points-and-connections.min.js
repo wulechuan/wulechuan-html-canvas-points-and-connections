@@ -36,22 +36,22 @@
 	var degreeToRadianFactor = Pi / 180; // used via multiply operator: var newRadian = givenDegree * degreeToRadianFactor;
 
 
-	wulechuanCanvas2DVector.presets = {
+	wulechuan2DVector.presets = {
 		impartVelocityPropertiesTo: wulechuanImpartVelocityPropertiesTo,
 		impartForcePropertiesTo: wulechuanImpartForcePropertiesTo
 	};
 	
 
 	wulechuanCanvasPointsAndConnections.utilities = {
-		canvas2DVector: wulechuanCanvas2DVector,
-		canvas2DParticle: wulechuanCanvas2DParticle
+		wulechuan2DVector: wulechuan2DVector,
+		wulechuan2DParticle: wulechuan2DParticle
 	};
 
 
 	window.wulechuanCanvasPointsAndConnections = wulechuanCanvasPointsAndConnections;
 
 
-	function wulechuanCanvas2DVector(constructorOptions) {
+	function wulechuan2DVector(constructorOptions) {
 		var thisVector = this;
 
 		var x = 0; // component a.
@@ -318,7 +318,7 @@
 			var newX = NaN;
 			var newY = NaN;
 
-			if (a instanceof wulechuanCanvas2DVector) {
+			if (a instanceof wulechuan2DVector) {
 				newX = a.x;
 				newY = a.y;
 			} else if (Array.isArray(a)) {
@@ -431,7 +431,7 @@
 
 
 		function getNewVectorOfSwappedComponents() {
-			return new wulechuanCanvas2DVector({
+			return new wulechuan2DVector({
 				value: getNewArrayOfSwappedComponents()
 			});
 		}
@@ -441,7 +441,7 @@
 		}
 
 		function getNewVectorAddedBy(a, b) {
-			return new wulechuanCanvas2DVector({
+			return new wulechuan2DVector({
 				value: _addOrSubtract(a, b, false)
 			});			
 		}
@@ -451,20 +451,20 @@
 		}
 
 		function getNewVectorSubtractedBy(a, b) {
-			return new wulechuanCanvas2DVector({
+			return new wulechuan2DVector({
 				value: _addOrSubtract(a, b, true)
 			});			
 		}
 
 		function getNewVectorMultipliedByScalar(scalar) {
-			return new wulechuanCanvas2DVector({
+			return new wulechuan2DVector({
 				value: getNewArrayMultipliedByScalar(scalar)
 			});			
 		}
 
 		function getNewVectorRotatedBy(degrees) {
 			var newDirection = _rotateBy(degrees);
-			return new wulechuanCanvas2DVector({
+			return new wulechuan2DVector({
 				length: length,
 				direction: newDirection
 			});
@@ -472,7 +472,7 @@
 
 		function getNewVectorRotatedByRadians(radians) {
 			var newDirectionRadian = _rotateByRadians(radians);
-			return new wulechuanCanvas2DVector({
+			return new wulechuan2DVector({
 				length: length,
 				directionRadian: newDirectionRadian
 			});
@@ -577,7 +577,7 @@
 	}
 
 
-	function wulechuanCanvas2DParticle(constructorOptions) {
+	function wulechuan2DParticle(constructorOptions) {
 		var thisParticle = this;
 
 		var mass = 1; // mass
@@ -591,9 +591,9 @@
 		var hasBeenBorn = false;
 		var isDead = false;
 
-		var position = new wulechuanCanvas2DVector({ x: 0, y: 0 });
-		var velocity = new wulechuanCanvas2DVector({ x: 0, y: 0 });
-		var force = new wulechuanCanvas2DVector({ x: 0, y: 0 });
+		var position = new wulechuan2DVector({ x: 0, y: 0 });
+		var velocity = new wulechuan2DVector({ x: 0, y: 0 });
+		var force = new wulechuan2DVector({ x: 0, y: 0 });
 
 		// Being public means being writable.
 		buildGettersAndSettersForPublicProperties();
@@ -1293,7 +1293,7 @@
 			allParticles.length = 0;
 
 			for (var i = 0; i < pointsCount; i++) {
-				var particle = new wulechuanCanvas2DParticle();
+				var particle = new wulechuan2DParticle();
 				
 				thisController.initOneParticle(
 					particle, pointsCount, activeAreaX1, activeAreaY1, activeAreaX2, activeAreaY2

@@ -32,7 +32,8 @@ const globsToClearBeforeRebuild = [
 	targetFolder,
 	samplesFolder+'/**/*.min.css',
 	samplesFolder+'/**/*.min.js',
-	samplesFolder+'/**/*.min.html'
+	samplesFolder+'/**/*.min.html',
+	samplesFolder+'/**/*.min.map'
 ];
 
 

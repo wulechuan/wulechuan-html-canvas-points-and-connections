@@ -37,8 +37,8 @@
 
 
 	wulechuan2DVector.presets = {
-		impartVelocityPropertiesTo: wulechuanImpartVelocityPropertiesTo,
-		impartForcePropertiesTo: wulechuanImpartForcePropertiesTo
+		impartVelocityPropertiesTo: wulechuanImpartVelocityTo,
+		impartForcePropertiesTo: wulechuanImpartForceTo
 	};
 	
 
@@ -54,8 +54,8 @@
 	function wulechuan2DVector(constructorOptions) {
 		var thisVector = this;
 
-		var x = 0; // component a.
-		var y = 0; // component b.
+		var x = 0; // component x.
+		var y = 0; // component y.
 		var length = 0;
 		var length2 = 0; // square of length; aka length * length.
 		var direction = NaN; // the theta in degrees.
@@ -512,70 +512,89 @@
 		}
 	}
 
-	function wulechuanImpartVelocityPropertiesTo() {
-		// var grantee = this;
-		// if (typeof grantee !== 'object' || !grantee) {
-		// 	throw TypeError('The grantee to impart properties to must be an object, and not a null.');
-		// }
-		// Object.defineProperty(grantee, 'velocity', {
-		// 	enumerable: true,
-		// 	get: function () {
-		// 		return [velocity.x, velocity.y];
-		// 	},
-		// 	set: function (newVelocity) {
-		// 		velocity.value = newVelocity;
-		// 		return [velocity.x, velocity.y];
-		// 	}
-		// });
+	function wulechuanImpartVelocityTo(methodsGrantee, propertiesGrantee) {
+		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
+			throw TypeError(
+				'The grantee to impart methods and properties to' +
+				' must be an object, and not a null.'
+			);
+		}
 
-		// Object.defineProperty(grantee, 'speed', {
-		// 	enumerable: true,
-		// 	get: function () {
-		// 		return velocity.length;
-		// 	},
-		// 	set: function (newSpeed) {
-		// 		velocity.length = newSpeed;
-		// 		return velocity.length;
-		// 	}
-		// });
+		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
+			propertiesGrantee = methodsGrantee;
+		}
 
-		// Object.defineProperty(grantee, 'speed2', {
-		// 	enumerable: true,
-		// 	get: function () {
-		// 		return velocity.length2;
-		// 	},
-		// 	set: function (newSpeed2) {
-		// 		velocity.length2 = newSpeed2;
-		// 		return velocity.length2;
-		// 	}
-		// });
+		var velocity = new wulechuan2DVector();
 
-		// Object.defineProperty(grantee, 'velocityDirection', {
-		// 	enumerable: true,
-		// 	get: function () {
-		// 		return velocity.direction;
-		// 	},
-		// 	set: function (newSpeedDirection) {
-		// 		velocity.direction = newSpeedDirection;
-		// 		return velocity.direction;
-		// 	}
-		// });
+		Object.defineProperty(propertiesGrantee, 'velocity', {
+			enumerable: true,
+			get: function () {
+				return velocity;
+			},
+			set: function (newVelocity) {
+				return velocity.value = newVelocity;
+			}
+		});
 
-		// Object.defineProperty(grantee, 'velocityDirectionRadian', {
-		// 	enumerable: true,
-		// 	get: function () {
-		// 		return velocity.directionRadian;
-		// 	},
-		// 	set: function (newSpeedDirectionRadian) {
-		// 		velocity.directionRadian = newSpeedDirectionRadian;
-		// 		return velocity.directionRadian;
-		// 	}
-		// });
+		Object.defineProperty(propertiesGrantee, 'speed', {
+			enumerable: true,
+			get: function () {
+				return velocity.length;
+			},
+			set: function (newSpeed) {
+				velocity.length = newSpeed;
+				return velocity.length;
+			}
+		});
+
+		Object.defineProperty(propertiesGrantee, 'speed2', {
+			enumerable: true,
+			get: function () {
+				return velocity.length2;
+			},
+			set: function (newSpeed2) {
+				velocity.length2 = newSpeed2;
+				return velocity.length2;
+			}
+		});
+
+		Object.defineProperty(propertiesGrantee, 'velocityDirection', {
+			enumerable: true,
+			get: function () {
+				return velocity.direction;
+			},
+			set: function (newSpeedDirection) {
+				velocity.direction = newSpeedDirection;
+				return velocity.direction;
+			}
+		});
+
+		Object.defineProperty(propertiesGrantee, 'velocityDirectionRadian', {
+			enumerable: true,
+			get: function () {
+				return velocity.directionRadian;
+			},
+			set: function (newSpeedDirectionRadian) {
+				velocity.directionRadian = newSpeedDirectionRadian;
+				return velocity.directionRadian;
+			}
+		});
+
+
+		methodsGrantee.turnBy = turnBy;
+		methodsGrantee.turnByRadians = turnByRadians;
+
+		function turnBy(degrees) {
+			velocity.direction += degrees;
+		}
+
+		function turnByRadians(radians) {
+			velocity.directionRadian += radians;
+		}
 	}
 
-	function wulechuanImpartForcePropertiesTo() {
+	function wulechuanImpartForceTo() {
 	}
-
 
 	function wulechuan2DParticle(constructorOptions) {
 		var thisParticle = this;

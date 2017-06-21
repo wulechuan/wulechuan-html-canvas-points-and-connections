@@ -514,7 +514,7 @@
 		}
 	}
 
-	function wulechuanImpartVelocityTo(propertyNames, methodsGrantee, propertiesGrantee) {
+	function wulechuanImpartVelocityTo(methodsGrantee, propertiesGrantee, customizedPropertyNames) {
 		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
 			throw TypeError(
 				'The grantee to impart methods and properties to' +
@@ -535,11 +535,11 @@
 		var pN_turnByRadians = 'turnByRadians';
 		var decidedNames = {};
 
-		propertyNames = propertyNames || {};
-		if (typeof propertyNames === 'string') {
-			decidedNames[pN_chief] = propertyNames;
-		} else if (propertyNames[pN_chief] && typeof propertyNames[pN_chief] === 'string') {
-			decidedNames[pN_chief] = propertyNames[pN_chief];
+		customizedPropertyNames = customizedPropertyNames || {};
+		if (typeof customizedPropertyNames === 'string') {
+			decidedNames[pN_chief] = customizedPropertyNames;
+		} else if (customizedPropertyNames[pN_chief] && typeof customizedPropertyNames[pN_chief] === 'string') {
+			decidedNames[pN_chief] = customizedPropertyNames[pN_chief];
 		} else {
 			decidedNames[pN_chief] = pN_chief;
 		}
@@ -560,8 +560,8 @@
 		processPropertyName(pN_turnByRadians);
 
 		function processPropertyName(propertyName) {
-			if (propertyNames[propertyName] && typeof propertyNames[propertyName] === 'string') {
-				decidedNames[propertyName] = propertyNames[propertyName];
+			if (customizedPropertyNames[propertyName] && typeof customizedPropertyNames[propertyName] === 'string') {
+				decidedNames[propertyName] = customizedPropertyNames[propertyName];
 			}
 		}
 
@@ -657,7 +657,7 @@
 		}
 	}
 
-	function wulechuanImpartForceTo(propertyNames, methodsGrantee, propertiesGrantee) {
+	function wulechuanImpartForceTo(methodsGrantee, propertiesGrantee, customizedPropertyNames) {
 		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
 			throw TypeError(
 				'The grantee to impart methods and properties to' +
@@ -676,11 +676,11 @@
 		var pN_forceDirectionRadian = 'forceDirectionRadian';
 		var decidedNames = {};
 
-		propertyNames = propertyNames || {};
-		if (typeof propertyNames === 'string') {
-			decidedNames[pN_chief] = propertyNames;
-		} else if (propertyNames[pN_chief] && typeof propertyNames[pN_chief] === 'string') {
-			decidedNames[pN_chief] = propertyNames[pN_chief];
+		customizedPropertyNames = customizedPropertyNames || {};
+		if (typeof customizedPropertyNames === 'string') {
+			decidedNames[pN_chief] = customizedPropertyNames;
+		} else if (customizedPropertyNames[pN_chief] && typeof customizedPropertyNames[pN_chief] === 'string') {
+			decidedNames[pN_chief] = customizedPropertyNames[pN_chief];
 		} else {
 			decidedNames[pN_chief] = pN_chief;
 		}
@@ -697,8 +697,8 @@
 		processPropertyName(pN_forceDirectionRadian);
 
 		function processPropertyName(propertyName) {
-			if (propertyNames[propertyName] && typeof propertyNames[propertyName] === 'string') {
-				decidedNames[propertyName] = propertyNames[propertyName];
+			if (customizedPropertyNames[propertyName] && typeof customizedPropertyNames[propertyName] === 'string') {
+				decidedNames[propertyName] = customizedPropertyNames[propertyName];
 			}
 		}
 
@@ -781,9 +781,84 @@
 		);
 	}
 
+	function wulechuanImpartLifeTo(methodsGrantee, propertiesGrantee, customizedPropertyNames) {
+		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
+			throw TypeError(
+				'The grantee to impart methods and properties to' +
+				' must be an object, and not a null.'
+			);
+		}
+
+		if (typeof propertiesGrantee !== 'object' || !propertiesGrantee) {
+			propertiesGrantee = methodsGrantee;
+		}
+
+		var pN_chief = 'age';
+		var pN_ageRatio = 'ageRatio';
+		var pN_ageLimitation = 'ageLimitation';
+		var pN_ageReferenceTime = 'ageReferenceTime';
+		var pN_ageReferenceTimeIsWallClockTime = 'ageReferenceTimeIsWallClockTime';
+		var pN_bornTime = 'bornTime';
+		var pN_hasBeenBorn = 'hasBeenBorn';
+		var pN_isDead = 'isDead';
+
+		var decidedNames = {};
+
+		customizedPropertyNames = customizedPropertyNames || {};
+		if (typeof customizedPropertyNames === 'string') {
+			decidedNames[pN_chief] = customizedPropertyNames;
+		} else if (customizedPropertyNames[pN_chief] && typeof customizedPropertyNames[pN_chief] === 'string') {
+			decidedNames[pN_chief] = customizedPropertyNames[pN_chief];
+		} else {
+			decidedNames[pN_chief] = pN_chief;
+		}
+		var decidedChiefName = decidedNames[pN_chief];
+
+		decidedNames[pN_ageRatio] = decidedChiefName + 'Ratio';
+		decidedNames[pN_ageLimitation] = decidedChiefName + 'Limitation';
+		decidedNames[pN_ageReferenceTime] = decidedChiefName + 'ReferenceTime';
+		decidedNames[pN_ageReferenceTimeIsWallClockTime] = decidedChiefName + 'ReferenceTimeIsWallClockTime';
+		decidedNames[pN_bornTime] = pN_bornTime;
+		decidedNames[pN_hasBeenBorn] = pN_hasBeenBorn;
+		decidedNames[pN_isDead] = pN_isDead;
+
+		processPropertyName(pN_ageRatio);
+		processPropertyName(pN_ageLimitation);
+		processPropertyName(pN_ageReferenceTime);
+		processPropertyName(pN_ageReferenceTimeIsWallClockTime);
+		processPropertyName(pN_bornTime);
+		processPropertyName(pN_hasBeenBorn);
+		processPropertyName(pN_isDead);
+
+		function processPropertyName(propertyName) {
+			if (customizedPropertyNames[propertyName] && typeof customizedPropertyNames[propertyName] === 'string') {
+				decidedNames[propertyName] = customizedPropertyNames[propertyName];
+			}
+		}
+
+
+
+
+
+		var bornTime = NaN;
+		var referenceTime = NaN; // in seconds instead of milliseconds
+		var referenceTimeIsWallClockTime = true; // True means particle runs free mode, in which the particle does NOT need an explicit external time reference
+		var age = NaN;
+		var ageRatio = NaN;  // scalar that can be either NaN or between [0, 1]
+		var ageLimitation = NaN; // in seconds
+		var hasBeenBorn = false;
+		var isDead = false;
+
+
+
+
+
+	}
+
 	function wulechuan2DParticle(constructorOptions) {
 		var propertyName_velocity = 'velocity';
 		var propertyName_force = 'force';
+		var propertyName_life = 'age';
 
 		var thisParticle = this;
 
@@ -815,13 +890,15 @@
 			// Being public means being writable.
 			buildGettersAndSettersForPublicProperties();
 
-			wulechuanImpartVelocityTo({
+			wulechuanImpartVelocityTo(thisParticle, null, {
 				velocity: propertyName_velocity,
 				// speed: 'ssppeeeedd',
 				// turnBy: 'turnDirectionByDegrees'
-			}, thisParticle);
+			});
 
-			wulechuanImpartForceTo(propertyName_force, thisParticle);
+			wulechuanImpartForceTo(thisParticle, null, propertyName_force);
+
+			// wulechuanImpartLifeTo(thisParticle, null, propertyName_life);
 
 			config(initOptions);
 			bearOn(initOptions.bornTime);

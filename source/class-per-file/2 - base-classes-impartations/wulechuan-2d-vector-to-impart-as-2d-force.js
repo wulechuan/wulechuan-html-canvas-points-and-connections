@@ -67,7 +67,7 @@
 					return force;
 				},
 				set: function (newForce) {
-					return force.value = newForce;
+					force.value = newForce;
 				}
 			}
 		);
@@ -81,7 +81,6 @@
 				},
 				set: function (newForceStrength) {
 					force.length = newForceStrength;
-					return force.length;
 				}
 			}
 		);
@@ -95,7 +94,6 @@
 				},
 				set: function (newForceStrength2) {
 					force.length2 = newForceStrength2;
-					return force.length2;
 				}
 			}
 		);
@@ -109,7 +107,6 @@
 				},
 				set: function (newForceDirection) {
 					force.direction = newForceDirection;
-					return force.direction;
 				}
 			}
 		);
@@ -123,7 +120,6 @@
 				},
 				set: function (newForceDirectionRadian) {
 					force.directionRadian = newForceDirectionRadian;
-					return force.directionRadian;
 				}
 			}
 		);

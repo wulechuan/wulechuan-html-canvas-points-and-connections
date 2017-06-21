@@ -113,7 +113,6 @@
 					// if (mass < tooSmallAbsoluteValue) {
 					// 	console.warn('The mass of Point2D is too low!');
 					// }
-					return mass;
 				}
 			});
 
@@ -124,7 +123,6 @@
 				},
 				set: function (newPosX) {
 					position.x = newPosX;
-					return position.x;
 				}
 			});
 
@@ -135,7 +133,6 @@
 				},
 				set: function (newPosY) {
 					position.y = newPosY;
-					return position.y;
 				}
 			});
 
@@ -145,7 +142,7 @@
 					return position;
 				},
 				set: function (newPosition) {
-					return position.value = newPosition;
+					position.value = newPosition;
 				}
 			});
 		}

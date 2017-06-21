@@ -113,7 +113,6 @@
 						x = newX;
 						evaluateLengthAndDirection();
 					}
-					return x;
 				}
 			});
 
@@ -128,7 +127,6 @@
 						y = newY;
 						evaluateLengthAndDirection();						
 					}
-					return y;
 				}
 			});
 
@@ -160,7 +158,6 @@
 						dealWithTinyLength();
 						evaluateComponents();
 					}
-					return length;
 				}
 			});
 
@@ -177,7 +174,6 @@
 						dealWithTinyLength();
 						evaluateComponents();
 					}
-					return length2;
 				}
 			});
 
@@ -196,8 +192,6 @@
 						evaluateDirectionRadianViaDegree();
 						evaluateComponents();
 					}
-
-					return direction;
 				}
 			});
 
@@ -223,8 +217,6 @@
 						evaluateDirectionDegreeViaRadian();
 						evaluateComponents();
 					}
-
-					return directionRadian;
 				}
 			});
 

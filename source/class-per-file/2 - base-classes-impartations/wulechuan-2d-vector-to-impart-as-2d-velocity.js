@@ -73,7 +73,7 @@
 					return velocity;
 				},
 				set: function (newVelocity) {
-					return velocity.value = newVelocity;
+					velocity.value = newVelocity;
 				}
 			}
 		);
@@ -87,7 +87,6 @@
 				},
 				set: function (newSpeed) {
 					velocity.length = newSpeed;
-					return velocity.length;
 				}
 			}
 		);
@@ -101,7 +100,6 @@
 				},
 				set: function (newSpeed2) {
 					velocity.length2 = newSpeed2;
-					return velocity.length2;
 				}
 			}
 		);
@@ -115,7 +113,6 @@
 				},
 				set: function (newSpeedDirection) {
 					velocity.direction = newSpeedDirection;
-					return velocity.direction;
 				}
 			}
 		);
@@ -129,7 +126,6 @@
 				},
 				set: function (newSpeedDirectionRadian) {
 					velocity.directionRadian = newSpeedDirectionRadian;
-					return velocity.directionRadian;
 				}
 			}
 		);

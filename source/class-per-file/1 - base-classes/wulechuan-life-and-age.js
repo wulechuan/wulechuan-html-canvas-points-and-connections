@@ -38,7 +38,7 @@
 		var pN_hasBeenBorn = 'hasBeenBorn';
 		var pN_isDead = 'isDead';
 		var pN_isAlive = 'isAlive';
-		var pN_bearOn = 'bearOn';
+		var pN_bear = 'bear';
 
 		var decidedNames = {};
 
@@ -60,7 +60,7 @@
 		decidedNames[pN_hasBeenBorn] = pN_hasBeenBorn;
 		decidedNames[pN_isDead] = pN_isDead;
 		decidedNames[pN_isAlive] = pN_isAlive;
-		decidedNames[pN_bearOn] = pN_bearOn;
+		decidedNames[pN_bear] = pN_bear;
 
 		processPropertyName(pN_ageRatio);
 		processPropertyName(pN_ageLimitation);
@@ -119,7 +119,6 @@
 							detectDeath();
 						}
 					}
-					return ageRatio;
 				}
 			}
 		);
@@ -137,7 +136,6 @@
 						ageLimitation = newAgeLimitation;
 					}
 					evaluateAgeRatio();
-					return ageLimitation;
 				}
 			}
 		);
@@ -180,7 +178,7 @@
 				get: function () {
 					return bornTime;
 				},
-				set: bearOn
+				set: bear
 			}
 		);
 
@@ -220,7 +218,7 @@
 
 
 
-		methodsGrantee[decidedNames[pN_bearOn]] = bearOn;
+		methodsGrantee[decidedNames[pN_bear]] = bear;
 
 
 
@@ -245,7 +243,7 @@
 			}
 		}
 
-		function bearOn(desiredBornTimeInSeconds) {
+		function bear(desiredBornTimeInSeconds) {
 			desiredBornTimeInSeconds = parseInt(desiredBornTimeInSeconds);
 			if (desiredBornTimeInSeconds > 0) {
 				referenceTimeIsWallClockTime = false;
@@ -289,7 +287,7 @@
 			evaluateAgeRatio();
 			evaluateBornTimeViaAge();
 
-			return age;
+			// return age;
 		}
 
 		function evaluateAgeRatio() {

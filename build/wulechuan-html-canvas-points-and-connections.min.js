@@ -54,6 +54,8 @@
 	function wulechuan2DVector(constructorOptions) {
 		var thisVector = this;
 
+		var epsilon = tooSmallAbsoluteValue;
+
 		var x = 0; // component x.
 		var y = 0; // component y.
 		var length = 0;
@@ -268,7 +270,7 @@
 
 
 		function lengthIsWayTooSmall() {
-			return length <= tooSmallAbsoluteValue;
+			return length <= epsilon;
 		}
 
 		function dealWithTinyLength() {
@@ -512,7 +514,7 @@
 		}
 	}
 
-	function wulechuanImpartVelocityTo(methodsGrantee, propertiesGrantee) {
+	function wulechuanImpartVelocityTo(propertyNames, methodsGrantee, propertiesGrantee) {
 		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
 			throw TypeError(
 				'The grantee to impart methods and properties to' +
@@ -520,69 +522,131 @@
 			);
 		}
 
-		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
+		if (typeof propertiesGrantee !== 'object' || !propertiesGrantee) {
 			propertiesGrantee = methodsGrantee;
 		}
 
+		var pN_chief = 'velocity';
+		var pN_speed = 'speed';
+		var pN_speed2 = 'speed2';
+		var pN_velocityDirection = 'velocityDirection';
+		var pN_velocityDirectionRadian = 'velocityDirectionRadian';
+		var pN_turnBy = 'turnBy';
+		var pN_turnByRadians = 'turnByRadians';
+		var decidedNames = {};
+
+		propertyNames = propertyNames || {};
+		if (typeof propertyNames === 'string') {
+			decidedNames[pN_chief] = propertyNames;
+		} else if (propertyNames[pN_chief] && typeof propertyNames[pN_chief] === 'string') {
+			decidedNames[pN_chief] = propertyNames[pN_chief];
+		} else {
+			decidedNames[pN_chief] = pN_chief;
+		}
+		var decidedChiefName = decidedNames[pN_chief];
+
+		decidedNames[pN_speed] = pN_speed;
+		decidedNames[pN_speed2] = pN_speed2;
+		decidedNames[pN_velocityDirection] = decidedChiefName + 'Direction';
+		decidedNames[pN_velocityDirectionRadian] = decidedChiefName + 'DirectionRadian';
+		decidedNames[pN_turnBy] = pN_turnBy;
+		decidedNames[pN_turnByRadians] = pN_turnByRadians;
+
+		processPropertyName(pN_speed);
+		processPropertyName(pN_speed2);
+		processPropertyName(pN_velocityDirection);
+		processPropertyName(pN_velocityDirectionRadian);
+		processPropertyName(pN_turnBy);
+		processPropertyName(pN_turnByRadians);
+
+		function processPropertyName(propertyName) {
+			if (propertyNames[propertyName] && typeof propertyNames[propertyName] === 'string') {
+				decidedNames[propertyName] = propertyNames[propertyName];
+			}
+		}
+
+
+
+
 		var velocity = new wulechuan2DVector();
 
-		Object.defineProperty(propertiesGrantee, 'velocity', {
-			enumerable: true,
-			get: function () {
-				return velocity;
-			},
-			set: function (newVelocity) {
-				return velocity.value = newVelocity;
+
+
+
+
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_chief],
+			{
+				enumerable: true,
+				get: function () {
+					return velocity;
+				},
+				set: function (newVelocity) {
+					return velocity.value = newVelocity;
+				}
 			}
-		});
+		);
 
-		Object.defineProperty(propertiesGrantee, 'speed', {
-			enumerable: true,
-			get: function () {
-				return velocity.length;
-			},
-			set: function (newSpeed) {
-				velocity.length = newSpeed;
-				return velocity.length;
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_speed],
+			{
+				enumerable: true,
+				get: function () {
+					return velocity.length;
+				},
+				set: function (newSpeed) {
+					velocity.length = newSpeed;
+					return velocity.length;
+				}
 			}
-		});
+		);
 
-		Object.defineProperty(propertiesGrantee, 'speed2', {
-			enumerable: true,
-			get: function () {
-				return velocity.length2;
-			},
-			set: function (newSpeed2) {
-				velocity.length2 = newSpeed2;
-				return velocity.length2;
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_speed2],
+			{
+				enumerable: true,
+				get: function () {
+					return velocity.length2;
+				},
+				set: function (newSpeed2) {
+					velocity.length2 = newSpeed2;
+					return velocity.length2;
+				}
 			}
-		});
+		);
 
-		Object.defineProperty(propertiesGrantee, 'velocityDirection', {
-			enumerable: true,
-			get: function () {
-				return velocity.direction;
-			},
-			set: function (newSpeedDirection) {
-				velocity.direction = newSpeedDirection;
-				return velocity.direction;
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_velocityDirection],
+			{
+				enumerable: true,
+				get: function () {
+					return velocity.direction;
+				},
+				set: function (newSpeedDirection) {
+					velocity.direction = newSpeedDirection;
+					return velocity.direction;
+				}
 			}
-		});
+		);
 
-		Object.defineProperty(propertiesGrantee, 'velocityDirectionRadian', {
-			enumerable: true,
-			get: function () {
-				return velocity.directionRadian;
-			},
-			set: function (newSpeedDirectionRadian) {
-				velocity.directionRadian = newSpeedDirectionRadian;
-				return velocity.directionRadian;
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_velocityDirectionRadian],
+			{
+				enumerable: true,
+				get: function () {
+					return velocity.directionRadian;
+				},
+				set: function (newSpeedDirectionRadian) {
+					velocity.directionRadian = newSpeedDirectionRadian;
+					return velocity.directionRadian;
+				}
 			}
-		});
+		);
 
 
-		methodsGrantee.turnBy = turnBy;
-		methodsGrantee.turnByRadians = turnByRadians;
+		methodsGrantee[decidedNames[pN_turnBy]] = turnBy;
+		methodsGrantee[decidedNames[pN_turnByRadians]] = turnByRadians;
+
 
 		function turnBy(degrees) {
 			velocity.direction += degrees;
@@ -593,10 +657,134 @@
 		}
 	}
 
-	function wulechuanImpartForceTo() {
+	function wulechuanImpartForceTo(propertyNames, methodsGrantee, propertiesGrantee) {
+		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
+			throw TypeError(
+				'The grantee to impart methods and properties to' +
+				' must be an object, and not a null.'
+			);
+		}
+
+		if (typeof propertiesGrantee !== 'object' || !propertiesGrantee) {
+			propertiesGrantee = methodsGrantee;
+		}
+
+		var pN_chief = 'force';
+		var pN_forceStrength = 'forceStrength';
+		var pN_forceStrength2 = 'forceStrength2';
+		var pN_forceDirection = 'forceDirection';
+		var pN_forceDirectionRadian = 'forceDirectionRadian';
+		var decidedNames = {};
+
+		propertyNames = propertyNames || {};
+		if (typeof propertyNames === 'string') {
+			decidedNames[pN_chief] = propertyNames;
+		} else if (propertyNames[pN_chief] && typeof propertyNames[pN_chief] === 'string') {
+			decidedNames[pN_chief] = propertyNames[pN_chief];
+		} else {
+			decidedNames[pN_chief] = pN_chief;
+		}
+		var decidedChiefName = decidedNames[pN_chief];
+
+		decidedNames[pN_forceStrength] = decidedChiefName + 'Strength';
+		decidedNames[pN_forceStrength2] = decidedChiefName + 'Strength2';
+		decidedNames[pN_forceDirection] = decidedChiefName + 'Direction';
+		decidedNames[pN_forceDirectionRadian] = decidedChiefName + 'DirectionRadian';
+
+		processPropertyName(pN_forceStrength);
+		processPropertyName(pN_forceStrength2);
+		processPropertyName(pN_forceDirection);
+		processPropertyName(pN_forceDirectionRadian);
+
+		function processPropertyName(propertyName) {
+			if (propertyNames[propertyName] && typeof propertyNames[propertyName] === 'string') {
+				decidedNames[propertyName] = propertyNames[propertyName];
+			}
+		}
+
+
+
+
+		var force = new wulechuan2DVector();
+
+
+
+
+
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_chief],
+			{
+				enumerable: true,
+				get: function () {
+					return force;
+				},
+				set: function (newForce) {
+					return force.value = newForce;
+				}
+			}
+		);
+
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_forceStrength],
+			{
+				enumerable: true,
+				get: function () {
+					return force.length;
+				},
+				set: function (newForceStrength) {
+					force.length = newForceStrength;
+					return force.length;
+				}
+			}
+		);
+
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_forceStrength2],
+			{
+				enumerable: true,
+				get: function () {
+					return force.length2;
+				},
+				set: function (newForceStrength2) {
+					force.length2 = newForceStrength2;
+					return force.length2;
+				}
+			}
+		);
+
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_forceDirection],
+			{
+				enumerable: true,
+				get: function () {
+					return force.direction;
+				},
+				set: function (newForceDirection) {
+					force.direction = newForceDirection;
+					return force.direction;
+				}
+			}
+		);
+
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_forceDirectionRadian],
+			{
+				enumerable: true,
+				get: function () {
+					return force.directionRadian;
+				},
+				set: function (newForceDirectionRadian) {
+					force.directionRadian = newForceDirectionRadian;
+					return force.directionRadian;
+				}
+			}
+		);
 	}
 
 	function wulechuan2DParticle(constructorOptions) {
+		var propertyName_velocity = 'velocity';
+		var propertyName_force = 'force';
+
 		var thisParticle = this;
 
 		var mass = 1; // mass
@@ -610,29 +798,40 @@
 		var hasBeenBorn = false;
 		var isDead = false;
 
-		var position = new wulechuan2DVector({ x: 0, y: 0 });
-		var velocity = new wulechuan2DVector({ x: 0, y: 0 });
-		var force = new wulechuan2DVector({ x: 0, y: 0 });
+		var position = new wulechuan2DVector();
 
-		// Being public means being writable.
-		buildGettersAndSettersForPublicProperties();
-
-
-		thisParticle.onMove = undefined;
-
-		// thisParticle.config = config;
-		thisParticle.move = move;
-		thisParticle.moveTo = moveTo;
-		thisParticle.setPosition = moveTo;
 
 
 		init(constructorOptions);
 
+		var velocity = thisParticle[propertyName_velocity];
+		var force = thisParticle[propertyName_force];
+
+
 
 		function init(initOptions) {
 			initOptions = initOptions || {};
+
+			// Being public means being writable.
+			buildGettersAndSettersForPublicProperties();
+
+			wulechuanImpartVelocityTo({
+				velocity: propertyName_velocity,
+				// speed: 'ssppeeeedd',
+				// turnBy: 'turnDirectionByDegrees'
+			}, thisParticle);
+
+			wulechuanImpartForceTo(propertyName_force, thisParticle);
+
 			config(initOptions);
 			bearOn(initOptions.bornTime);
+
+
+			// thisParticle.config = config;
+			thisParticle.move = move;
+			thisParticle.moveTo = moveTo;
+			thisParticle.setPosition = moveTo;
+			thisParticle.onMove = undefined;
 		}
 
 		function config(options) {
@@ -791,116 +990,6 @@
 
 
 
-			Object.defineProperty(thisParticle, 'velocity', {
-				enumerable: true,
-				get: function () {
-					return velocity;
-				},
-				set: function (newVelocity) {
-					return velocity.value = newVelocity;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'speed', {
-				enumerable: true,
-				get: function () {
-					return velocity.length;
-				},
-				set: function (newSpeed) {
-					velocity.length = newSpeed;
-					return velocity.length;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'speed2', {
-				enumerable: true,
-				get: function () {
-					return velocity.length2;
-				},
-				set: function (newSpeed2) {
-					velocity.length2 = newSpeed2;
-					return velocity.length2;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'velocityDirection', {
-				enumerable: true,
-				get: function () {
-					return velocity.direction;
-				},
-				set: function (newSpeedDirection) {
-					velocity.direction = newSpeedDirection;
-					return velocity.direction;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'velocityDirectionRadian', {
-				enumerable: true,
-				get: function () {
-					return velocity.directionRadian;
-				},
-				set: function (newSpeedDirectionRadian) {
-					velocity.directionRadian = newSpeedDirectionRadian;
-					return velocity.directionRadian;
-				}
-			});
-
-
-
-
-			Object.defineProperty(thisParticle, 'force', {
-				enumerable: true,
-				get: function () {
-					return force;
-				},
-				set: function (newForce) {
-					return force.value = newForce;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'forceStrength', {
-				enumerable: true,
-				get: function () {
-					return force.length;
-				},
-				set: function (newForceStrength) {
-					force.length = newForceStrength;
-					return force.length;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'forceStrength2', {
-				enumerable: true,
-				get: function () {
-					return force.length2;
-				},
-				set: function (newForceStrength2) {
-					force.length2 = newForceStrength2;
-					return force.length2;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'forceDirection', {
-				enumerable: true,
-				get: function () {
-					return force.direction;
-				},
-				set: function (newForceDirection) {
-					force.direction = newForceDirection;
-					return force.direction;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'forceDirectionRadian', {
-				enumerable: true,
-				get: function () {
-					return force.directionRadian;
-				},
-				set: function (newForceDirectionRadian) {
-					force.directionRadian = newForceDirectionRadian;
-					return force.directionRadian;
-				}
-			});
 		}
 
 

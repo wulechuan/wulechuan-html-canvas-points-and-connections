@@ -2,7 +2,7 @@
 	buildWhatWeWant(window.wulechuanCanvasPointsAndConnections);
 })(function buildWhatWeWant(wulechuanCanvasPointsAndConnections) {
 	function draw() {
-		controller.drawFrame();
+		controller.drawFrame(new Date().getTime() / 1000);
 		requestAnimationFrame(draw);
 	}
 
@@ -24,8 +24,8 @@
 		lineColorRGB: '128, 128, 160',
 		speedMin: 0.1,
 		speedMax: 0.79,
-		generateOnePoint: generateOnePointAroundACircle,
-		updateOnePointOnIteration: updateOnePointOnIteration
+		// generateOnePoint: generateOnePointAroundACircle,
+		// updateOnePointOnIteration: updateOnePointOnIteration
 	});
 
 	function generateOnePointAroundACircle(point) {

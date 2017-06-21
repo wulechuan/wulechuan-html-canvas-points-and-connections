@@ -29,8 +29,8 @@
 	var tan = Math.tan;
 	var atan2 = Math.atan2;
 	var Pi = Math.PI;
-	var Pi2 = Pi * 2;
-	var Pi_2 = Pi / 2;
+	var Pi_2 = Pi * 2;
+	var Pi_1_2 = Pi / 2;
 	var tooSmallAbsoluteValue = abs(0.000000001);
 	var radianToDegreeFactor = 180 / Pi; // used via multiply operator: var newDegree = givenRadian * radianToDegreeFactor;
 	var degreeToRadianFactor = Pi / 180; // used via multiply operator: var newRadian = givenDegree * degreeToRadianFactor;
@@ -72,6 +72,8 @@
 		thisVector.setValue = setValue;
 
 		thisVector.equalTo = equalTo;
+		thisVector.getDistanceTo = getDistanceTo;
+		thisVector.getDistance2To = getDistance2To;
 
 		thisVector.swapComponents = swapComponents;
 		thisVector.add = add;
@@ -307,7 +309,7 @@
 		}
 
 		function evaluateDirectionBetweenZeroAnd2Pi() {
-			directionBetween0And2Pi = directionRadian % Pi2;
+			directionBetween0And2Pi = directionRadian % Pi_2;
 			directionBetween0And360 = direction % 360;
 		}
 
@@ -357,6 +359,25 @@
 
 			return false;
 		}
+
+		function getDistance2To(a, b) {
+			var comparingComponents = _evaluateArgmentsForComponents(a, b);
+			var dx = comparingComponents[0] - x;
+			var dy = comparingComponents[1] - y;
+
+			if (!isNaN(dx) && !isNaN(dy)) {
+				return dx * dx + dy * dy;
+			}
+
+			return NaN;
+		}
+
+		function getDistanceTo(a, b) {
+			return sqroot(getDistance2To(a, b));
+		}
+
+
+
 
 		function getNewArrayOfSwappedComponents() {
 			var newX = y;
@@ -496,12 +517,10 @@
 		// Object.defineProperty(grantee, 'velocity', {
 		// 	enumerable: true,
 		// 	get: function () {
-		// 		// only return copy of private object
 		// 		return [velocity.x, velocity.y];
 		// 	},
 		// 	set: function (newVelocity) {
 		// 		velocity.value = newVelocity;
-		// 		// only return copy of private object
 		// 		return [velocity.x, velocity.y];
 		// 	}
 		// });
@@ -591,6 +610,7 @@
 
 
 		function init(initOptions) {
+			initOptions = initOptions || {};
 			config(initOptions);
 			bearOn(initOptions.bornTime);
 		}
@@ -740,13 +760,10 @@
 			Object.defineProperty(thisParticle, 'position', {
 				enumerable: true,
 				get: function () {
-					// only return copy of private object
-					return [position.x, position.y];
+					return position;
 				},
 				set: function (newPosition) {
-					position.value = newPosition;
-					// only return copy of private object
-					return [position.x, position.y];
+					return position.value = newPosition;
 				}
 			});
 
@@ -757,13 +774,10 @@
 			Object.defineProperty(thisParticle, 'velocity', {
 				enumerable: true,
 				get: function () {
-					// only return copy of private object
-					return [velocity.x, velocity.y];
+					return velocity;
 				},
 				set: function (newVelocity) {
-					velocity.value = newVelocity;
-					// only return copy of private object
-					return [velocity.x, velocity.y];
+					return velocity.value = newVelocity;
 				}
 			});
 
@@ -817,13 +831,10 @@
 			Object.defineProperty(thisParticle, 'force', {
 				enumerable: true,
 				get: function () {
-					// only return copy of private object
-					return [force.x, force.y];
+					return force;
 				},
 				set: function (newForce) {
-					force.value = newForce;
-					// only return copy of private object
-					return [force.x, force.y];
+					return force.value = newForce;
 				}
 			});
 
@@ -1018,27 +1029,27 @@
 		var pointColorRGB = '0,0,0';
 		var lineColorRGB = '0,0,0';
 		var pointsAreRounded = true;
-		var shouldBounceAtBoundary = true;
+		var shouldBounceAtBoundary = false;
 
 		var activeAreaX1 = 0;
 		var activeAreaY1 = 0;
 		var activeAreaX2 = 0;
 		var activeAreaY2 = 0;
-		var mouseCursorX = null;
-		var mouseCursorY = null;
-		var maxDistanceToMakeConnection2 = 100000;
+		var mouseCursorX = NaN;
+		var mouseCursorY = NaN;
+		var maxDistanceToMakeConnection2 = maxDistanceToMakeConnection * maxDistanceToMakeConnection;
 
-		var allPoints = [];
+		var lastFrameDrawnTime = NaN; // in seconds
+
+		var allParticles = [];
 		var theDrawPointMethod;
 
-		var random = Math.random;
 
-
-		thisController.generateOnePoint = _generateOnePointDefaultMethod;
-		thisController.updateOnePointOnIteration = _updateOnePointOnIterationDefaultMethod;
-		thisController.drawFrame = drawFrame.bind(thisController);
-		thisController.updateCanvasSize = updateCanvasSize.bind(thisController);
-		thisController.setActiveArea = setActiveArea.bind(thisController);
+		thisController.initOneParticle = _initOneParticleDefaultMethod;
+		thisController.updateOneParticleOnIteration = _updateOneParticleOnIterationDefaultMethod;
+		thisController.drawFrame = drawFrame;
+		thisController.updateCanvasSize = updateCanvasSize;
+		thisController.setActiveArea = setActiveArea;
 
 
 		init(constructorOptions);
@@ -1077,24 +1088,24 @@
 
 			theDrawPointMethod = pointsAreRounded ? _drawPointAsRoundedDot : _drawPointAsSqure;
 
-			if (options.hasOwnProperty('updateOnePointOnIteration')) {
-				if (typeof options.updateOnePointOnIteration === 'function') {
-					thisController.updateOnePointOnIteration = options.updateOnePointOnIteration;
+			if (options.hasOwnProperty('updateOneParticleOnIteration')) {
+				if (typeof options.updateOneParticleOnIteration === 'function') {
+					thisController.updateOneParticleOnIteration = options.updateOneParticleOnIteration;
 				} else {
-					thisController.updateOnePointOnIteration = _updateOnePointOnIterationDefaultMethod;
+					thisController.updateOneParticleOnIteration = _updateOneParticleOnIterationDefaultMethod;
 				}
 			}
 
-			var oldGenerateOnePointMethod = thisController.generateOnePoint;
-			if (options.hasOwnProperty('generateOnePoint')) {
-				if (typeof options.generateOnePoint === 'function') {
-					thisController.generateOnePoint = options.generateOnePoint;
+			var oldinitOneParticleMethod = thisController.initOneParticle;
+			if (options.hasOwnProperty('initOneParticle')) {
+				if (typeof options.initOneParticle === 'function') {
+					thisController.initOneParticle = options.initOneParticle;
 				} else {
-					thisController.generateOnePoint = _generateOnePointDefaultMethod;
+					thisController.initOneParticle = _initOneParticleDefaultMethod;
 				}
 			}
 
-			if (hasBeenInitialized && oldGenerateOnePointMethod !== thisController.generateOnePoint) {
+			if (hasBeenInitialized && oldinitOneParticleMethod !== thisController.initOneParticle) {
 				_generateAllPoints();
 			}
 		}
@@ -1106,11 +1117,10 @@
 			});
 
 			window.addEventListener('mouseout', function () {
-				mouseCursorX = null;
-				mouseCursorY = null;
+				mouseCursorX = NaN;
+				mouseCursorY = NaN;
 			});
 		}
-
 
 		function updateCanvasSize(toUpdateActiveArea) {
 			canvas.width = canvas.clientWidth;
@@ -1123,7 +1133,6 @@
 			}
 		}
 
-
 		function setActiveArea(x1, y1, x2, y2) {
 			activeAreaX1 = Math.min(x1, x2);
 			activeAreaX2 = Math.max(x1, x2);
@@ -1131,66 +1140,70 @@
 			activeAreaY2 = Math.max(y1, y2);
 		}
 
-		function drawFrame() {
-			var px, py, comparingPoint;
-
+		function drawFrame(localTimeInSeconds) {
+			var iterationDuration = localTimeInSeconds - lastFrameDrawnTime;
 
 			canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
-
-			allPoints.forEach(function (point, pointIndex) {
-				thisController.updateOnePointOnIteration(point);
-
-
-				point.x += point.vx;
-				point.y += point.vy;
-
-
-				px = point.x;
-				py = point.y;
+			allParticles.forEach(function (particle, particleIndex) {
+				var position = particle.position;
+				var velocity = particle.velocity;
+				var px = position.x;
+				var py = position.y;
+				var comparingParticle;
 
 
-				if (shouldBounceAtBoundary) {
-					if (px > activeAreaX2) {
-						point.vx = Math.abs(point.vx) * -1;
-					}
-					if (py > activeAreaY2) {
-						point.vy = Math.abs(point.vy) * -1;
-					}
-					if (px < activeAreaX1) {
-						point.vx = Math.abs(point.vx);
-					}
-					if (py < activeAreaY1) {
-						point.vy = Math.abs(point.vy);
-					}
-				}
+				thisController.updateOneParticleOnIteration(particle, iterationDuration);
 
 
-				var i = pointIndex + 1;
-				for ( ; i < allPoints.length; i++) {
-					comparingPoint = allPoints[i];
+				var i = particleIndex + 1;
+				for ( ; i < allParticles.length; i++) {
+					comparingParticle = allParticles[i];
 
 					drawLine(
-						px, py, comparingPoint.x, comparingPoint.y,
-						evaluateDistanceRatio(px, py, comparingPoint.x, comparingPoint.y)
+						px, py, comparingParticle.x, comparingParticle.y,
+						evaluateDistanceRatio(particle.position, comparingParticle.position)
 					);
 
-					if (mouseCursorX !== null) {
+					if (!isNaN(mouseCursorX)) {
 						drawLine(
 							px, py, mouseCursorX, mouseCursorY,
-							evaluateDistanceRatio(px, py, mouseCursorX, mouseCursorY)
+							evaluateDistanceRatio(
+								particle.position,
+								{
+									x: mouseCursorX, 
+									y: mouseCursorY
+								}
+							)
 						);
 					}
 				}
 
 
 				theDrawPointMethod(px, py);
+
+				if (shouldBounceAtBoundary) {
+					if (px > activeAreaX2) {
+						velocity.x = Math.abs(velocity.x) * -1;
+					}
+					if (py > activeAreaY2) {
+						velocity.y = Math.abs(velocity.y) * -1;
+					}
+					if (px < activeAreaX1) {
+						velocity.x = Math.abs(velocity.x);
+					}
+					if (py < activeAreaY1) {
+						velocity.y = Math.abs(velocity.y);
+					}
+				}
 			});
 
 
-			if (mouseCursorX !== null) {
+			if (!isNaN(mouseCursorX)) {
 				theDrawPointMethod(mouseCursorX, mouseCursorY);
 			}
+
+			lastFrameDrawnTime = localTimeInSeconds;
 		}
 
 		function _drawPointAsRoundedDot(px, py) {
@@ -1221,57 +1234,40 @@
 		}
 
 		function _generateAllPoints() {
-			allPoints.length = 0;
+			allParticles.length = 0;
 
 			for (var i = 0; i < pointsCount; i++) {
-				var point = {};
+				var particle = new wulechuanCanvas2DParticle();
 				
-				thisController.generateOnePoint(
-					point, pointsCount, activeAreaX1, activeAreaY1, activeAreaX2, activeAreaY2
+				thisController.initOneParticle(
+					particle, pointsCount, activeAreaX1, activeAreaY1, activeAreaX2, activeAreaY2
 				);
 
-				thisController.updateOnePointOnIteration(
-					point, speedMin, speedMax, pointsCount, activeAreaX1, activeAreaY1, activeAreaX2, activeAreaY2
-				);
-
-				allPoints.push(point);
+				allParticles.push(particle);
 			}
 		}
 
-		function _generateOnePointDefaultMethod(point) {
-			point.x = random() * (activeAreaX2 - activeAreaX1) + activeAreaX1;
-			point.y = random() * (activeAreaY2 - activeAreaY1) + activeAreaY1;
+		function _initOneParticleDefaultMethod(particle) {
+			particle.position = [
+				randomBetween(activeAreaX1, activeAreaX2),
+				randomBetween(activeAreaY1, activeAreaY2)
+			];
+			particle.speed = randomBetween(speedMin, speedMax);
+			particle.velocityDirection = randomBetween(0, Pi_2);
 		}
 
-		function _updateOnePointOnIterationDefaultMethod(point) {
-			var speed, direction;
+		function _updateOneParticleOnIterationDefaultMethod(particle, iterationDuration) {
+			particle.speed *= randomBetween(0.95, 1.05);
+			particle.velocityDirection += randomBetween(-4, 4);
 
-
-			if (!point.hasOwnProperty('vx')) {
-				speed = random() * (speedMax - speedMin) + speedMin;
-				direction = random() * 2 * Math.PI;
-			} else {
-				var oldSpeed = point.speed;
-				var oldDirection = point.direction;
-				// var oldVx = point.vx;
-				// var oldVy = point.vy;
-
-				speed = oldSpeed * (random() * 0.1 + 0.95);
-				direction = oldDirection + (random() * 8 - 4) / 360 * Math.PI;
-			}
-
-
-			point.speed = speed;
-			point.direction = direction;
-			point.vx = speed * Math.sin(direction);
-			point.vy = speed * Math.cos(direction);
+			particle.move(iterationDuration);
 		}
 
-		function evaluateDistanceRatio(p1x, p1y, p2x, p2y) {
-			var dx = p1x - p2x;
-			var dy = p1y - p2y;
-			var distance2 = dx * dx + dy * dy;
-			return Math.min(1, distance2 / maxDistanceToMakeConnection2);
+		function evaluateDistanceRatio(position1, position2) {
+			return Math.min(
+				1, 
+				position1.getDistance2To(position2) / maxDistanceToMakeConnection2
+			);
 		}
 	}
 })();

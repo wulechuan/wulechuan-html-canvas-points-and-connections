@@ -1,4 +1,4 @@
-const shouldMinifyFiles = true;
+const shouldMinifyFiles = false;
 let shouldBuildSourceMaps = false;
 const shouldPreserveTempFilesForInspection = false;
 

@@ -32,6 +32,11 @@
 	var degreeToRadianFactor = Pi / 180; // used via multiply operator: var newRadian = givenDegree * degreeToRadianFactor;
 
 
+	wulechuanCanvas2DVector.presets = {
+		impartVelocityPropertiesTo: wulechuanImpartVelocityPropertiesTo,
+		impartForcePropertiesTo: wulechuanImpartForcePropertiesTo
+	};
+	
 
 	wulechuanCanvasPointsAndConnections.utilities = {
 		canvas2DVector: wulechuanCanvas2DVector,
@@ -50,8 +55,8 @@
 		var length = 0;
 		var length2 = 0; // square of length; aka length * length.
 		var direction = NaN; // the theta in degrees.
-		var directionBetween0And360 = NaN; // the theta in degrees.
 		var directionRadian = NaN; // the theta in radians.
+		var directionBetween0And360 = NaN; // the theta in degrees.
 		var directionBetween0And2Pi = NaN; // the theta in radians.
 
 
@@ -217,6 +222,13 @@
 				}
 			});
 
+			Object.defineProperty(thisVector, 'directionBetween0And360', {
+				enumerable: true,
+				get: function () {
+					return directionBetween0And360;
+				}
+			});
+
 			Object.defineProperty(thisVector, 'directionRadian', {
 				enumerable: true,
 				get: function () {
@@ -236,6 +248,13 @@
 					return directionRadian;
 				}
 			});
+
+			Object.defineProperty(thisVector, 'directionBetween0And2Pi', {
+				enumerable: true,
+				get: function () {
+					return directionBetween0And2Pi;
+				}
+			});
 		}
 
 
@@ -247,8 +266,8 @@
 			if (lengthIsWayTooSmall()) {
 				direction = NaN;
 				directionRadian = NaN;
-				directionBetween0And360 = NaN;
 				directionBetween0And2Pi = NaN;
+				directionBetween0And360 = NaN;
 
 				return true;
 			}
@@ -281,8 +300,8 @@
 		}
 
 		function evaluateDirectionBetweenZeroAnd2Pi() {
-			directionBetween0And360 = direction % 360;
 			directionBetween0And2Pi = directionRadian % Pi2;
+			directionBetween0And360 = direction % 360;
 		}
 
 
@@ -388,24 +407,87 @@
 		}
 	}
 
+	function wulechuanImpartVelocityPropertiesTo() {
+		// var grantee = this;
+		// if (typeof grantee !== 'object' || !grantee) {
+		// 	throw TypeError('The grantee to impart properties to must be an object, and not a null.');
+		// }
+		// Object.defineProperty(grantee, 'velocity', {
+		// 	enumerable: true,
+		// 	get: function () {
+		// 		// only return copy of private object
+		// 		return [velocity.x, velocity.y];
+		// 	},
+		// 	set: function (newVelocity) {
+		// 		velocity.value = newVelocity;
+		// 		// only return copy of private object
+		// 		return [velocity.x, velocity.y];
+		// 	}
+		// });
+
+		// Object.defineProperty(grantee, 'speed', {
+		// 	enumerable: true,
+		// 	get: function () {
+		// 		return velocity.length;
+		// 	},
+		// 	set: function (newSpeed) {
+		// 		velocity.length = newSpeed;
+		// 		return velocity.length;
+		// 	}
+		// });
+
+		// Object.defineProperty(grantee, 'speed2', {
+		// 	enumerable: true,
+		// 	get: function () {
+		// 		return velocity.length2;
+		// 	},
+		// 	set: function (newSpeed2) {
+		// 		velocity.length2 = newSpeed2;
+		// 		return velocity.length2;
+		// 	}
+		// });
+
+		// Object.defineProperty(grantee, 'velocityDirection', {
+		// 	enumerable: true,
+		// 	get: function () {
+		// 		return velocity.direction;
+		// 	},
+		// 	set: function (newSpeedDirection) {
+		// 		velocity.direction = newSpeedDirection;
+		// 		return velocity.direction;
+		// 	}
+		// });
+
+		// Object.defineProperty(grantee, 'velocityDirectionRadian', {
+		// 	enumerable: true,
+		// 	get: function () {
+		// 		return velocity.directionRadian;
+		// 	},
+		// 	set: function (newSpeedDirectionRadian) {
+		// 		velocity.directionRadian = newSpeedDirectionRadian;
+		// 		return velocity.directionRadian;
+		// 	}
+		// });
+	}
+
+	function wulechuanImpartForcePropertiesTo() {
+	}
+
+
 	function wulechuanCanvas2DParticle(constructorOptions) {
 		var thisParticle = this;
 
-
-		var x = 0; // x poisition
-		var y = 0; // y position
-
 		var mass = 1; // mass
-
-		var velocity = new wulechuanCanvas2DVector({ x: 0, y: 0 });
-		var force = new wulechuanCanvas2DVector({ x: 0, y: 0 });
-
 		var bornTime = NaN;
 		var age = NaN;
 		var ageRatio = NaN;  // scalar that can be either NaN or between [0, 1]
 		var ageLimitation = NaN; // in seconds
 		var hasBeenBorn = false;
 		var isDead = false;
+
+		var position = new wulechuanCanvas2DVector({ x: 0, y: 0 });
+		var velocity = new wulechuanCanvas2DVector({ x: 0, y: 0 });
+		var force = new wulechuanCanvas2DVector({ x: 0, y: 0 });
 
 
 
@@ -420,11 +502,6 @@
 		thisParticle.updateClock = evaluateAge.bind(thisParticle); // single argument, time in seconds
 		thisParticle.moveTo = moveTo.bind(thisParticle);
 		thisParticle.setPosition = thisParticle.moveTo;
-
-		// thisPoint.setVelocity = setVelocity.bind(thisPoint);
-		// thisPoint.addVelocity = addVelocity.bind(thisPoint);
-		// thisPoint.setForce = setForce.bind(thisPoint);
-		// thisPoint.addForce = addForce.bind(thisPoint);
 
 
 		init(constructorOptions);
@@ -451,35 +528,31 @@
 			// Obviously,
 			// later processed attribute will overwrite ealier processed ones,
 			// if their values are coupled.
+			processAttribute('mass');
 			processAttribute('ageRatio');
 			processAttribute('age');
 			processAttribute('ageLimitation');
 			processAttribute('bornTime');
-			processAttribute('m');
 			processAttribute('x');
 			processAttribute('y');
-			processAttribute('speed2');
-			processAttribute('speed');
-			processAttribute('speedDirection');
-			processAttribute('speedDirectionRadian');
-			processAttribute('vx');
-			processAttribute('vy');
-			processAttribute('forceStrength2');
-			processAttribute('forceStrength');
-			processAttribute('forceDirection');
-			processAttribute('forceDirectionRadian');
-			processAttribute('forceX');
-			processAttribute('forceY');
+			processObjectAttribute('velocity');
+			processObjectAttribute('force');
 
 			function processAttribute(attributeName) {
 				if (options.hasOwnProperty(attributeName)) {
 					thisParticle[attributeName] = options[attributeName];
 				}
 			}
+
+			function processObjectAttribute(attributeName) {
+				if (options.hasOwnProperty(attributeName)) {
+					thisParticle[attributeName].value = options[attributeName];
+				}
+			}
 		}
 
 		function buildGettersAndSettersForPublicProperties() {
-			Object.defineProperty(publicState, 'ageRatio', {
+			Object.defineProperty(thisParticle, 'ageRatio', {
 				enumerable: true,
 				get: function () {
 					return ageRatio;
@@ -494,7 +567,7 @@
 				}
 			});
 
-			Object.defineProperty(publicState, 'age', {
+			Object.defineProperty(thisParticle, 'age', {
 				enumerable: true,
 				get: function () {
 					return age;
@@ -513,7 +586,7 @@
 				}
 			});
 
-			Object.defineProperty(publicState, 'ageLimitation', {
+			Object.defineProperty(thisParticle, 'ageLimitation', {
 				enumerable: true,
 				get: function () {
 					return ageLimitation;
@@ -528,7 +601,7 @@
 				}
 			});
 
-			Object.defineProperty(publicState, 'bornTime', {
+			Object.defineProperty(thisParticle, 'bornTime', {
 				enumerable: true,
 				get: function () {
 					return bornTime;
@@ -543,7 +616,7 @@
 				}
 			});
 
-			Object.defineProperty(publicState, 'mass', {
+			Object.defineProperty(thisParticle, 'mass', {
 				enumerable: true,
 				get: function () {
 					return mass;
@@ -551,316 +624,169 @@
 				set: function (newMass) {
 					newMass = parseFloat(newMass);
 					if (newMass >= 0) mass = newMass;
-					if (Math.abs(mass) < tooSmallAbsoluteValue) {
-						console.warn('The mass of Point2D is too low!');
-					}
+					// if (mass < tooSmallAbsoluteValue) {
+					// 	console.warn('The mass of Point2D is too low!');
+					// }
 					return mass;
 				}
 			});
 
-			Object.defineProperty(publicState, 'x', {
+			Object.defineProperty(thisParticle, 'x', {
 				enumerable: true,
 				get: function () {
-					return x;
+					return position.x;
 				},
 				set: function (newPosX) {
-					newPosX = parseFloat(newPosX);
-					if (!isNaN(newPosX)) x = newPosX;
-					return x;
+					position.x = newPosX;
+					return position.x;
 				}
 			});
 
-			Object.defineProperty(publicState, 'y', {
+			Object.defineProperty(thisParticle, 'y', {
 				enumerable: true,
 				get: function () {
-					return y;
+					return position.y;
 				},
 				set: function (newPosY) {
-					newPosY = parseFloat(newPosY);
-					if (!isNaN(newPosY)) y = newPosY;
-					return y;
+					position.y = newPosY;
+					return position.y;
 				}
 			});
 
-			Object.defineProperty(publicState, 'position', {
+			Object.defineProperty(thisParticle, 'position', {
 				enumerable: true,
 				get: function () {
-					return [x, y];
+					// only return copy of private object
+					return [position.x, position.y];
 				},
 				set: function (newPosition) {
-					var newX, newY;
-
-					if (Array.isArray(newPosition) && newPosition.length > 1) {
-						newX = parseFloat(newPosition[0]);
-						newY = parseFloat(newPosition[1]);
-
-						if (!isNaN(newX) && !isNaN(newY)) {
-							x = newX;
-							y = newY;
-						}
-					}
-
-					return [x, y];
+					position.value = newPosition;
+					// only return copy of private object
+					return [position.x, position.y];
 				}
 			});
 
-			Object.defineProperty(publicState, 'v', {
+
+
+
+
+			Object.defineProperty(thisParticle, 'velocity', {
 				enumerable: true,
 				get: function () {
-					return [vx, vy];
+					// only return copy of private object
+					return [velocity.x, velocity.y];
 				},
 				set: function (newVelocity) {
-					var newVX, newVY;
-
-					if (Array.isArray(newVelocity) && newVelocity.length > 1) {
-						newVX = parseFloat(newVelocity[0]);
-						newVY = parseFloat(newVelocity[1]);
-
-						if (!isNaN(newVX) && !isNaN(newVY)) {
-							vx = newVX;
-							vy = newVY;
-						}
-					}
-
-					evaluateSpeedAndDirectionViaVelocity();
-
-					return [vx, vy];
+					velocity.value = newVelocity;
+					// only return copy of private object
+					return [velocity.x, velocity.y];
 				}
 			});
 
-			Object.defineProperty(publicState, 'vx', {
+			Object.defineProperty(thisParticle, 'speed', {
 				enumerable: true,
 				get: function () {
-					return vx;
-				},
-				set: function (newVX) {
-					newVX = parseFloat(newVX);
-					if (!isNaN(newVX)) vx = newVX;
-					evaluateSpeedAndDirectionViaVelocity();
-					return vx;
-				}
-			});
-
-			Object.defineProperty(publicState, 'vy', {
-				enumerable: true,
-				get: function () {
-					return vy;
-				},
-				set: function (newVY) {
-					newVY = parseFloat(newVY);
-					if (!isNaN(newVY)) vy = newVY;
-					evaluateSpeedAndDirectionViaVelocity();
-					return vy;
-				}
-			});
-
-			Object.defineProperty(publicState, 'speed', {
-				enumerable: true,
-				get: function () {
-					return speed;
+					return velocity.length;
 				},
 				set: function (newSpeed) {
-					newSpeed = parseFloat(newSpeed);
-					if (newSpeed >= 0) speed = newSpeed;
-					evaluateVelocityViaSpeedAndDirection();
-					return speed;
+					velocity.length = newSpeed;
+					return velocity.length;
 				}
 			});
 
-			Object.defineProperty(publicState, 'speed2', {
+			Object.defineProperty(thisParticle, 'speed2', {
 				enumerable: true,
 				get: function () {
-					return speed2;
+					return velocity.length2;
+				},
+				set: function (newSpeed2) {
+					velocity.length2 = newSpeed2;
+					return velocity.length2;
 				}
-				// speed2 has no setter
 			});
 
-			Object.defineProperty(publicState, 'speedDirection', {
+			Object.defineProperty(thisParticle, 'velocityDirection', {
 				enumerable: true,
 				get: function () {
-					return speedDirection;
+					return velocity.direction;
 				},
 				set: function (newSpeedDirection) {
-					newSpeedDirection = parseFloat(newSpeedDirection);
-					if (!isNaN(newSpeedDirection)) {
-						speedDirection = newSpeedDirection % 360;
-					}
-					evaluateVelocityViaSpeedAndDirection();
-					evaluateSpeedDirectionRadianViaDegrees();
-					return speedDirection;
+					velocity.direction = newSpeedDirection;
+					return velocity.direction;
 				}
 			});
 
-			Object.defineProperty(publicState, 'speedDirectionRadian', {
+			Object.defineProperty(thisParticle, 'velocityDirectionRadian', {
 				enumerable: true,
 				get: function () {
-					return speedDirectionRadian;
+					return velocity.directionRadian;
 				},
 				set: function (newSpeedDirectionRadian) {
-					newSpeedDirectionRadian = parseFloat(newSpeedDirectionRadian);
-					if (!isNaN(newSpeedDirectionRadian)) {
-						speedDirectionRadian = newSpeedDirectionRadian % Pi2;
-					}
-					evaluateVelocityViaSpeedAndDirection();
-					evaluateSpeedDirectionDegreesViaRadian();
-					return speedDirectionRadian;
+					velocity.directionRadian = newSpeedDirectionRadian;
+					return velocity.directionRadian;
 				}
 			});
 
 
 
 
-
-			Object.defineProperty(publicState, 'force', {
+			Object.defineProperty(thisParticle, 'force', {
 				enumerable: true,
 				get: function () {
-					return [forceX, forceY];
+					// only return copy of private object
+					return [force.x, force.y];
 				},
 				set: function (newForce) {
-					var newForceX, newForceY;
-
-					if (Array.isArray(newForce) && newForce.length > 1) {
-						newForceX = parseFloat(newForce[0]);
-						newForceY = parseFloat(newForce[1]);
-
-						if (!isNaN(newForceX) && !isNaN(newForceY)) {
-							forceX = newForceX;
-							forceY = newForceY;
-						}
-					}
-
-					evaluateForceStrengthAndDirectionViaForceVectory();
-
-					return [forceX, forceY];
+					force.value = newForce;
+					// only return copy of private object
+					return [force.x, force.y];
 				}
 			});
 
-			Object.defineProperty(publicState, 'forceX', {
+			Object.defineProperty(thisParticle, 'forceStrength', {
 				enumerable: true,
 				get: function () {
-					return forceX;
-				},
-				set: function (newForceX) {
-					newForceX = parseFloat(newForceX);
-					if (!isNaN(newForceX)) forceX = newForceX;
-					evaluateForceStrengthAndDirectionViaForceVectory();
-					return forceX;
-				}
-			});
-
-			Object.defineProperty(publicState, 'forceY', {
-				enumerable: true,
-				get: function () {
-					return forceY;
-				},
-				set: function (newForceY) {
-					newForceY = parseFloat(newForceY);
-					if (!isNaN(newForceY)) forceY = newForceY;
-					evaluateForceStrengthAndDirectionViaForceVectory();
-					return forceY;
-				}
-			});
-
-			Object.defineProperty(publicState, 'forceStrength', {
-				enumerable: true,
-				get: function () {
-					return forceStrength;
+					return force.length;
 				},
 				set: function (newForceStrength) {
-					newForceStrength = parseFloat(newForceStrength);
-					if (newForceStrength >= 0) forceStrength = newForceStrength;
-					evaluateForceVectorViaForceStrengthAndDirection();
-					return forceStrength;
+					force.length = newForceStrength;
+					return force.length;
 				}
 			});
 
-			Object.defineProperty(publicState, 'forceStrength2', {
+			Object.defineProperty(thisParticle, 'forceStrength2', {
 				enumerable: true,
 				get: function () {
-					return forceStrength2;
+					return force.length2;
+				},
+				set: function (newForceStrength2) {
+					force.length2 = newForceStrength2;
+					return force.length2;
 				}
-				// forceStrength2 has no setter
 			});
 
-			Object.defineProperty(publicState, 'forceDirection', {
+			Object.defineProperty(thisParticle, 'forceDirection', {
 				enumerable: true,
 				get: function () {
-					return forceDirection;
+					return force.direction;
 				},
 				set: function (newForceDirection) {
-					newForceDirection = parseFloat(newForceDirection);
-					if (!isNaN(newForceDirection)) {
-						forceDirection = newForceDirection;
-						// forceDirection = newForceDirection % 360;
-					}
-					evaluateForceVectorViaForceStrengthAndDirection();
-					evaluateForceDirectionRadianViaDegrees();
-					return forceDirection;
+					force.direction = newForceDirection;
+					return force.direction;
 				}
 			});
 
-			Object.defineProperty(publicState, 'forceDirectionRadian', {
+			Object.defineProperty(thisParticle, 'forceDirectionRadian', {
 				enumerable: true,
 				get: function () {
-					return forceDirectionRadian;
+					return force.directionRadian;
 				},
 				set: function (newForceDirectionRadian) {
-					newForceDirectionRadian = parseFloat(newForceDirectionRadian);
-					if (!isNaN(newForceDirectionRadian)) {
-						forceDirectionRadian = newForceDirectionRadian;
-						// forceDirectionRadian = newforceDirectionRadian % Pi2;
-					}
-					evaluateForceVectorViaForceStrengthAndDirection();
-					evaluateForceDirectionDegreesViaRadian();
-					return forceDirectionRadian;
+					force.directionRadian = newForceDirectionRadian;
+					return force.directionRadian;
 				}
 			});
 		}
-
-
-
-		function evaluateVelocityViaSpeedAndDirection() {
-			vx = speed * sin(speedDirectionRadian);
-			vy = speed * cos(speedDirectionRadian);
-		}
-
-		function evaluateSpeedAndDirectionViaVelocity() {
-			speed2 = vx * vx + vy * vy;
-			speed = sqroot(speed2);
-			speedDirectionRadian = atan2(vy, vx);
-			evaluateSpeedDirectionDegreesViaRadian();
-		}
-
-		function evaluateSpeedDirectionRadianViaDegrees() {
-			speedDirectionRadian = speedDirection * degreeToRadianFactor;
-		}
-
-		function evaluateSpeedDirectionDegreesViaRadian() {
-			speedDirection = speedDirectionRadian * radianToDegreeFactor;
-		}
-
-
-
-		function evaluateForceVectorViaForceStrengthAndDirection() {
-			forceX = forceStrength * sin(forceDirectionRadian);
-			forceY = forceStrength * cos(forceDirectionRadian);
-		}
-
-		function evaluateForceStrengthAndDirectionViaForceVectory() {
-			forceStrength2 = forceX * forceX + forceY * forceY;
-			forceStrength = sqroot(forceStrength2);
-			forceDirectionRadian = atan2(forceY, forceX);
-			evaluateForceDirectionDegreesViaRadian();
-		}
-
-		function evaluateForceDirectionRadianViaDegrees() {
-			forceDirectionRadian = forceDirection * degreeToRadianFactor;
-		}
-
-		function evaluateForceDirectionDegreesViaRadian() {
-			forceDirection = forceDirectionRadian * radianToDegreeFactor;
-		}
-
 
 
 
@@ -890,7 +816,7 @@
 				return;
 			}
 
-			if (forceStrength <= tooSmallAbsoluteValue) {
+			if (force.strength <= tooSmallAbsoluteValue) {
 				return;
 				// console.warn('Force is too small to move a Point2D.');
 			}

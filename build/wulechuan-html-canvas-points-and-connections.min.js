@@ -1042,7 +1042,8 @@
 		var canvasCurrentY = NaN;
 		var mouseCursorLocalX = NaN;
 		var mouseCursorLocalY = NaN;
-		var maxDistanceToMakeConnection2 = maxDistanceToMakeConnection * maxDistanceToMakeConnection;
+		var maxDistanceToMakeConnection2 =
+			maxDistanceToMakeConnection * maxDistanceToMakeConnection;
 
 		var lastFrameDrawnTime = NaN; // in seconds
 
@@ -1156,7 +1157,6 @@
 
 			allParticles.forEach(function (particle, particleIndex) {
 				var position = particle.position;
-				var velocity = particle.velocity;
 				var px = position.x;
 				var py = position.y;
 				var comparingParticle;
@@ -1190,19 +1190,25 @@
 
 
 				theDrawPointMethod(px, py);
+				drawVelocity(particle);
+
+				var velocity = particle.velocity;
+				var vx = velocity.x;
+				var vy = velocity.y;
+
 
 				if (shouldBounceAtBoundary) {
 					if (px > activeAreaX2) {
-						velocity.x = Math.abs(velocity.x) * -1;
+						velocity.x = abs(vx) * -1;
 					}
 					if (py > activeAreaY2) {
-						velocity.y = Math.abs(velocity.y) * -1;
+						velocity.y = abs(vy) * -1;
 					}
 					if (px < activeAreaX1) {
-						velocity.x = Math.abs(velocity.x);
+						velocity.x = abs(vx);
 					}
 					if (py < activeAreaY1) {
-						velocity.y = Math.abs(velocity.y);
+						velocity.y = abs(vy);
 					}
 				}
 			});
@@ -1233,12 +1239,15 @@
 			);
 		}
 
-		function drawLine(p1x, p1y, p2x, p2y, distanceRatio) {
+		function drawLine(p1x, p1y, p2x, p2y, distanceRatio, lineColor) {
 			var lineWidthRatio = 1 - distanceRatio;
 			var lineWidth = thickestLineWidth * lineWidthRatio;
 			if (lineWidth < lineWidthDrawingThreshold) return;
 
-			var lineColor =  'rgba(' + lineColorRGB + ',' + Math.min(1, lineWidthRatio + 0.5) + ')';
+			if (!lineColor) {
+				lineColor =  'rgba(' + lineColorRGB + ',' + Math.min(1, lineWidthRatio + 0.5) + ')';
+			}
+
 
 			canvasContext.lineWidth = lineWidth;
 			canvasContext.strokeStyle = lineColor;
@@ -1247,6 +1256,15 @@
 			canvasContext.moveTo(p1x, p1y);
 			canvasContext.lineTo(p2x, p2y);
 			canvasContext.stroke();
+		}
+
+		function drawVelocity(particle) {
+			var x = particle.position.x;
+			var y = particle.position.y;
+			var vx = particle.velocity.x;
+			var vy = particle.velocity.y;
+
+			drawLine(x, y, x+vx*30, y+vy*30, 0, 'red');
 		}
 
 		function _generateAllPoints() {
@@ -1275,8 +1293,7 @@
 		function _updateOneParticleOnIterationDefaultMethod(particle, iterationDuration) {
 			particle.speed *= randomBetween(0.95, 1.05);
 			particle.velocityDirection += randomBetween(-4, 4);
-
-			particle.move(iterationDuration);
+			// particle.move(iterationDuration);
 		}
 
 		function evaluateDistanceRatio(position1, position2) {

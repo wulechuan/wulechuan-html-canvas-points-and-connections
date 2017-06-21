@@ -16,6 +16,10 @@
 		if (a==b) return 1;
 		return (b - v) /(b - a);
 	}
+
+	function nowInSeconds() {
+		return new Date().getTime() / 1000;
+	}
 	
 	var abs = Math.abs;
 	var random = Math.random;
@@ -65,13 +69,28 @@
 		buildGettersAndSettersForPublicProperties();
 
 
-		thisVector.swapComponents = swapComponents;
+		thisVector.setValue = setValue;
+
 		thisVector.equalTo = equalTo;
+
+		thisVector.swapComponents = swapComponents;
 		thisVector.add = add;
 		thisVector.subtract = subtract;
 		thisVector.multiplyByScalar = multiplyByScalar;
 		thisVector.rotateBy = rotateBy;
 		thisVector.rotateByRadians = rotateByRadians;
+
+		thisVector.getNewArrayOfSwappedComponents = getNewArrayOfSwappedComponents;
+		thisVector.getNewArrayAddedBy = getNewArrayAddedBy;
+		thisVector.getNewArraySubtractedBy = getNewArraySubtractedBy;
+		thisVector.getNewArrayMultipliedByScalar = getNewArrayMultipliedByScalar;
+
+		thisVector.getNewVectorOfSwappedComponents = getNewVectorOfSwappedComponents;
+		thisVector.getNewVectorAddedBy = getNewVectorAddedBy;
+		thisVector.getNewVectorSubtractedBy = getNewVectorSubtractedBy;
+		thisVector.getNewVectorMultipliedByScalar = getNewVectorMultipliedByScalar;
+		thisVector.getNewVectorRotatedBy = getNewVectorRotatedBy;
+		thisVector.getNewVectorRotatedByRadians = getNewVectorRotatedByRadians;
 
 
 		init(constructorOptions);
@@ -93,10 +112,13 @@
 			// will overwrite that of the direction.
 			processAttribute('length2');
 			processAttribute('length');
+
 			processAttribute('direction');
 			processAttribute('directionRadian');
+
 			processAttribute('x');
 			processAttribute('y');
+			processAttribute('value');
 
 			function processAttribute(attributeName) {
 				if (options.hasOwnProperty(attributeName)) {
@@ -143,22 +165,7 @@
 				get: function () {
 					return [x, y];
 				},
-				set: function (newValue) {
-					var newX, newY;
-
-					if (Array.isArray(newValue) && newValue.length > 1) {
-						newX = parseFloat(newValue[0]);
-						newY = parseFloat(newValue[1]);
-
-						if (!isNaN(newX) && !isNaN(newY)) {
-							x = newX;
-							y = newY;
-							evaluateLengthAndDirection();						
-						}
-					}
-
-					return [x, y];
-				}
+				set: setValue
 			});
 
 			Object.defineProperty(thisVector, 'isZeroVector', {
@@ -305,28 +312,9 @@
 		}
 
 
-		function swapComponents() {
-			var temp = x;
-			x = y;
-			y = temp;
-			evaluateLengthAndDirection();
-
-			return thisVector;
-		}
-
-		function multiplyByScalar(scalar) {
-			scalar = parseFloat(scalar);
-			if (!isNaN(scalar)) {
-				x *= scalar;
-				y *= scalar;
-				evaluateLengthAndDirection();
-			}
-
-			return thisVector;
-		}
-
-		function add(a, b) {
-			var newX = NaN, newY = NaN;
+		function _evaluateArgmentsForComponents(a, b) {
+			var newX = NaN;
+			var newY = NaN;
 
 			if (a instanceof wulechuanCanvas2DVector) {
 				newX = a.x;
@@ -341,69 +329,162 @@
 				newY = parseFloat(b);
 			}
 
-			if (!isNaN(newX) && !isNaN(newY)) {
-				x += newX;
-				y += newY;
-				evaluateLengthAndDirection();
-			}
-
-			return thisVector;
+			return [newX, newY];
 		}
 
-		function subtract(a, b) {
-			var newX = NaN, newY = NaN;
-
-			if (a instanceof wulechuanCanvas2DVector) {
-				newX = a.x;
-				newY = a.y;
-			} else if (Array.isArray(a)) {
-				if (a.length > 1) {
-					newX = parseFloat(a[0]);
-					newY = parseFloat(a[1]);
-				}
-			} else {
-				newX = parseFloat(a);
-				newY = parseFloat(b);
-			}
+		function setValue(a, b) {
+			var newComponents = _evaluateArgmentsForComponents(a, b);
+			var newX = newComponents[0];
+			var newY = newComponents[1];
 
 			if (!isNaN(newX) && !isNaN(newY)) {
-				x -= newX;
-				y -= newY;
-				evaluateLengthAndDirection();
+				x = newX;
+				y = newY;
+				evaluateLengthAndDirection();						
 			}
 
-			return thisVector;
+			return [x, y];
 		}
 
 		function equalTo(a, b) {
-			var newX = NaN, newY = NaN;
+			var comparingComponents = _evaluateArgmentsForComponents(a, b);
+			var comparingX = comparingComponents[0];
+			var comparingY = comparingComponents[1];
 
-			if (a instanceof wulechuanCanvas2DVector) {
-				newX = a.x;
-				newY = a.y;
-			} else if (Array.isArray(a)) {
-				if (a.length > 1) {
-					newX = parseFloat(a[0]);
-					newY = parseFloat(a[1]);
-				}
-			} else {
-				newX = parseFloat(a);
-				newY = parseFloat(b);
-			}
-
-			if (!isNaN(newX) && !isNaN(newY)) {
-				return x == newX && y === newY;
+			if (!isNaN(comparingX) && !isNaN(comparingY)) {
+				return x == comparingX && y === comparingY;
 			}
 
 			return false;
 		}
 
+		function getNewArrayOfSwappedComponents() {
+			var newX = y;
+			var newY = x;
+			return [newX, newY];
+		}
+
+		function getNewArrayMultipliedByScalar(scalar) {
+			var newX = x;
+			var newY = y;
+
+			scalar = parseFloat(scalar);
+			if (!isNaN(scalar)) {
+				newX *= scalar;
+				newY *= scalar;
+			}
+
+			return [newX, newY];
+		}
+
+		function _addOrSubtract(a, b, shouldSubtract) {
+			var additionComponents = _evaluateArgmentsForComponents(a, b);
+			var newX = x;
+			var newY = y;
+			var additionX = additionComponents[0];
+			var additionY = additionComponents[1];
+
+			if (!isNaN(additionX) && !isNaN(additionY)) {
+				if (shouldSubtract) {
+					newX -= additionX;
+					newY -= additionY;
+				} else {
+					newX += additionX;
+					newY += additionY;
+				}
+			}
+
+			return [newX, newY];
+		}
+
+		function _rotateBy(degrees) {
+			return direction + degrees;
+		}
+
+		function _rotateByRadians(radians) {
+			return directionRadian + radians;
+		}
+
+
+		function getNewVectorOfSwappedComponents() {
+			return new wulechuanCanvas2DVector({
+				value: getNewArrayOfSwappedComponents()
+			});
+		}
+
+		function getNewArrayAddedBy(a, b) {
+			return _addOrSubtract(a, b, false);
+		}
+
+		function getNewVectorAddedBy(a, b) {
+			return new wulechuanCanvas2DVector({
+				value: _addOrSubtract(a, b, false)
+			});			
+		}
+
+		function getNewArraySubtractedBy(a, b) {
+			return _addOrSubtract(a, b, true);
+		}
+
+		function getNewVectorSubtractedBy(a, b) {
+			return new wulechuanCanvas2DVector({
+				value: _addOrSubtract(a, b, true)
+			});			
+		}
+
+		function getNewVectorMultipliedByScalar(scalar) {
+			return new wulechuanCanvas2DVector({
+				value: getNewArrayMultipliedByScalar(scalar)
+			});			
+		}
+
+		function getNewVectorRotatedBy(degrees) {
+			var newDirection = _rotateBy(degrees);
+			return new wulechuanCanvas2DVector({
+				length: length,
+				direction: newDirection
+			});
+		}
+
+		function getNewVectorRotatedByRadians(radians) {
+			var newDirectionRadian = _rotateByRadians(radians);
+			return new wulechuanCanvas2DVector({
+				length: length,
+				directionRadian: newDirectionRadian
+			});
+		}
+
+
+
+
+		function swapComponents() {
+			thisVector.value = getNewArrayOfSwappedComponents();
+			return thisVector;
+		}
+
+		function multiplyByScalar(scalar) {
+			thisVector.value = getNewArrayMultipliedByScalar(scalar);
+			return thisVector;
+		}
+
+		function add(a, b) {
+			thisVector.value = _addOrSubtract(a, b, false);
+			return thisVector;
+		}
+
+		function subtract(a, b) {
+			thisVector.value = _addOrSubtract(a, b, true);
+			return thisVector;
+		}
+
 		function rotateBy(degrees) {
-			this.direction += degrees;
+			thisVector.direction = _rotateBy(degrees);
+			return thisVector;
 		}
 
 		function rotateByRadians(radians) {
-			this.directionRadian += radians;
+			thisVector.directionRadian = _rotateBy(radians);
+			return thisVector;
 		}
 	}
 
@@ -478,8 +559,10 @@
 		var thisParticle = this;
 
 		var mass = 1; // mass
+
 		var bornTime = NaN;
-		var localTime = NaN; // in seconds instead of milliseconds
+		var referenceTimeIsWallClockTime = true; // True means particle runs free mode, in which the particle does NOT need an explicit external time reference
+		var referenceTime = NaN; // in seconds instead of milliseconds
 		var age = NaN;
 		var ageRatio = NaN;  // scalar that can be either NaN or between [0, 1]
 		var ageLimitation = NaN; // in seconds
@@ -498,11 +581,11 @@
 
 		thisParticle.onMove = undefined;
 
-		thisParticle.config = config.bind(thisParticle);
-		thisParticle.move = move.bind(thisParticle);
-		thisParticle.updateClock = updateLocalTime.bind(thisParticle); // single argument, time in seconds
-		thisParticle.moveTo = moveTo.bind(thisParticle);
+		// thisParticle.config = config;
 		thisParticle.setPosition = thisParticle.moveTo;
+		thisParticle.move = move;
+		thisParticle.moveTo = moveTo;
+		thisParticle.updateClock = updateReferenceTime;
 
 
 		init(constructorOptions);
@@ -764,10 +847,17 @@
 		}
 
 
-		function evaluateAgeInformationViaBornTimeAndLocalTime() {
-			if (localTime >= bornTime) {
+		function evaluateAgeInformationViaBornTimeAndReferenceTime() {
+			var currentTime;
+			if (referenceTimeIsWallClockTime) {
+				currentTime = nowInSeconds();
+			} else {
+				currentTime = referenceTime;
+			}
+
+			if (currentTime >= bornTime) {
 				hasBeenBorn = true;
-				setAgeTo(localTime - bornTime);
+				setAgeTo(currentTime - bornTime);
 			} else {
 				hasBeenBorn = false;
 				isDead = false;
@@ -776,22 +866,38 @@
 			}
 		}
 
-		function bearOn(desiredBornTime) {
-			desiredBornTime = parseInt(desiredBornTime);
-			if (!(desiredBornTime > 0)) {
-				desiredBornTime = new Date().getTime() / 1000;
+		function bearOn(desiredBornTimeInSeconds) {
+			desiredBornTimeInSeconds = parseInt(desiredBornTimeInSeconds);
+			if (desiredBornTimeInSeconds > 0) {
+				referenceTimeIsWallClockTime = false;
+			} else {
+				referenceTimeIsWallClockTime = true;
+				desiredBornTimeInSeconds = nowInSeconds();
 			}
 
-			bornTime = desiredBornTime;
-			evaluateAgeInformationViaBornTimeAndLocalTime();
+			bornTime = desiredBornTimeInSeconds;
+			evaluateAgeInformationViaBornTimeAndReferenceTime();
 		}
 
-		function updateLocalTime(newLocalTimeInSeconds) {
-			newLocalTimeInSeconds = parseInt(newLocalTimeInSeconds);
-			if (newLocalTimeInSeconds > 0 && newLocalTimeInSeconds !== localTime) {
-				localTime = newLocalTimeInSeconds;
-				evaluateAgeInformationViaBornTimeAndLocalTime();
+		function updateReferenceTime(newReferenceTimeInSeconds) {
+			newReferenceTimeInSeconds = parseInt(newReferenceTimeInSeconds);
+			if (isNaN(newReferenceTimeInSeconds)) {
+				referenceTimeIsWallClockTime = true;
+				evaluateAgeInformationViaBornTimeAndReferenceTime();
+			} else {
+				if (newReferenceTimeInSeconds > 0 && newReferenceTimeInSeconds !== referenceTime) {
+					referenceTimeIsWallClockTime = false;
+					referenceTime = newReferenceTimeInSeconds;
+					evaluateAgeInformationViaBornTimeAndReferenceTime();
+				} else {
+					// The "referenceTimeIsWallClockTime" stays unchanged.
+					// referenceTimeIsWallClockTime = false;
+				}
 			}
+		}
+
+		function evaluateBornTimeViaAge() {
+
 		}
 
 		function setAgeTo(newAge) {
@@ -804,6 +910,8 @@
 				}
 			}
 			evaluateAgeRatio();
+			evaluateBornTimeViaAge();
+
 			return age;
 		}
 
@@ -832,7 +940,7 @@
 
 
 
-		function move(duration) {
+		function move(durationInSeconds) {
 			if (!hasBeenBorn) return;
 
 			if (isDead) return;
@@ -846,28 +954,19 @@
 				// console.warn('Force is too small to move a Point2D.');
 			}
 
-			duration = parseFloat(duration);
+			durationInSeconds = parseFloat(durationInSeconds);
 
-			if (duration <= tooSmallAbsoluteValue) {
+			if (durationInSeconds <= tooSmallAbsoluteValue) {
 				return;
 				// console.warn('Duration is too small to move a Point2D.');
 			}
 
-			vx += forceX / mass;
-			vy += forceY / mass;
-
-			evaluateSpeedAndDirectionViaVelocity();
-
-			x += vx;
-			y += vy;
+			velocity.add(force.getNewArrayMultipliedByScalar(1 / mass));
+			position.add(velocity.getNewArrayMultipliedByScalar(durationInSeconds));
 		}
 
-		function moveTo(a, b) {
-			if (Array.isArray(a) && typeof b === 'undefined') {
-				publicState.position = a;
-			} else {
-				publicState.position = [a, b];
-			}
+		function moveTo() {
+			position.setValue.apply(arguments);
 		}
 	}
 

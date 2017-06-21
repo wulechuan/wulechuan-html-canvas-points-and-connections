@@ -1,39 +1,41 @@
-const shouldMinifyFiles = false;
-let shouldBuildSourceMaps = false;
+const shouldMinifyFiles = true;
+let shouldBuildSourceMaps = true;
 const shouldPreserveTempFilesForInspection = false;
 
 
-const chiefSourceGlobJs = ['source/**/*.js'];
+const productionSourceGlobJs = ['source/**/*.js'];
+const productionBuildFolder = 'build';
 
-const samplesFolder = 'samples';
+const samplesSourceFolder = 'samples/source';
+const samplesBuildFolder = 'samples/build';
 
 const samplesSourceGlobCss = [
-	samplesFolder+'/**/*.stylus',
-	samplesFolder+'/**/*.styl'
+	samplesSourceFolder+'/**/*.stylus',
+	samplesSourceFolder+'/**/*.styl'
 ];
 
 const samplesSourceGlobJs = [
-	samplesFolder+'/**/*.js'
+	samplesSourceFolder+'/**/*.js'
 ];
 
 const samplesSourceGlobHtml = [
-	samplesFolder+'/**/*.html'
+	samplesSourceFolder+'/**/*.html'
 ];
 
-const targetFolder = 'build';
-const buildCacheFolder = '_temp';
+const buildingCacheFolder = '_temp';
 
-const appSourceGlobToWatch = [
+const allSourceGlobsToWatch = [
 	'source/**/*',
-	samplesFolder+'/**/*'
+	samplesSourceFolder+'/**/*'
 ];
 
-const globsToClearBeforeRebuild = [
-	targetFolder,
-	samplesFolder+'/**/*.min.css',
-	samplesFolder+'/**/*.min.js',
-	samplesFolder+'/**/*.min.html',
-	samplesFolder+'/**/*.min.map'
+const globsToClearBeforeRebuilding = [
+	productionBuildFolder,
+	samplesBuildFolder,
+	samplesSourceFolder+'/**/*.min.css',
+	samplesSourceFolder+'/**/*.min.js',
+	samplesSourceFolder+'/**/*.min.html',
+	samplesSourceFolder+'/**/*.min.map'
 ];
 
 
@@ -70,15 +72,15 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			compress: shouldMinifyFiles
 		}));
 
-		if (shouldBuildSourceMaps) {
-			actionsToTake.push(sourcemaps.write('.'));
-		}
-
 		actionsToTake.push(renameFiles({
 			suffix: '.min'
 		}));
 
-		actionsToTake.push(gulp.dest(samplesFolder));
+		if (shouldBuildSourceMaps) {
+			actionsToTake.push(sourcemaps.write('.'));
+		}
+
+		actionsToTake.push(gulp.dest(samplesBuildFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
@@ -95,7 +97,7 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 	gulp.task('build: js: chief', (onThisTaskDone) => {
 		var actionsToTake = [];
 
-		actionsToTake.push(gulp.src(chiefSourceGlobJs));
+		actionsToTake.push(gulp.src(productionSourceGlobJs));
 
 		if (shouldBuildSourceMaps) {
 			actionsToTake.push(sourcemaps.init());
@@ -105,15 +107,15 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			actionsToTake.push(minifyJs());
 		}
 
-		if (shouldBuildSourceMaps) {
-			actionsToTake.push(sourcemaps.write(targetFolder));
-		}
-
 		actionsToTake.push(renameFiles({
 			suffix: '.min'
 		}));
 
-		actionsToTake.push(gulp.dest(targetFolder));
+		if (shouldBuildSourceMaps) {
+			actionsToTake.push(sourcemaps.write(productionBuildFolder));
+		}
+
+		actionsToTake.push(gulp.dest(productionBuildFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
@@ -131,15 +133,15 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			actionsToTake.push(minifyJs());
 		}
 
-		if (shouldBuildSourceMaps) {
-			actionsToTake.push(sourcemaps.write('.'));
-		}
-
 		actionsToTake.push(renameFiles({
 			suffix: '.min'
 		}));
 
-		actionsToTake.push(gulp.dest(samplesFolder));
+		if (shouldBuildSourceMaps) {
+			actionsToTake.push(sourcemaps.write('.'));
+		}
+
+		actionsToTake.push(gulp.dest(samplesBuildFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
@@ -173,11 +175,11 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 			}));
 		}
 
-		actionsToTake.push(renameFiles({
-			suffix: '.min'
-		}));
+		// actionsToTake.push(renameFiles({
+		// 	suffix: '.min'
+		// }));
 
-		actionsToTake.push(gulp.dest(samplesFolder));
+		actionsToTake.push(gulp.dest(samplesBuildFolder));
 
 		pump(actionsToTake, onThisTaskDone);
 	});
@@ -192,12 +194,12 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 
 (function 定义二级公共任务() {
 	gulp.task('clear old build', () => {
-		return deleteFiles(globsToClearBeforeRebuild);
+		return deleteFiles(globsToClearBeforeRebuilding);
 	});
 
 	gulp.task('clear build cache', (onThisTaskDone) => {
 		setTimeout(()=> {
-			deleteFiles(buildCacheFolder);
+			deleteFiles(buildingCacheFolder);
 			onThisTaskDone();
 		}, 1234);
 	});
@@ -220,7 +222,7 @@ if (!shouldMinifyFiles) shouldBuildSourceMaps = false;
 	});
 
 	gulp.task('watch', [], () => {
-		return gulp.watch(appSourceGlobToWatch, ['build: all']);
+		return gulp.watch(allSourceGlobsToWatch, ['build: all']);
 	});
 })();
 

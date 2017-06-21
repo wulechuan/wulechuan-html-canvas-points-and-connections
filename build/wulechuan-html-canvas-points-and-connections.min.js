@@ -801,6 +801,8 @@
 		var pN_bornTime = 'bornTime';
 		var pN_hasBeenBorn = 'hasBeenBorn';
 		var pN_isDead = 'isDead';
+		var pN_isAlive = 'isAlive';
+		var pN_bearOn = 'bearOn';
 
 		var decidedNames = {};
 
@@ -821,6 +823,8 @@
 		decidedNames[pN_bornTime] = pN_bornTime;
 		decidedNames[pN_hasBeenBorn] = pN_hasBeenBorn;
 		decidedNames[pN_isDead] = pN_isDead;
+		decidedNames[pN_isAlive] = pN_isAlive;
+		decidedNames[pN_bearOn] = pN_bearOn;
 
 		processPropertyName(pN_ageRatio);
 		processPropertyName(pN_ageLimitation);
@@ -839,7 +843,6 @@
 
 
 
-
 		var bornTime = NaN;
 		var referenceTime = NaN; // in seconds instead of milliseconds
 		var referenceTimeIsWallClockTime = true; // True means particle runs free mode, in which the particle does NOT need an explicit external time reference
@@ -852,96 +855,20 @@
 
 
 
-
-	}
-
-	function wulechuan2DParticle(constructorOptions) {
-		var propertyName_velocity = 'velocity';
-		var propertyName_force = 'force';
-		var propertyName_life = 'age';
-
-		var thisParticle = this;
-
-		var mass = 1; // mass
-
-		var bornTime = NaN;
-		var referenceTime = NaN; // in seconds instead of milliseconds
-		var referenceTimeIsWallClockTime = true; // True means particle runs free mode, in which the particle does NOT need an explicit external time reference
-		var age = NaN;
-		var ageRatio = NaN;  // scalar that can be either NaN or between [0, 1]
-		var ageLimitation = NaN; // in seconds
-		var hasBeenBorn = false;
-		var isDead = false;
-
-		var position = new wulechuan2DVector();
-
-
-
-		init(constructorOptions);
-
-		var velocity = thisParticle[propertyName_velocity];
-		var force = thisParticle[propertyName_force];
-
-
-
-		function init(initOptions) {
-			initOptions = initOptions || {};
-
-			// Being public means being writable.
-			buildGettersAndSettersForPublicProperties();
-
-			wulechuanImpartVelocityTo(thisParticle, null, {
-				velocity: propertyName_velocity,
-				// speed: 'ssppeeeedd',
-				// turnBy: 'turnDirectionByDegrees'
-			});
-
-			wulechuanImpartForceTo(thisParticle, null, propertyName_force);
-
-			// wulechuanImpartLifeTo(thisParticle, null, propertyName_life);
-
-			config(initOptions);
-			bearOn(initOptions.bornTime);
-
-
-			// thisParticle.config = config;
-			thisParticle.move = move;
-			thisParticle.moveTo = moveTo;
-			thisParticle.setPosition = moveTo;
-			thisParticle.onMove = undefined;
-		}
-
-		function config(options) {
-			options = options || {};
-
-			// Obviously,
-			// later processed attribute will overwrite ealier processed ones,
-			// if their values are coupled.
-			processAttribute('mass');
-			processAttribute('ageRatio');
-			processAttribute('age');
-			processAttribute('ageLimitation');
-			processAttribute('bornTime');
-			processAttribute('x');
-			processAttribute('y');
-			processObjectAttribute('velocity');
-			processObjectAttribute('force');
-
-			function processAttribute(attributeName) {
-				if (options.hasOwnProperty(attributeName)) {
-					thisParticle[attributeName] = options[attributeName];
-				}
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_chief],
+			{
+				enumerable: true,
+				get: function () {
+					return age;
+				},
+				set: setAgeTo
 			}
+		);
 
-			function processObjectAttribute(attributeName) {
-				if (options.hasOwnProperty(attributeName)) {
-					thisParticle[attributeName].value = options[attributeName];
-				}
-			}
-		}
-
-		function buildGettersAndSettersForPublicProperties() {
-			Object.defineProperty(thisParticle, 'ageRatio', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_ageRatio],
+			{
 				enumerable: true,
 				get: function () {
 					return ageRatio;
@@ -958,17 +885,12 @@
 					}
 					return ageRatio;
 				}
-			});
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'age', {
-				enumerable: true,
-				get: function () {
-					return age;
-				},
-				set: setAgeTo
-			});
-
-			Object.defineProperty(thisParticle, 'ageLimitation', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_ageLimitation],
+			{
 				enumerable: true,
 				get: function () {
 					return ageLimitation;
@@ -981,17 +903,12 @@
 					evaluateAgeRatio();
 					return ageLimitation;
 				}
-			});
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'bornTime', {
-				enumerable: true,
-				get: function () {
-					return bornTime;
-				},
-				set: bearOn
-			});
-
-			Object.defineProperty(thisParticle, 'referenceTimeIsWallClockTime', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_ageReferenceTimeIsWallClockTime],
+			{
 				enumerable: true,
 				get: function () {
 					return referenceTimeIsWallClockTime;
@@ -1006,69 +923,72 @@
 						// are not possible to evaluate any more.
 					}
 				}
-			});
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'referenceTime', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_ageReferenceTime],
+			{
 				enumerable: true,
 				get: function () {
 					return referenceTime;
 				},
 				set: updateReferenceTime
-			});
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'mass', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_bornTime],
+			{
 				enumerable: true,
 				get: function () {
-					return mass;
+					return bornTime;
 				},
-				set: function (newMass) {
-					newMass = parseFloat(newMass);
-					if (newMass >= 0) mass = newMass;
-					// if (mass < tooSmallAbsoluteValue) {
-					// 	console.warn('The mass of Point2D is too low!');
-					// }
-					return mass;
-				}
-			});
+				set: bearOn
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'x', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_hasBeenBorn],
+			{
 				enumerable: true,
 				get: function () {
-					return position.x;
+					return hasBeenBorn;
 				},
-				set: function (newPosX) {
-					position.x = newPosX;
-					return position.x;
-				}
-			});
+				set: nilFunction
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'y', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_isDead],
+			{
 				enumerable: true,
 				get: function () {
-					return position.y;
+					return isDead;
 				},
-				set: function (newPosY) {
-					position.y = newPosY;
-					return position.y;
-				}
-			});
+				set: nilFunction
+			}
+		);
 
-			Object.defineProperty(thisParticle, 'position', {
+		Object.defineProperty(propertiesGrantee,
+			decidedNames[pN_isAlive],
+			{
 				enumerable: true,
 				get: function () {
-					return position;
+					return hasBeenBorn && !isDead;
 				},
-				set: function (newPosition) {
-					return position.value = newPosition;
-				}
-			});
+				set: nilFunction
+			}
+		);
 
 
 
 
+		methodsGrantee[decidedNames[pN_bearOn]] = bearOn;
 
-		}
 
+
+		function nilFunction() {}
 
 		function evaluateAgeInformationViaBornTimeAndReferenceTime() {
 			var currentTime;
@@ -1164,14 +1084,150 @@
 				isDead = true;
 			}
 		}
+	}
 
+	function wulechuan2DParticle(constructorOptions) {
+		var propertyName_velocity = 'velocity';
+		var propertyName_force = 'force';
+		var propertyName_life = 'age';
+
+		var thisParticle = this;
+
+		var mass = 1; // mass
+		var position = new wulechuan2DVector();
+
+
+
+		init(constructorOptions);
+
+		var velocity = thisParticle[propertyName_velocity];
+		var force = thisParticle[propertyName_force];
+		var bornTime = thisParticle.bornTime;
+		var referenceTime = thisParticle.referenceTime;
+		var referenceTimeIsWallClockTime = thisParticle.referenceTimeIsWallClockTime;
+		var age = thisParticle.age;
+		var ageRatio = thisParticle.ageRatio;
+		var ageLimitation = thisParticle.ageLimitation;
+		var hasBeenBorn = thisParticle.hasBeenBorn;
+		var isDead = thisParticle.isDead;
+		var isAlive = thisParticle.isAlive;
+		var bearOn = thisParticle.bearOn;
+
+
+		constructorOptions = constructorOptions || {};
+		bearOn(constructorOptions.bornTime);
+
+
+		function init(initOptions) {
+			// Being public means being writable.
+			buildGettersAndSettersForPublicProperties();
+
+			wulechuanImpartVelocityTo(thisParticle, null, {
+				velocity: propertyName_velocity,
+				// speed: 'ssppeeeedd',
+				// turnBy: 'turnDirectionByDegrees'
+			});
+
+			wulechuanImpartForceTo(thisParticle, null, propertyName_force);
+
+			wulechuanImpartLifeTo(thisParticle, null, {
+				age: propertyName_life,
+				// isDead: 'hasDied',
+				bearOn: 'bearOn'
+			});
+
+			config(initOptions);
+
+
+			// thisParticle.config = config;
+			thisParticle.move = move;
+			thisParticle.moveTo = moveTo;
+			thisParticle.setPosition = moveTo;
+			thisParticle.onMove = undefined;
+		}
+
+		function config(options) {
+			options = options || {};
+
+			// Obviously,
+			// later processed attribute will overwrite ealier processed ones,
+			// if their values are coupled.
+			processAttribute('mass');
+			processAttribute('ageRatio');
+			processAttribute('age');
+			processAttribute('ageLimitation');
+			processAttribute('bornTime');
+			processAttribute('x');
+			processAttribute('y');
+			processObjectAttribute('velocity');
+			processObjectAttribute('force');
+
+			function processAttribute(attributeName) {
+				if (options.hasOwnProperty(attributeName)) {
+					thisParticle[attributeName] = options[attributeName];
+				}
+			}
+
+			function processObjectAttribute(attributeName) {
+				if (options.hasOwnProperty(attributeName)) {
+					thisParticle[attributeName].value = options[attributeName];
+				}
+			}
+		}
+
+		function buildGettersAndSettersForPublicProperties() {
+			Object.defineProperty(thisParticle, 'mass', {
+				enumerable: true,
+				get: function () {
+					return mass;
+				},
+				set: function (newMass) {
+					newMass = parseFloat(newMass);
+					if (newMass >= 0) mass = newMass;
+					// if (mass < tooSmallAbsoluteValue) {
+					// 	console.warn('The mass of Point2D is too low!');
+					// }
+					return mass;
+				}
+			});
+
+			Object.defineProperty(thisParticle, 'x', {
+				enumerable: true,
+				get: function () {
+					return position.x;
+				},
+				set: function (newPosX) {
+					position.x = newPosX;
+					return position.x;
+				}
+			});
+
+			Object.defineProperty(thisParticle, 'y', {
+				enumerable: true,
+				get: function () {
+					return position.y;
+				},
+				set: function (newPosY) {
+					position.y = newPosY;
+					return position.y;
+				}
+			});
+
+			Object.defineProperty(thisParticle, 'position', {
+				enumerable: true,
+				get: function () {
+					return position;
+				},
+				set: function (newPosition) {
+					return position.value = newPosition;
+				}
+			});
+		}
 
 
 
 		function move(durationInSeconds) {
-			if (!hasBeenBorn) return;
-
-			if (isDead) return;
+			if (!isAlive) return;
 
 			if (mass <= tooSmallAbsoluteValue) {
 				return;

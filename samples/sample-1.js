@@ -1,24 +1,31 @@
 (function (buildWhatWeWant) {
 	buildWhatWeWant(window.wulechuanCanvasPointsAndConnections);
 })(function buildWhatWeWant(wulechuanCanvasPointsAndConnections) {
+	var drawnFramesCount = 0;
+	var timeoutIndex = NaN;
 	function draw() {
+		if (shoudSlowDownForTesting && drawnFramesCount>2) {
+			clearTimeout(timeoutIndex);
+			return;
+		}
 		controller.drawFrame(new Date().getTime() / 1000);
 		requestAnimationFrame(draw);
+		drawnFramesCount++;
 	}
 
-	var shoudSlowDownForTesting = true;
+	var shoudSlowDownForTesting = false;
 	var frameRate = 30;
 	var particleCounts = 60;
 
 	if (shoudSlowDownForTesting) {
-		frameRate = 0.2;
+		frameRate = 1;
 		particleCounts = 2; // must greater than 1, otherwise no connection is needed.
 	}
 
 
 	var canvas = document.querySelector('#test-canvas');
 	var requestAnimationFrame = function (func) {
-		window.setTimeout(func, 1000 / frameRate);
+		timeoutIndex = window.setTimeout(func, 1000 / frameRate);
 	};
 
 
@@ -77,7 +84,7 @@
 	}
 
 	window.addEventListener('resize', function () {
-		controller.updateCanvasSize();
+		controller.updateCanvasPositionAndSize();
 	});
 
 	draw();

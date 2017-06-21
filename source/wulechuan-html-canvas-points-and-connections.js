@@ -318,8 +318,6 @@
 			var newX = NaN;
 			var newY = NaN;
 
-			console.log('_eval', a, b);
-
 			if (a instanceof wulechuanCanvas2DVector) {
 				newX = a.x;
 				newY = a.y;
@@ -328,8 +326,7 @@
 					newX = parseFloat(a[0]);
 					newY = parseFloat(a[1]);
 				}
-			} else if (a && typeof a === 'object' && a.hasOwnProperty(x)) {
-				console.log(a);
+			} else if (a && typeof a === 'object' && a.hasOwnProperty('x')) {
 				newX = parseFloat(a.x);
 				newY = parseFloat(a.y);
 			} else {
@@ -367,7 +364,6 @@
 		}
 
 		function getDistance2To(a, b) {
-			console.log('distance2', a, b);
 			var comparingComponents = _evaluateArgmentsForComponents(a, b);
 			var dx = comparingComponents[0] - x;
 			var dy = comparingComponents[1] - y;
@@ -1042,8 +1038,10 @@
 		var activeAreaY1 = 0;
 		var activeAreaX2 = 0;
 		var activeAreaY2 = 0;
-		var mouseCursorX = NaN;
-		var mouseCursorY = NaN;
+		var canvasCurrentX = NaN;
+		var canvasCurrentY = NaN;
+		var mouseCursorLocalX = NaN;
+		var mouseCursorLocalY = NaN;
 		var maxDistanceToMakeConnection2 = maxDistanceToMakeConnection * maxDistanceToMakeConnection;
 
 		var lastFrameDrawnTime = NaN; // in seconds
@@ -1055,7 +1053,7 @@
 		thisController.initOneParticle = _initOneParticleDefaultMethod;
 		thisController.updateOneParticleOnIteration = _updateOneParticleOnIterationDefaultMethod;
 		thisController.drawFrame = drawFrame;
-		thisController.updateCanvasSize = updateCanvasSize;
+		thisController.updateCanvasPositionAndSize = updateCanvasPositionAndSize;
 		thisController.setActiveArea = setActiveArea;
 
 
@@ -1069,7 +1067,7 @@
 		function init(initOptions) {
 			config(initOptions);
 			setupMouseEvents();
-			updateCanvasSize();
+			updateCanvasPositionAndSize();
 			_generateAllPoints();
 
 			hasBeenInitialized = true;
@@ -1119,19 +1117,23 @@
 
 		function setupMouseEvents() {
 			window.addEventListener('mousemove', function (event) {
-				mouseCursorX = event.clientX;
-				mouseCursorY = event.clientY;
+				mouseCursorLocalX = event.clientX - canvasCurrentX;
+				mouseCursorLocalY = event.clientY - canvasCurrentY;
 			});
 
 			window.addEventListener('mouseout', function () {
-				mouseCursorX = NaN;
-				mouseCursorY = NaN;
+				mouseCursorLocalX = NaN;
+				mouseCursorLocalY = NaN;
 			});
 		}
 
-		function updateCanvasSize(toUpdateActiveArea) {
+		function updateCanvasPositionAndSize(toUpdateActiveArea) {
 			canvas.width = canvas.clientWidth;
 			canvas.height = canvas.clientHeight;
+
+			var newBoundingBox = canvas.getBoundingClientRect();
+			canvasCurrentX = newBoundingBox.left;
+			canvasCurrentY = newBoundingBox.top;
 
 			if (typeof toUpdateActiveArea === 'function') {
 				toUpdateActiveArea(canvas);
@@ -1172,14 +1174,14 @@
 						evaluateDistanceRatio(particle.position, comparingParticle.position)
 					);
 
-					if (!isNaN(mouseCursorX)) {
+					if (!isNaN(mouseCursorLocalX)) {
 						drawLine(
-							px, py, mouseCursorX, mouseCursorY,
+							px, py, mouseCursorLocalX, mouseCursorLocalY,
 							evaluateDistanceRatio(
 								particle.position,
 								{
-									x: mouseCursorX, 
-									y: mouseCursorY
+									x: mouseCursorLocalX, 
+									y: mouseCursorLocalY
 								}
 							)
 						);
@@ -1206,8 +1208,8 @@
 			});
 
 
-			if (!isNaN(mouseCursorX)) {
-				theDrawPointMethod(mouseCursorX, mouseCursorY);
+			if (!isNaN(mouseCursorLocalX)) {
+				theDrawPointMethod(mouseCursorLocalX, mouseCursorLocalY);
 			}
 
 			lastFrameDrawnTime = localTimeInSeconds;
@@ -1278,12 +1280,9 @@
 		}
 
 		function evaluateDistanceRatio(position1, position2) {
-			if (typeof position2 === 'object' && !(position2 instanceof wulechuanCanvas2DVector)) {
-				console.log('pos2 object:', position2);
-			}
 			var distance2 = position1.getDistance2To(position2);
 			var distance2Ratio = distance2 / maxDistanceToMakeConnection2;
-			// console.log('distance2Ratio:', distance2Ratio, position2);
+			
 			return Math.min(1, distance2Ratio);
 		}
 	}

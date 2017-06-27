@@ -1,4 +1,4 @@
-	var nameOfEntranceMethod_zhCN = '吴乐川拟传授类';
+	var nameOfEntranceMethod_zhCN = '吴乐川：拟传授类';
 	var nameOfEntranceMethod_enUS = 'wulechuanImpartAnInstanceOf';
 
 	var wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingualMethods();

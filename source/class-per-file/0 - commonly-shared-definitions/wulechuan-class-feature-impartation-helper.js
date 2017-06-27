@@ -1,10 +1,14 @@
+	var nameOfEntranceMethod_zhCN = '吴乐川拟传授类';
+	var nameOfEntranceMethod_enUS = 'wulechuanImpartAnInstanceOf';
+
 	var wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingualMethods();
-	var wulechuanObjectAndClassHelper = {
-		wulechuanImpart:
-			wulechuanImpartMultilingualMethodsHost.wulechuanImpart,
-		吴乐川传授:
-			wulechuanImpartMultilingualMethodsHost.吴乐川传授
-	};
+	var wulechuanObjectAndClassHelper = {};
+
+	wulechuanObjectAndClassHelper[nameOfEntranceMethod_zhCN] =
+		wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_zhCN];
+
+	wulechuanObjectAndClassHelper[nameOfEntranceMethod_enUS] =
+		wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_enUS];
 
 	window.wulechuanObjectAndClassHelper = wulechuanObjectAndClassHelper;
 
@@ -15,28 +19,40 @@
 	 * 		...
 	 * 	}
 	 * 
-	 * 	My2DVector['variantsForWulechuanImpartation'] = {
-	 * 		default: { instanceChiefName: 'my2DVector', ... },
-	 * 		position: { instanceChiefName: 'position', ... },
-	 * 		force: { instanceChiefName: 'force', ... },
-	 * 		velocity: { instanceChiefName: 'velocity', ... }
+	 * 	My2DVector.variantsForWulechuanImpartation = {
+	 * 		position2D: { instanceChiefName: 'position', ... },
+	 * 		force2D:    { instanceChiefName: 'force', ... },
+	 * 		velocity2D: { instanceChiefName: 'velocity', ... }
 	 * 	}
 	 * 
 	 * 	function My2DPoint() {
-	 * 		wulechuanImpart(My2DVector).as('position').to(this);
+	 * 		wulechuanImpart(My2DVector).as('position2D').to(this);
 	 * 	}
 	 * 
 	 * 	function My2DParticle() {
-	 * 		wulechuanImpart(My2DVector).as('position').renamedAs('pos').to(this);
+	 * 		wulechuanImpart(My2DVector).as('position2D').renamedAs('pos').to(this);
 	 * 
-	 * 		wulechuanImpart(My2DVector).as('velocity').renamedAs({
+	 * 		wulechuanImpart(My2DVector).as('velocity2D').renamedAs({
 	 * 			speed: 'velocityLength',
 	 * 			speed2: 'squareSpeed'
 	 * 			velocityDirection: 'movingDirection'
 	 * 		}).to(this);
 	 * 
 	 * 		wulechuanImpart(My2DVector)
-	 * 			.configuredAs('force')
+	 * 			.buildAccordingTo({
+	 * 				x: 3,
+	 * 				y: -19
+	 * 			})
+	 * 			.as('position2D')
+	 * 			.withCustomizedPropertyNames({
+	 * 				__chiefName__: 'centerPos',
+	 * 				x: 'centerX',
+	 * 				y: 'centerY'
+	 * 			})
+	 * 			.to(this);
+	 * 
+	 * 		wulechuanImpart(My2DVector)
+	 * 			.configuredAs('force2D')
 	 * 			.withCustomizedPropertyNames({
 	 * 				strength: 's',
 	 * 				forceDirection: 'forceAngle'
@@ -51,11 +67,17 @@
 	 * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
 	 *  wulechuanImpart(My2DParticle).to(myLovelyObjectLiteral);
 	 */
-	function createWulechuanImpartMutilingualMethods() {
-		var finallyPublicMethodName_zhCN = '吴乐川传授';
-		var finallyPublicMethodName_enUS = 'wulechuanImpart';
 
-		var methodName_as_zhCN0 = '之变体';
+
+	/**
+	 * This is the factory function to build up the impartation tool,
+	 * returning some methods which are virtually the same to each other,
+	 * but in mutliple human languages.
+	 */
+	function createWulechuanImpartMutilingualMethods() {
+		var methodName_buildAccordingTo_zhCN0 = '之实例，构建时依据';
+		var methodName_buildAccordingTo_enUS0 = 'buildAccordingTo';
+		var methodName_as_zhCN0 = '并视作';
 		var methodName_as_enUS0 = 'as';
 		var methodName_as_enUS1 = 'configuredAs';
 		var methodName_withCustomizedPropertyNames_zhCN0 = '并变更以下属性';
@@ -80,15 +102,14 @@
 
 		var sliceArray = Array.prototype.slice;
 
-		var wulechuanImpartMethodsHost = {};
-		wulechuanImpartMethodsHost[finallyPublicMethodName_zhCN] =
+		var wulechuanImpartMultilingualMethodsHost = {};
+		wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_zhCN] =
 			impart.bind(null, languageCode_zhCN);
 
-		wulechuanImpartMethodsHost[finallyPublicMethodName_enUS] =
+		wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_enUS] =
 			impart.bind(null, languageCode_enUS);
 
-		return wulechuanImpartMethodsHost;
-
+		return wulechuanImpartMultilingualMethodsHost;
 
 
 
@@ -96,12 +117,28 @@
 		function impart() {
 			var args = sliceArray.apply(arguments);
 			var usingLanguage = args.unshift();
-			var helper = new WulechuanImpartHelper(usingLanguage);
-			return helper.impart.apply(helper, args);
+			var operator = new WulechuanImpartationOperator(usingLanguage);
+			return operator.startToImpart.apply(operator, args);
 		}
 
-		function WulechuanImpartHelper(usingLanguage) {
-			var thisHelper = this;
+
+
+
+
+		/**
+		 * A class, instance of which is the operator
+		 * that remembers several key factors nd does the impartation job
+		 * for a given class.
+		 * 
+		 * Each time the entrance method is invoked,
+		 * a new instance of this class is created,
+		 * and takes over the imartation process afterwards.
+		 * 
+		 * @class
+		 * @param {string} usingLanguage 
+		 */
+		function WulechuanImpartationOperator(usingLanguage) {
+			var thisOperator = this;
 
 			var errorOcured = false;
 			var errorMessage;
@@ -115,15 +152,15 @@
 			var usedPropertyNamesCustomization = {};
 
 
-			var boundAsAction = as.bind(thisHelper);
-			var boundRenameAction = withCustomizedPropertyNames.bind(thisHelper);
-			var boundToAction = to.bind(thisHelper);
+			var boundAsAction = as.bind(thisOperator);
+			var boundRenameAction = withCustomizedPropertyNames.bind(thisOperator);
+			var boundToAction = to.bind(thisOperator);
 
-			thisHelper.startToImpart = startToImpart.bind(thisHelper);
+			thisOperator.startToImpart = startToImpart;
 
-			function startToImpart(theGivenFunction, constructionOptions, shouldNotThrowErrors) {
-				delete thisHelper.startToImpart;
-				console.trace('applied', arguments);
+			function startToImpart(theGivenFunction, shouldNotThrowErrors) {
+				delete thisOperator.startToImpart;
+
 
 				shouldThrowErrors = !shouldNotThrowErrors;
 
@@ -172,11 +209,15 @@
 
 				_addAllMethodsToThisHelper();
 
-				return thisHelper; // chainable 
+				return thisOperator; // chainable 
+			}
+
+			function buildAccordingTo(constructionOptions) {
+
 			}
 
 			function as(variantName) {
-				if (errorOcured) return thisHelper;
+				if (errorOcured) return thisOperator;
 
 				var _foundVariant;
 
@@ -192,15 +233,15 @@
 				}
 
 				if (errorOcured) {
-					_removeSomeMethodsOnAsEnding();
-					return thisHelper; // chainable when no error occurs
+					_removeSomeMethodsOn_As_Ending();
+					return thisOperator; // chainable when no error occurs
 				}
 
 				// Here nothing returns to prevent chaining invokation.
 			}
 
 			function withCustomizedPropertyNames(propertyNamesCustomization) {
-				if (errorOcured) return thisHelper;
+				if (errorOcured) return thisOperator;
 
 				if (_isInvalidObject(propertyNamesCustomization)) {
 					errorOcured = false;
@@ -209,17 +250,17 @@
 				}
 
 				if (errorOcured) {
-					_removeSomeMethodsOnRenamingEnding();
-					return thisHelper; // chainable when no error occurs
+					_removeSomeMethodsOn_Renaming_Ending();
+					return thisOperator; // chainable when no error occurs
 				}
 
 				// Here nothing returns to prevent chaining invokation.
 			}
 
-			function to(methodsGrantee, propertiesGrantee) {
+			function to(granteeOfMethods, granteeOfProperties) {
 				if (errorOcured) return;
 
-				if (_isNeitherAnObjectNorAnArray(methodsGrantee)) {
+				if (_isNeitherAnObjectNorAnArray(granteeOfMethods)) {
 					switch (usingLanguage) {
 						case languageCode_zhCN:
 							errorMessage = '受封者必须是一个标准对象或数组，且不可为空对象（null）。';
@@ -236,31 +277,31 @@
 					_dealWithCurrentError();
 				}
 
-				if (_isNeitherAnObjectNorAnArray(propertiesGrantee)) {
-					propertiesGrantee = methodsGrantee;
+				if (_isNeitherAnObjectNorAnArray(granteeOfProperties)) {
+					granteeOfProperties = granteeOfMethods;
 				}
 
 
 				if (errorOcured) {
 					switch (usingLanguage) {
 						case languageCode_zhCN:
-							delete thisHelper[methodName_as_zhCN0];
-							delete thisHelper[methodName_withCustomizedPropertyNames_zhCN0];
-							delete thisHelper[methodName_to_zhCN0];
+							delete thisOperator[methodName_as_zhCN0];
+							delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];
+							delete thisOperator[methodName_to_zhCN0];
 							break;
 
 						case languageCode_enUS:
-							delete thisHelper[methodName_as_enUS0];
-							delete thisHelper[methodName_as_enUS1];
+							delete thisOperator[methodName_as_enUS0];
+							delete thisOperator[methodName_as_enUS1];
 
-							delete thisHelper[methodName_withCustomizedPropertyNames_enUS0];
-							delete thisHelper[methodName_withCustomizedPropertyNames_enUS1];
+							delete thisOperator[methodName_withCustomizedPropertyNames_enUS0];
+							delete thisOperator[methodName_withCustomizedPropertyNames_enUS1];
 
-							delete thisHelper[methodName_to_enUS0];
+							delete thisOperator[methodName_to_enUS0];
 							break;
 					}
 
-					_impartIt(methodsGrantee, propertiesGrantee);
+					return _impartIt(granteeOfMethods, granteeOfProperties);
 				}
 			}
 
@@ -278,29 +319,29 @@
 			function _addAllMethodsToThisHelper() {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
-						thisHelper[methodName_as_zhCN0] =
+						thisOperator[methodName_as_zhCN0] =
 							boundAsAction;
 
-						thisHelper[methodName_withCustomizedPropertyNames_zhCN0] =
+						thisOperator[methodName_withCustomizedPropertyNames_zhCN0] =
 							boundRenameAction;
 
-						thisHelper[methodName_to_zhCN0] =
+						thisOperator[methodName_to_zhCN0] =
 							boundToAction;
 						break;
 
 
 					case languageCode_enUS:
-						thisHelper[methodName_as_enUS0] =
+						thisOperator[methodName_as_enUS0] =
 							boundAsAction;
-						thisHelper[methodName_as_enUS1] =
+						thisOperator[methodName_as_enUS1] =
 							boundAsAction;
 
-						thisHelper[methodName_withCustomizedPropertyNames_enUS0] =
+						thisOperator[methodName_withCustomizedPropertyNames_enUS0] =
 							boundRenameAction;
-						thisHelper[methodName_withCustomizedPropertyNames_enUS1] =
+						thisOperator[methodName_withCustomizedPropertyNames_enUS1] =
 							boundRenameAction;
 
-						thisHelper[methodName_to_enUS0] =
+						thisOperator[methodName_to_enUS0] =
 							boundToAction;
 						break;
 				}
@@ -309,45 +350,45 @@
 			function _removeAllMethodsFromThisHelper() {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
-						delete thisHelper[methodName_as_zhCN0];
-						delete thisHelper[methodName_withCustomizedPropertyNames_zhCN0];
-						delete thisHelper[methodName_to_zhCN0];
+						delete thisOperator[methodName_as_zhCN0];
+						delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];
+						delete thisOperator[methodName_to_zhCN0];
 						break;
 
 					case languageCode_enUS:
-						delete thisHelper[methodName_as_enUS0];
-						delete thisHelper[methodName_as_enUS1];
+						delete thisOperator[methodName_as_enUS0];
+						delete thisOperator[methodName_as_enUS1];
 
-						delete thisHelper[methodName_withCustomizedPropertyNames_enUS0];
-						delete thisHelper[methodName_withCustomizedPropertyNames_enUS1];
+						delete thisOperator[methodName_withCustomizedPropertyNames_enUS0];
+						delete thisOperator[methodName_withCustomizedPropertyNames_enUS1];
 
-						delete thisHelper[methodName_to_enUS0];
+						delete thisOperator[methodName_to_enUS0];
 						break;
 				}
 			}
 
-			function _removeSomeMethodsOnAsEnding() {
+			function _removeSomeMethodsOn_As_Ending() {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
-						delete thisHelper[methodName_as_zhCN0];
+						delete thisOperator[methodName_as_zhCN0];
 						break;
 
 					case languageCode_enUS:
-						delete thisHelper[methodName_as_enUS0];
-						delete thisHelper[methodName_as_enUS1];
+						delete thisOperator[methodName_as_enUS0];
+						delete thisOperator[methodName_as_enUS1];
 						break;
 				}
 			}
 
-			function _removeSomeMethodsOnRenamingEnding() {
+			function _removeSomeMethodsOn_Renaming_Ending() {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
-						delete thisHelper[methodName_withCustomizedPropertyNames_zhCN0];
+						delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];
 						break;
 
 					case languageCode_enUS:
-						delete thisHelper[methodName_withCustomizedPropertyNames_enUS0];
-						delete thisHelper[methodName_withCustomizedPropertyNames_enUS1];
+						delete thisOperator[methodName_withCustomizedPropertyNames_enUS0];
+						delete thisOperator[methodName_withCustomizedPropertyNames_enUS1];
 						break;
 				}
 			}
@@ -384,16 +425,20 @@
 				return isValid;
 			}
 
-			function _impartIt(methodsGrantee, propertiesGrantee) {
-				_impartMethodsTo(methodsGrantee);
-				_impartPropertiesTo(propertiesGrantee);
+			function _impartIt(granteeOfMethods, granteeOfProperties) {
+				var intanceObjectToImpart = new theConstructor;
+
+				_impartMethodsTo(intanceObjectToImpart, granteeOfMethods);
+				_impartPropertiesTo(intanceObjectToImpart, granteeOfProperties);
+
+				return intanceObjectToImpart;
 			}
 
-			function _impartMethodsTo(methodsGrantee) {
+			function _impartMethodsTo(objectToImpart, granteeOfMethods) {
 				
 			}
 
-			function _impartPropertiesTo(propertiesGrantee) {
+			function _impartPropertiesTo(objectToImpart, granteeOfProperties) {
 				
 			}
 		}

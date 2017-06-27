@@ -1,7 +1,9 @@
-	var wulechuanImpartMethodsHost = createWulechuanImpartMethodsInMultiLanguages();
+	var wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingualMethods();
 	var wulechuanObjectAndClassHelper = {
-		wulechuanImpart: wulechuanImpartMethodsHost.wulechuanImpart,
-		吴乐川传授: wulechuanImpartMethodsHost.吴乐川传授
+		wulechuanImpart:
+			wulechuanImpartMultilingualMethodsHost.wulechuanImpart,
+		吴乐川传授:
+			wulechuanImpartMultilingualMethodsHost.吴乐川传授
 	};
 
 	window.wulechuanObjectAndClassHelper = wulechuanObjectAndClassHelper;
@@ -49,7 +51,7 @@
 	 * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
 	 *  wulechuanImpart(My2DParticle).to(myLovelyObjectLiteral);
 	 */
-	function createWulechuanImpartMethodsInMultiLanguages() {
+	function createWulechuanImpartMutilingualMethods() {
 		var finallyPublicMethodName_zhCN = '吴乐川传授';
 		var finallyPublicMethodName_enUS = 'wulechuanImpart';
 
@@ -217,7 +219,7 @@
 			function to(methodsGrantee, propertiesGrantee) {
 				if (errorOcured) return;
 
-				if (_isNeigherAnObjectNorAnArray(methodsGrantee)) {
+				if (_isNeitherAnObjectNorAnArray(methodsGrantee)) {
 					switch (usingLanguage) {
 						case languageCode_zhCN:
 							errorMessage = '受封者必须是一个标准对象或数组，且不可为空对象（null）。';
@@ -234,7 +236,7 @@
 					_dealWithCurrentError();
 				}
 
-				if (_isNeigherAnObjectNorAnArray(propertiesGrantee)) {
+				if (_isNeitherAnObjectNorAnArray(propertiesGrantee)) {
 					propertiesGrantee = methodsGrantee;
 				}
 
@@ -353,7 +355,7 @@
 
 
 
-			function _isNeigherAnObjectNorAnArray(value) {
+			function _isNeitherAnObjectNorAnArray(value) {
 				return !value || typeof value !== 'object';
 			}
 

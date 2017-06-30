@@ -57,10 +57,13 @@
 	 * 	// are hidden (removed from the instance),
 	 * 	// while the three aliases for the "shoot" function are available now.
 	 * 
-	 * 	// Note that any stage, as long as it is *NOT* the last stage, when invoked,
-	 * 	// returns the instance itself, so that we can chain the invocations.
-	 * 	// This way we can easily design natural-language-like invocation chain.
-	 * 	// For example:
+	 * 
+	 * 
+	 * 
+	 * 	Note that any stage, as long as it is *NOT* the last stage, when invoked,
+	 * 	returns the instance itself, so that we can chain the invocations.
+	 * 	This way we can easily design natural-language-like invocation chain.
+	 * @example:
 	 * 	var mySecondeInstance = new myLovelyClass;
 	 * 	var 被打死的敌人 = myLovelyInstance.预备().开火！();
 	 */

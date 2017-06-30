@@ -14,20 +14,24 @@
 	 * 
 	 * @example
 	 * 	function myLovelyClass() {
-	 * 		var myBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
-	 * 		myBuilder.addStage(methodAsStage1, {
+	 * 
+	 * 		var stagesBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
+	 * 
+	 * 		stagesBuilder.addStage(methodAsStage1, {
 	 * 			'zh-CN': [ '第一步', '预备', '准备' ],
 	 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
 	 * 		});
 	 * 
-	 * 		myBuilder.addStage(shoot, {
+	 * 		stagesBuilder.addStage(shoot, {
 	 * 			'zh-CN': [ '发射', '开火', '开火！' ],
 	 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
 	 * 		});
 	 * 
 	 * 
-	 * 		// this line below is essential and required.
-	 * 		myBuilder.setUsedNaturalLanguageTo('zh-CN');
+	 * 
+	 * 		// This line below is essential and required.
+	 * 		stagesBuilder.setUsedNaturalLanguageTo('zh-CN');
+	 * 
 	 * 
 	 * 
 	 * 		function methodAsStage1() {

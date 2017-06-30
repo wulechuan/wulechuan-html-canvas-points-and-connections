@@ -1,3 +1,65 @@
+	/**
+	 * @author 吴乐川 <wulechuan@live.com>
+	 * 
+	 * Instances of this helper class is to apply a programming pattern design by me
+	 * to a given object.
+	 * The object is thus decorated, so that, all methods of the object are mapped into
+	 * so-called stages, each method a stage.
+	 * And from then on, only the first method is exposed.
+	 * All other methods are hidden untill the first method gets invoked and not thrown.
+	 * 
+	 * Usually you want to use an instance of this helper class inside another class,
+	 * to decorate each and every instance of the later class.
+	 * @param {!object} stagesOperator
+	 * 
+	 * @example
+	 * 	function myLovelyClass() {
+	 * 		var myBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
+	 *  	myBuilder.addStage(methodAsStage1, {
+	 * 			'zh-CN': [ '第一步', '预备', '准备' ],
+	 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
+	 *  	});
+	 * 
+	 *  	myBuilder.addStage(shoot, {
+	 * 			'zh-CN': [ '发射', '开火', '开火！' ],
+	 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
+	 *  	});
+	 * 
+	 * 
+	 * 		// this line below is essential and required.
+	 * 		myBuilder.setUsedNaturalLanguageTo('zh-CN');
+	 * 
+	 * 
+	 * 		function methodAsStage1() {
+	 * 			// your actions here
+	 * 		}
+	 * 
+	 * 		function shoot() {
+	 * 			// your actions here
+	 * 		}
+	 * 	}
+	 * 
+	 * 	var myLovelyInstance = new myLovelyClass;
+	 * 	
+	 * 	// Now the "myLovelyInstance" object has only methods
+	 * 	// which are mapped to the "methodAsStage1" function,
+	 *  // in all three Chinese aliases, of course.
+	 * 	// The methods which are mapped to the "shoot" function
+	 * 	// is *NOT* available at this time.
+	 * 
+	 * 	myLovelyInstance.第一步();
+	 * 
+	 * 	// From now on, the three aliases for the "methodAsStage1"
+	 * 	// are hidden (removed from the instance),
+	 * 	// while the three aliases for the "shoot" function are available now.
+	 * 
+	 *  // Note that any stage, as long as it is *NOT* the last stage, when invoked,
+	 * 	// returns the instance itself, so that we can chain the invocations.
+	 *  // This way we can easily design natural-language-like invocation chain.
+	 *  // For example:
+	 *  var mySecondeInstance = new myLovelyClass;
+	 *  var 被打死的敌人 = myLovelyInstance.预备().开火！();
+	 */
 	function WulechuanApplyOneStageOneMethodProgrammingPatternFor(stagesOperator) {
 		var methodName_addStage = 'addStage';
 		var methodName_setUsedNaturalLanguageTo = 'setUsedNaturalLanguageTo';
@@ -23,12 +85,12 @@
 		 * 
 		 * @example
 		 * 	function myLovelyClass() {
-		 * 		var myBuilder = new WulechuanActionStagesBuilder(this);
+		 * 		var myBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
 		 *  	myBuilder.addStage(methodAsStage1, {
 		 * 			'zh-CN': [ '第一步', '预备', '准备' ],
 		 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
 		 *  	});
-
+		 * 
 		 *  	myBuilder.addStage(shoot, {
 		 * 			'zh-CN': [ '发射', '开火', '开火！' ],
 		 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]

@@ -1,3 +1,186 @@
+	function WulechuanApplyOneStageOneMethodProgrammingPatternFor(stagesOperator) {
+		var methodName_addStage = 'addStage';
+		var methodName_setUsedNaturalLanguageTo = 'setUsedNaturalLanguageTo';
+		var methodName_startFromFirstStage = 'startFromFirstStage';
+
+		var thisManagerOfStages = this;
+
+		var allStages = [];
+		var currentStageIndex = NaN;
+		var usingLanguage;
+
+		thisManagerOfStages[methodName_addStage] = defineFirstStage;
+		thisManagerOfStages[methodName_setUsedNaturalLanguageTo] = setUsedNaturalLanguageTo;
+
+
+
+
+		/**
+		 * 
+		 * @param {!object} stageAction 
+		 * @param {!boolean} isAnOptionalStage 
+		 * @param {!object} actionAliases 
+		 * 
+		 * @example
+		 * 	function myLovelyClass() {
+		 * 		var myBuilder = new WulechuanActionStagesBuilder(this);
+		 *  	myBuilder.addStage(methodAsStage1, {
+		 * 			'zh-CN': [ '第一步', '预备', '准备' ],
+		 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
+		 *  	});
+
+		 *  	myBuilder.addStage(shoot, {
+		 * 			'zh-CN': [ '发射', '开火', '开火！' ],
+		 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
+		 *  	});
+		 * 
+		 * 
+		 * 		function methodAsStage1() {
+		 * 			// your actions here
+		 * 		}
+		 * 
+		 * 		function shoot() {
+		 * 			// your actions here
+		 * 		}
+		 * 	}
+		 */
+		function addStage(stageAction, allowsToSkipThisStage, actionAliases) {
+			if (typeof stageAction !== 'function') {
+				throw TypeError(
+					'A so-called stage is basically a function, '+
+					'with some associated aliases just for conveniences, '+
+					'which not only does some demonded work '+
+					'but also exposes subsequence stages '+
+					'and hides past stages for a given stages operator. '+
+					'Among them, the demonded work is provided by you developer, '+
+					'So, when defining a stage, the first argument must be a function, '+
+					'\nwhile the input was of type "'+typeof stageAction+'".'
+				);
+			}
+
+			if (!actionAliases) {
+				throw TypeError(
+					'At least one alias is required for a stage action to publish as a method.'
+				);
+			}
+
+			var indexOfThisStage = allStages.length;
+
+			var newStage = {
+				actionAliases: actionAliases,
+				allowsToSkip: allowsToSkipThisStage,
+				action: function () {
+					currentStageIndex = indexOfThisStage;
+					var resultOfTheStageAction = stageAction.apply(stagesOperator, arguments);
+
+					_modifyThisOperatorByExposingOrHidingSomeMethods();
+
+					if (indexOfThisStage === allStages.length-1) {
+						// The final result of the actions chain is really what we want.
+						return resultOfTheStageAction;
+					} else {
+						// Must return the {stagesOperator} for chaining steps,
+						// even if errors occur inside the action, as long as nothing get thrown.
+						return stagesOperator;
+					}
+				}
+			};
+
+			allStages.push(newStage);
+
+			return newStage;
+		}
+
+		function defineFirstStage(stageAction, actionAliases) {
+			// The first stage is ALWAYS required,
+			// it doesn't make any sense if it is allowed to skip.
+			addStage(stageAction, true, actionAliases);
+			thisManagerOfStages[methodName_addStage] = addStage;
+			thisManagerOfStages[methodName_setUsedNaturalLanguageTo] = setUsedNaturalLanguageTo;
+			_tryToExposeFirstStageSoThatTheOperatorIsUsable();
+		}
+
+		function setUsedNaturalLanguageTo(language) {
+			if (!language) {
+				throw TypeError('Must specify the natural language to use.');
+			}
+			usingLanguage = language;
+			_tryToExposeFirstStageSoThatTheOperatorIsUsable();
+		}
+
+		function _tryToExposeFirstStageSoThatTheOperatorIsUsable() {
+			if (allStages.length < 1) return;
+			if (!usingLanguage) return;
+
+			// Expose it with the common name.
+			thisManagerOfStages[methodName_startFromFirstStage] = startFromFirstStage;
+
+			// Also expose it with specified aliases of first stage.
+			var actionAliasesInCurrentLanuageToExpose = allStages[0].actionAliases[usingLanguage];
+			for (var ai=0; ai< actionAliasesInCurrentLanuageToExpose.length; ai++) {
+				var alias = actionAliasesInCurrentLanuageToExpose[ai];
+				thisManagerOfStages[alias] = startFromFirstStage;
+			}
+		}
+
+		function startFromFirstStage() {
+			allStages[0].action.apply(stagesOperator, arguments);
+		}
+
+		function _modifyThisOperatorByExposingOrHidingSomeMethods() {
+			_hideMethodsOfAllPastOrSkippedStages();
+
+			var currentStage = allStages[currentStageIndex];
+
+			currentStage.action.apply(stagesOperator, arguments);
+
+			if (currentStageIndex === 0) {
+				_exposeMethodsOfAllStagesStartingWithIndex(1);
+			}
+		}
+
+		function _hideMethodsOfAllPastOrSkippedStages() {
+			for (var si = 0; si <= currentStageIndex; si++) {
+				var stage = allStages[si];
+				var actionAliasesInCurrentLanuage = stage.actionAliases[usingLanguage];
+				for (var ai = 0; ai < actionAliasesInCurrentLanuage.language; ai++) {
+					var alias = actionAliasesInCurrentLanuage[ai];
+					delete stagesOperator[alias];
+				}
+			}
+		}
+
+		function _exposeMethodsOfAllStagesStartingWithIndex(startingStageIndex) {
+			var allForwardsOptionalStagesTillFirstRequiredStage = [];
+
+			var si, stage;
+			for (si = startingStageIndex; si < allStages.length; si++) {
+				stage = allStages[si];
+				allForwardsOptionalStagesTillFirstRequiredStage.push(stage);
+				if (!stage.allowsToSkip) {
+					break;
+				}
+			}
+
+			for (si = 0; si < allForwardsOptionalStagesTillFirstRequiredStage.length; si++) {
+				stage = allForwardsOptionalStagesTillFirstRequiredStage[si];
+
+				var stageActionToExpose = stage.action;
+
+				var actionAliasesInCurrentLanuage = stage.actionAliases[usingLanguage];
+				for (var ai = 0; ai < actionAliasesInCurrentLanuage.language; ai++) {
+					var alias = actionAliasesInCurrentLanuage[ai];
+					stagesOperator[alias] = stageActionToExpose;
+				}
+			}
+		}
+	}
+
+
+
+
+
+
 	var nameOfEntranceMethod_zhCN = '吴乐川：拟传授类';
 	var nameOfEntranceMethod_enUS = 'wulechuanImpartAnInstanceOf';
 
@@ -19,7 +202,7 @@
 	 * 		...
 	 * 	}
 	 *
-	 * 	My2DVector.variantsForWulechuanImpartation = {
+	 * 	My2DVector.profilesForWulechuanImpartation = {
 	 * 		position2D: { instanceChiefName: 'position', ... },
 	 * 		force2D:    { instanceChiefName: 'force', ... },
 	 * 		velocity2D: { instanceChiefName: 'velocity', ... }
@@ -60,7 +243,7 @@
 	 * 			.to(this);
 	 * 	}
 	 *
-	 * 	My2DParticle.variantsForWulechuanImpartation = {
+	 * 	My2DParticle.profilesForWulechuanImpartation = {
 	 * 		default: { instanceChiefName: 'particle2D', ... }
 	 * 	};
 	 *
@@ -75,27 +258,35 @@
 	 * but in mutliple human languages.
 	 */
 	function createWulechuanImpartMutilingualMethods() {
+		// This method name below will NOT be public
+		// because we are wrapping it with an outer function,
+		// so that we can easily decide the using langugae.
+		// Thus, only one alias is enough for it to use inside this scope.
+		var methodName_startToImpart = 'startToImpart';
+
+		var methodName_usingThisProfile_zhCN0 = '并视作';
+		var methodName_usingThisProfile_enUS0 = 'as';
+		var methodName_usingThisProfile_enUS1 = 'usingThisProfile';
+
 		var methodName_buildAccordingTo_zhCN0 = '之实例，构建时依据';
 		var methodName_buildAccordingTo_enUS0 = 'buildAccordingTo';
-		var methodName_as_zhCN0 = '并视作';
-		var methodName_as_enUS0 = 'as';
-		var methodName_as_enUS1 = 'usingThisProfile';
+
 		var methodName_withCustomizedPropertyNames_zhCN0 = '并变更以下属性';
 		var methodName_withCustomizedPropertyNames_enUS0 = 'withCustomizedPropertyNames';
 		var methodName_withCustomizedPropertyNames_enUS1 = 'renamedAs';
-		var methodName_to_zhCN0 = '予';
-		var methodName_to_enUS0 = 'to';
 
-		var propertyName_defaultVariant = 'default';
-		var propertyName_variantsForWulechuanImpartation = 'variantsForWulechuanImpartation';
+		var methodName_towards_zhCN0 = '予';
+		var methodName_towards_enUS0 = 'to';
+
+		var propertyName_profilesForWulechuanImpartation = 'profilesForWulechuanImpartation';
+		var propertyName_defaultProfile = 'default';
 		var propertyName_instanceChiefName = 'instanceChiefName';
 
 
 
 
-		var languageCode_enUS = 'en-US';
 		var languageCode_zhCN = 'zh-CN';
-
+		var languageCode_enUS = 'en-US';
 
 
 
@@ -136,8 +327,8 @@
 
 		/**
 		 * A class, instance of which is the operator
-		 * that remembers several key factors nd does the impartation job
-		 * for a given class.
+		 * that remembers several key factors and does the impartation job
+		 * for a given class(a.k.a. a function).
 		 *
 		 * Each time the entrance method is invoked,
 		 * a new instance of this class is created,
@@ -149,25 +340,121 @@
 		function _WulechuanImpartationOperator(usingLanguage) {
 			var thisOperator = this;
 
-			var errorOcured = false;
-			var errorMessage;
+			var errorAlreadyOcurred = false;
+			var currentErrorMessage;
 			var shouldThrowErrors;
 
 			var theConstructor;
 			var theConstructionOptions;
-			var allVariantsConfigurations;
+			var allImpartationProfiles;
 
-			var usedVariant;
+			var usedProfile;
 			var usedPropertyNamesCustomization = {};
 
 
-			var boundAsAction = as.bind(thisOperator);
-			var boundRenameAction = withCustomizedPropertyNames.bind(thisOperator);
-			var boundToAction = to.bind(thisOperator);
+			var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(thisOperator);
 
-			thisOperator.startToImpart = startToImpart;
+			stagesForMethods.addStage(startToImpart, {
+				'zh-CN': [
+					methodName_startToImpart
+				],
+				'en-US': [
+					methodName_startToImpart
+				]
+			});
+
+			stagesForMethods.addStage(usingThisProfile, {
+				'zh-CN': [
+					methodName_usingThisProfile_zhCN0
+				],
+				'en-US': [
+					methodName_usingThisProfile_enUS0,
+					methodName_usingThisProfile_enUS1
+				]
+			});
+
+			stagesForMethods.addStage(buildAccordingTo, {
+				'zh-CN': [
+					methodName_buildAccordingTo_zhCN0
+				],
+				'en-US': [
+					methodName_buildAccordingTo_enUS0
+				]
+			});
+
+			stagesForMethods.addStage(withCustomizedPropertyNames, {
+				'zh-CN': [
+					methodName_withCustomizedPropertyNames_zhCN0
+				],
+				'en-US': [
+					methodName_withCustomizedPropertyNames_enUS0,
+					methodName_withCustomizedPropertyNames_enUS1
+				]
+			});
+
+			stagesForMethods.addStage(towards, {
+				'zh-CN': [
+					methodName_towards_zhCN0
+				],
+				'en-US': [
+					methodName_towards_enUS0
+				]
+			});
 
 
+
+
+
+			function _the(subject) {
+				return {
+					isNeitherAnObjectNorAnArray: function() {
+						return !subject || typeof subject !== 'object';
+					},
+
+					isAValidObject: function() {
+						return !!subject && typeof subject === 'object' && !Array.isArray(subject);
+					},
+
+					isNotAValidObject: function() {
+						return !_the(subject).isAValidObject();
+					},
+
+					isAValidArray: function() {
+						return Array.isArray(subject);
+					},
+
+					isAnInvalidArray: function() {
+						return !Array.isArray(subject);
+					},
+
+					isAValidKey: function() {
+						return !!subject && typeof subject === 'string';
+					},
+
+					isAnInvalidKey: function(subject) {
+						return !_the(subject).isAnValidKey(subject);
+					},
+
+					isAValidProfile: function() {
+						var isValid =
+								_the(subject).isAValidObject(subject)
+							&&	_the(subject).isAValidKey(subject[propertyName_instanceChiefName])
+							;
+
+						return isValid;
+					}
+				};
+			}
+
+			function _dealWithCurrentError() {
+				errorAlreadyOcurred = true;
+				
+				if (shouldThrowErrors) {
+					throw TypeError('\n'+currentErrorMessage);
+				} else {
+					console.error(TypeError('\n'+currentErrorMessage));
+				}
+			}
 
 
 			/**
@@ -177,16 +464,13 @@
 			 * @param {?boolean} shouldNotThrowErrors
 			 */
 			function startToImpart(theGivenFunction, shouldNotThrowErrors) {
-				delete thisOperator.startToImpart;
-
-
 				shouldThrowErrors = !shouldNotThrowErrors;
 
 
 				if (typeof theGivenFunction !== 'function') {
 					switch (usingLanguage) {
 						case languageCode_zhCN:
-							errorMessage =
+							currentErrorMessage =
 								'首个参数必须为一个函数。其将被视为一个构造函数以构造一个对象。'+
 								'该对象之属性和方法将被传授给受封者。'+
 								'\n而实际提供的首个参数是一个'+typeof theGivenFunction + '。'
@@ -194,7 +478,7 @@
 							break;
 
 						case languageCode_enUS:
-							errorMessage =
+							currentErrorMessage =
 								'The provided source must be a function, '+
 								'which will be used as a constructor '+
 								'to create the object to impart to a grantee.'+
@@ -203,31 +487,27 @@
 								;
 							break;
 					}
+
 					_dealWithCurrentError();
 				} else {
 					theConstructor = theGivenFunction;
-					theConstructionOptions = constructionOptions;
 				}
 
 
-				var _configurations = theConstructor[propertyName_variantsForWulechuanImpartation];
-				if (_isInvalidObject(_configurations)) {
-					_configurations = {};
-					_configurations[propertyName_defaultVariant] = {};
+				var _allImpartationProfiles = theConstructor[propertyName_profilesForWulechuanImpartation];
+				if (_the(_allImpartationProfiles).isNotAValidObject()) {
+					_allImpartationProfiles = {};
+					_allImpartationProfiles[propertyName_defaultProfile] = {};
 				}
 
 
-				allVariantsConfigurations = _configurations;
+				allImpartationProfiles = _allImpartationProfiles;
 
 
-				var _defaultVariant = allVariantsConfigurations[propertyName_defaultVariant];
-				if (_isValidVariant(_defaultVariant)) {
-					usedVariant = _defaultVariant;
+				var _defaultProfile = allImpartationProfiles[propertyName_defaultProfile];
+				if (_the(_defaultProfile).isAValidProfile()) {
+					usedProfile = _defaultProfile;
 				}
-
-				_addAllMethodsToThisHelper();
-
-				return thisOperator; // chainable
 			}
 
 			/**
@@ -235,27 +515,43 @@
 			 *
 			 * @param {!string} variantName
 			 */
-			function as(variantName) {
-				if (errorOcured) return thisOperator;
+			function usingThisProfile(profileName) {
+				if (errorAlreadyOcurred) return thisOperator;
 
-				var _foundVariant;
+				var _foundProfile;
+				var _theFoundProfileIsInvalid = true;
 
-				if (_isValidKey(variantName)) {
-					_foundVariant = allVariantsConfigurations[variantName];
-					if (_isValidVariant(_foundVariant)) {
-						usedVariant = _foundVariant;
+				if (_the(profileName).isAValidKey()) {
+					_foundProfile = allImpartationProfiles[profileName];
+
+					if (_the(_foundProfile).isAValidProfile()) {
+						usedProfile = _foundProfile;
+						_theFoundProfileIsInvalid = false;
 					}
 				}
 
-				if (!usedVariant) {
-					errorOcured = true;
-				}
+				if (_theFoundProfileIsInvalid) {
+					if (typeof profileName !== 'string') {
+						profileName = typeof profileName;
+					}
 
-				if (errorOcured) {
-					_removeSomeMethodsWhen_As_Ending();
-				}
+					switch (usingLanguage) {
+						case languageCode_zhCN:
+							currentErrorMessage =
+								'未找到指定的变体。'+
+								'输入参数为：“'+profileName+'”。';
+							break;
 
-				return thisOperator; // must return this for chaining steps, even if errors occur.
+						case languageCode_enUS:
+							currentErrorMessage =
+								'The desired profile name was invalid. '+
+								'No profile was matched by that name. '+
+								'\nThe input was "'+profileName+'".';
+							break;
+					}
+
+					_dealWithCurrentError();
+				}
 			}
 
 			/**
@@ -264,36 +560,30 @@
 			 * @param {?object} constructionOptions
 			 */
 			function buildAccordingTo(constructionOptions) {
-
+				theConstructionOptions = constructionOptions;
 			}
 
 			function withCustomizedPropertyNames(propertyNamesCustomization) {
-				if (errorOcured) return thisOperator;
+				if (errorAlreadyOcurred) return thisOperator;
 
-				if (_isInvalidObject(propertyNamesCustomization)) {
-					errorOcured = false;
+				if (_the(propertyNamesCustomization).isNotAValidObject()) {
+					errorAlreadyOcurred = true;
 				} else {
 					usedPropertyNamesCustomization = propertyNamesCustomization;
 				}
-
-				if (errorOcured) {
-					_removeSomeMethodsWhen_Renaming_Ending();
-				}
-
-				return thisOperator; // must return this for chaining steps, even if errors occur.
 			}
 
-			function to(granteeOfMethods, granteeOfProperties) {
-				if (errorOcured) return;
+			function towards(granteeOfMethods, granteeOfProperties) {
+				if (errorAlreadyOcurred) return;
 
-				if (_isNeitherAnObjectNorAnArray(granteeOfMethods)) {
+				if (_the(granteeOfMethods).isNeitherAnObjectNorAnArray()) {
 					switch (usingLanguage) {
 						case languageCode_zhCN:
-							errorMessage = '受封者必须是一个标准对象或数组，且不可为空对象（null）。';
+							currentErrorMessage = '受封者必须是一个标准对象或数组，且不可为空对象（null）。';
 							break;
 
 						case languageCode_enUS:
-							errorMessage =
+							currentErrorMessage =
 								'The grantee to impart methods and properties to '+
 								'must be an object or an array, and not a null.'
 								;
@@ -303,159 +593,25 @@
 					_dealWithCurrentError();
 				}
 
-				if (_isNeitherAnObjectNorAnArray(granteeOfProperties)) {
+				if (_the(granteeOfProperties).isNeitherAnObjectNorAnArray()) {
 					granteeOfProperties = granteeOfMethods;
 				}
 
 
-				if (errorOcured) {
-					switch (usingLanguage) {
-						case languageCode_zhCN:
-							delete thisOperator[methodName_as_zhCN0];
-							delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];
-							delete thisOperator[methodName_to_zhCN0];
-							break;
 
-						case languageCode_enUS:
-							delete thisOperator[methodName_as_enUS0];
-							delete thisOperator[methodName_as_enUS1];
 
-							delete thisOperator[methodName_withCustomizedPropertyNames_enUS0];
-							delete thisOperator[methodName_withCustomizedPropertyNames_enUS1];
-
-							delete thisOperator[methodName_to_enUS0];
-							break;
-					}
-
+				if (errorAlreadyOcurred) {
 					// return nothing if any error occurs.
 					return;
 				}
 
-				var theInstanceThatHasBeenImparted =  _impartIt(granteeOfMethods, granteeOfProperties);
 
+
+				var theInstanceThatHasBeenImparted =  _impartIt(granteeOfMethods, granteeOfProperties);
 				// return the instance for the grantee to store a variable within its scope.
 				return theInstanceThatHasBeenImparted;
 			}
 
-
-			function _dealWithCurrentError() {
-				if (shouldThrowErrors) {
-					_removeAllMethodsFromThisHelper();
-					throw TypeError('\n'+errorMessage);
-				} else {
-					errorOcured = true;
-					console.error(TypeError('\n'+errorMessage));
-				}
-			}
-
-			function _addAllMethodsToThisHelper() {
-				switch (usingLanguage) {
-					case languageCode_zhCN:
-						thisOperator[methodName_as_zhCN0] =
-							boundAsAction;
-
-						thisOperator[methodName_withCustomizedPropertyNames_zhCN0] =
-							boundRenameAction;
-
-						thisOperator[methodName_to_zhCN0] =
-							boundToAction;
-						break;
-
-
-					case languageCode_enUS:
-						thisOperator[methodName_as_enUS0] =
-							boundAsAction;
-						thisOperator[methodName_as_enUS1] =
-							boundAsAction;
-
-						thisOperator[methodName_withCustomizedPropertyNames_enUS0] =
-							boundRenameAction;
-						thisOperator[methodName_withCustomizedPropertyNames_enUS1] =
-							boundRenameAction;
-
-						thisOperator[methodName_to_enUS0] =
-							boundToAction;
-						break;
-				}
-			}
-
-			function _removeAllMethodsFromThisHelper() {
-				switch (usingLanguage) {
-					case languageCode_zhCN:
-						delete thisOperator[methodName_as_zhCN0];
-						delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];
-						delete thisOperator[methodName_to_zhCN0];
-						break;
-
-					case languageCode_enUS:
-						delete thisOperator[methodName_as_enUS0];
-						delete thisOperator[methodName_as_enUS1];
-
-						delete thisOperator[methodName_withCustomizedPropertyNames_enUS0];
-						delete thisOperator[methodName_withCustomizedPropertyNames_enUS1];
-
-						delete thisOperator[methodName_to_enUS0];
-						break;
-				}
-			}
-
-			function _removeSomeMethodsWhen_As_Ending() {
-				switch (usingLanguage) {
-					case languageCode_zhCN:
-						delete thisOperator[methodName_as_zhCN0];
-						break;
-
-					case languageCode_enUS:
-						delete thisOperator[methodName_as_enUS0];
-						delete thisOperator[methodName_as_enUS1];
-						break;
-				}
-			}
-
-			function _removeSomeMethodsWhen_Renaming_Ending() {
-				switch (usingLanguage) {
-					case languageCode_zhCN:
-						delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];
-						break;
-
-					case languageCode_enUS:
-						delete thisOperator[methodName_withCustomizedPropertyNames_enUS0];
-						delete thisOperator[methodName_withCustomizedPropertyNames_enUS1];
-						break;
-				}
-			}
-
-
-
-
-			function _isNeitherAnObjectNorAnArray(value) {
-				return !value || typeof value !== 'object';
-			}
-
-			function _isValidObject(value) {
-				return !!value && typeof value === 'object' && !Array.isArray(value);
-			}
-
-			function _isInvalidObject(value) {
-				return !_isValidObject(value);
-			}
-
-			function _isValidKey(key) {
-				return !!key && typeof key === 'string';
-			}
-
-			// function _isInvalidKey(key) {
-			// 	return !_isValidKey(key);
-			// }
-
-			function _isValidVariant(variant) {
-				var isValid =
-						_isValidObject(variant)
-					&&	_isValidKey(variant[propertyName_instanceChiefName])
-					;
-
-				return isValid;
-			}
 
 			function _impartIt(granteeOfMethods, granteeOfProperties) {
 				var intanceObjectToImpart = new theConstructor;

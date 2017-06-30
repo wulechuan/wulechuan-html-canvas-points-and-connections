@@ -82,29 +82,6 @@
 		 * @param {!object} stageAction 
 		 * @param {!boolean} isAnOptionalStage 
 		 * @param {!object} actionAliases 
-		 * 
-		 * @example
-		 * 	function myLovelyClass() {
-		 * 		var myBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
-		 *  	myBuilder.addStage(methodAsStage1, {
-		 * 			'zh-CN': [ '第一步', '预备', '准备' ],
-		 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
-		 *  	});
-		 * 
-		 *  	myBuilder.addStage(shoot, {
-		 * 			'zh-CN': [ '发射', '开火', '开火！' ],
-		 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
-		 *  	});
-		 * 
-		 * 
-		 * 		function methodAsStage1() {
-		 * 			// your actions here
-		 * 		}
-		 * 
-		 * 		function shoot() {
-		 * 			// your actions here
-		 * 		}
-		 * 	}
 		 */
 		function addStage(stageAction, allowsToSkipThisStage, actionAliases) {
 			if (typeof stageAction !== 'function') {

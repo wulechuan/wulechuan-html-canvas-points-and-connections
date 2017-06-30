@@ -15,15 +15,15 @@
 	 * @example
 	 * 	function myLovelyClass() {
 	 * 		var myBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
-	 *  	myBuilder.addStage(methodAsStage1, {
+	 * 		myBuilder.addStage(methodAsStage1, {
 	 * 			'zh-CN': [ '第一步', '预备', '准备' ],
 	 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
-	 *  	});
+	 * 		});
 	 * 
-	 *  	myBuilder.addStage(shoot, {
+	 * 		myBuilder.addStage(shoot, {
 	 * 			'zh-CN': [ '发射', '开火', '开火！' ],
 	 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
-	 *  	});
+	 * 		});
 	 * 
 	 * 
 	 * 		// this line below is essential and required.

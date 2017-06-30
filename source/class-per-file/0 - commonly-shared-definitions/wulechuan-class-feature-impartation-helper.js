@@ -126,7 +126,7 @@
 		function impart() {
 			var args = sliceArray.apply(arguments);
 			var usingLanguage = args.unshift();
-			var operator = new WulechuanImpartationOperator(usingLanguage);
+			var operator = new _WulechuanImpartationOperator(usingLanguage);
 			return operator.startToImpart.apply(operator, args);
 		}
 
@@ -146,7 +146,7 @@
 		 * @class
 		 * @param {string} usingLanguage
 		 */
-		function WulechuanImpartationOperator(usingLanguage) {
+		function _WulechuanImpartationOperator(usingLanguage) {
 			var thisOperator = this;
 
 			var errorOcured = false;
@@ -231,16 +231,7 @@
 			}
 
 			/**
-			 * Step 2 - to accept the options for construction of an instance that is to impart.
-			 *
-			 * @param {?object} constructionOptions
-			 */
-			function buildAccordingTo(constructionOptions) {
-
-			}
-
-			/**
-			 * Step 3 - to accept the name of the desired variant to use.
+			 * Step 2 - to accept the name of the desired variant to use.
 			 *
 			 * @param {!string} variantName
 			 */
@@ -265,6 +256,15 @@
 				}
 
 				return thisOperator; // must return this for chaining steps, even if errors occur.
+			}
+
+			/**
+			 * Step 3 - to accept the options for construction of an instance that is to impart.
+			 *
+			 * @param {?object} constructionOptions
+			 */
+			function buildAccordingTo(constructionOptions) {
+
 			}
 
 			function withCustomizedPropertyNames(propertyNamesCustomization) {

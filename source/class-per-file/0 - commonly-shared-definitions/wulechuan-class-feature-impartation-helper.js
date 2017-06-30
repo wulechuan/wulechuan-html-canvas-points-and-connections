@@ -39,11 +39,11 @@
 	 * 		}).to(this);
 	 *
 	 * 		wulechuanImpart(My2DVector)
+	 * 			.as('position2D')
 	 * 			.buildAccordingTo({
 	 * 				x: 3,
 	 * 				y: -19
 	 * 			})
-	 * 			.as('position2D')
 	 * 			.withCustomizedPropertyNames({
 	 * 				__chiefName__: 'centerPos',
 	 * 				x: 'centerX',
@@ -52,7 +52,7 @@
 	 * 			.to(this);
 	 *
 	 * 		wulechuanImpart(My2DVector)
-	 * 			.configuredAs('force2D')
+	 * 			.usingThisProfile('force2D')
 	 * 			.withCustomizedPropertyNames({
 	 * 				strength: 's',
 	 * 				forceDirection: 'forceAngle'
@@ -79,7 +79,7 @@
 		var methodName_buildAccordingTo_enUS0 = 'buildAccordingTo';
 		var methodName_as_zhCN0 = '并视作';
 		var methodName_as_enUS0 = 'as';
-		var methodName_as_enUS1 = 'configuredAs';
+		var methodName_as_enUS1 = 'usingThisProfile';
 		var methodName_withCustomizedPropertyNames_zhCN0 = '并变更以下属性';
 		var methodName_withCustomizedPropertyNames_enUS0 = 'withCustomizedPropertyNames';
 		var methodName_withCustomizedPropertyNames_enUS1 = 'renamedAs';
@@ -261,7 +261,7 @@
 				}
 
 				if (errorOcured) {
-					_removeSomeMethodsOn_As_Ending();
+					_removeSomeMethodsWhen_As_Ending();
 				}
 
 				return thisOperator; // must return this for chaining steps, even if errors occur.
@@ -277,7 +277,7 @@
 				}
 
 				if (errorOcured) {
-					_removeSomeMethodsOn_Renaming_Ending();
+					_removeSomeMethodsWhen_Renaming_Ending();
 				}
 
 				return thisOperator; // must return this for chaining steps, even if errors occur.
@@ -399,7 +399,7 @@
 				}
 			}
 
-			function _removeSomeMethodsOn_As_Ending() {
+			function _removeSomeMethodsWhen_As_Ending() {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
 						delete thisOperator[methodName_as_zhCN0];
@@ -412,7 +412,7 @@
 				}
 			}
 
-			function _removeSomeMethodsOn_Renaming_Ending() {
+			function _removeSomeMethodsWhen_Renaming_Ending() {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
 						delete thisOperator[methodName_withCustomizedPropertyNames_zhCN0];

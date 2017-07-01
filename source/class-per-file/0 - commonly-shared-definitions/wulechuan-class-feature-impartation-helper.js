@@ -170,6 +170,8 @@ function createWulechuanImpartMutilingualMethods() {
 
 
 	/**
+	 * @requires @wulechuan/apply-one-stage-one-method-pattern
+	 * 
 	 * The function, the wrapped versions of which are exposed.
 	 * Wrapping is essentially for providing this function
 	 * in multiple human languages.
@@ -193,11 +195,17 @@ function createWulechuanImpartMutilingualMethods() {
 	 * 
 	 * A class, instance of which is the operator
 	 * that remembers several key factors and does the impartation job
-	 * for a given class(a.k.a. a function).
+	 * for a given class(a.k.a. a function) or an object.
 	 *
 	 * Each time the entrance method is invoked,
-	 * a new instance of this class is created,
+	 * a new instance of this operator class is created,
 	 * which then takes over the impartation process afterwards.
+	 * If the operator is used through its class impartation route,
+	 * an instance object of the provided class is created
+	 * via the new operator, and this instance is the object
+	 * to impart properties from;
+	 * if otherwise the object route is taken,
+	 * the object itself it the one to impart properties from.
 	 *
 	 * @class
 	 * 

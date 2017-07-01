@@ -149,6 +149,8 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 
 	var allStages = [];
 	var currentStageIndex = NaN;
+	var knownLanguagesSoFar = [];
+	var knownLanguagesIndicesSoFar = {}; // Simply for easy avoiding duplications
 	var usingLanguage;
 
 	thisManagerOfStages[methodName_addStage] = addFirstStage;
@@ -166,12 +168,12 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 	/**
 	 * 
 	 * @param {!object} stageAction - A function that will be added to the operator as its method at correct stage.
-	 * @param {!boolean} isAnOptionalStage - True means the stage being added is an optional stage, so that the method
+	 * @param {?boolean} isAnOptionalStage - True means the stage being added is an optional stage, so that the method
 	 * 	after this optional stage should also be exposed at the previous stage of this optional stage.
 	 * @param {!object} actionAliases - An object that takes several arrays, each contains aliases in a specific language.
-	 * -	@param {?array} actionAliases['zh-CN'] - An array that contains aliases of the method that presenting a stage, in Chinese.
-	 * -	@param {?array} actionAliases[languageCode1] - An array that contains aliases of the method that presenting a stage, in a specific language.
+	 * -	@param {!array} actionAliases[languageCode1] - An array that contains aliases of the method that presenting a stage, in a specific language.
 	 * -	@param {?array} actionAliases[languageCode2] - An array that contains aliases of the method that presenting a stage, in a specific language.
+	 * -	@param {?array} actionAliases['zh-CN'] - An array that contains aliases of the method that presenting a stage, in Chinese.
 	 */
 	function addStage(stageAction, allowsToSkipThisStage, actionAliases) {
 		if (typeof stageAction !== 'function') {
@@ -187,11 +189,16 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 			);
 		}
 
-		if (!actionAliases) {
-			throw TypeError(
-				'At least one alias is required for a stage action to publish as a method.'
-			);
+
+		if (arguments.length === 2) {
+			actionAliases = allowsToSkipThisStage;
+			allowsToSkipThisStage = false;
 		}
+
+
+		// This line below might throw an error if the provided actionAliases is not valid.
+		_examineProvidedActionAliases(actionAliases);
+
 
 		var indexOfThisStage = allStages.length;
 
@@ -230,6 +237,38 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 		thisManagerOfStages[methodName_addStage] = addStage;
 		thisManagerOfStages[methodName_setPreferredNaturalLanguageTo] = setPreferredNaturalLanguageTo;
 		_tryToExposeFirstStageSoThatTheOperatorIsUsable();
+	}
+
+	function _examineProvidedActionAliases(actionAliasesInAllLanguages) {
+		var errorMessage1 = 'At least one alias is required for a stage action to publish as a method.';
+
+		if (!actionAliasesInAllLanguages || typeof actionAliasesInAllLanguages !== 'object') {
+			throw TypeError(errorMessage1);
+		}
+
+		var atLeastOneValidAliasIsProvided = false;
+		for (var language in actionAliasesInAllLanguages) {
+			var actionAliasesInASpecificLanguage = actionAliasesInAllLanguages[language];
+
+			if (actionAliasesInASpecificLanguage && typeof actionAliasesInASpecificLanguage === 'string') {
+				actionAliasesInAllLanguages[language] = [actionAliasesInASpecificLanguage];
+				actionAliasesInASpecificLanguage = actionAliasesInAllLanguages[language];
+			}
+
+			if (!_isAUsableArray(actionAliasesInASpecificLanguage)) continue;
+
+			atLeastOneValidAliasIsProvided = true;
+
+			var isAnUnknownLanguage = !knownLanguagesIndicesSoFar[language];
+			if (isAnUnknownLanguage) {
+				knownLanguagesSoFar.push(language);
+				knownLanguagesIndicesSoFar[language] = true;
+			}
+		}
+
+		if (!atLeastOneValidAliasIsProvided) {
+			throw TypeError(errorMessage1);
+		}
 	}
 
 	function _getActionAliasesBetterInThisLanguage(actionAliasesInAllLanguages, preferredLanguage) {

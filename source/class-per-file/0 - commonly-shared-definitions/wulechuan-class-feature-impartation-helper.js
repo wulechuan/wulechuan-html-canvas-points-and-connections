@@ -9,6 +9,7 @@ window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingual
 
 /**
  * @author 吴乐川 <wulechuan@live.com>
+ * 
  * @example
  * 	function My2DVector() {
  * 		...
@@ -21,19 +22,19 @@ window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingual
  * 	}
  *
  * 	function My2DPoint() {
- * 		wulechuanImpart(My2DVector).as('position2D').to(this);
+ * 		wulechuanImpart.theClass(My2DVector).as('position2D').to(this);
  * 	}
  *
  * 	function My2DParticle() {
- * 		wulechuanImpart(My2DVector).as('position2D').renamedAs('pos').to(this);
+ * 		wulechuanImpart.theClass(My2DVector).as('position2D').renamedAs('pos').to(this);
  *
- * 		wulechuanImpart(My2DVector).as('velocity2D').renamedAs({
+ * 		wulechuanImpart.theClass(My2DVector).as('velocity2D').renamedAs({
  * 			speed: 'velocityLength',
  * 			speed2: 'squareSpeed'
  * 			velocityDirection: 'movingDirection'
  * 		}).to(this);
  *
- * 		wulechuanImpart(My2DVector)
+ * 		wulechuanImpart.theClass(My2DVector)
  * 			.as('position2D')
  * 			.buildAccordingTo({
  * 				x: 3,
@@ -46,7 +47,7 @@ window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingual
  * 			})
  * 			.to(this);
  *
- * 		wulechuanImpart(My2DVector)
+ * 		wulechuanImpart.theClass(My2DVector)
  * 			.usingThisProfile('force2D')
  * 			.withCustomizedPropertyNames({
  * 				strength: 's',
@@ -55,16 +56,21 @@ window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingual
  * 			.to(this);
  * 	}
  *
+ * @example
  * 	My2DParticle.profilesForWulechuanImpartation = {
  * 		default: { instanceChiefName: 'particle2D', ... }
  * 	};
  *
  * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
- *  wulechuanImpart(My2DParticle).to(myLovelyObjectLiteral);
+ *  wulechuanImpart.theClass(My2DParticle).to(myLovelyObjectLiteral);
  */
 
 
+
+
 /**
+ * @author 吴乐川 <wulechuan@live.com>
+ * 
  * This is the factory function to build up the impartation tool,
  * returning some methods which are virtually the same to each other,
  * but in mutliple human languages.
@@ -181,6 +187,8 @@ function createWulechuanImpartMutilingualMethods() {
 
 
 	/**
+	 * @author 吴乐川 <wulechuan@live.com>
+	 * 
 	 * A class, instance of which is the operator
 	 * that remembers several key factors and does the impartation job
 	 * for a given class(a.k.a. a function).
@@ -190,7 +198,8 @@ function createWulechuanImpartMutilingualMethods() {
 	 * and takes over the imartation process afterwards.
 	 *
 	 * @class
-	 * @param {string} usingLanguage
+	 * 
+	 * @param {!string} usingLanguage
 	 */
 	function _WulechuanImpartationOperator(usingLanguage) {
 		var thisOperator = this;

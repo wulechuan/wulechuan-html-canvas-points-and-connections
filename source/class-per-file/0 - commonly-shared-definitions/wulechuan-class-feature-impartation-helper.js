@@ -83,16 +83,17 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	}
  *
  * 	function 二维点() {
- * 		传授.实例对象源于此类(二维矢量).视作('二维位置').予(this);
+ * 		传授(true).实例对象源于此类(二维矢量).视作('二维位置').予(this);
+ * 		// “传授(true)”中的“true”代表即便有错误也不抛出，而仅仅在控制台打印错误记录。
  * 	}
  *
  * 	function 二维粒子() {
- * 		传授.实例对象源于此类(二维矢量)
+ * 		传授().实例对象源于此类(二维矢量)
  * 			.视作('二维位置')
  * 			.且定名为('方位')    // 此例中故意将默认配置中的主名称“位置”改称“方位”。
  * 			.予(this); 
  *
- * 		传授.实例对象源于此类(二维矢量)
+ * 		传授().实例对象源于此类(二维矢量)
  * 			.视作('二维速度')
  * 			.并更名以下属性({
  * 				速率2: '速率之平方'     // 此处有意改称之，以为示例。
@@ -103,7 +104,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 				方向: '移动方向'       // 此处有意将速度之“方向”改称“移动方向”。
  * 			}).予(this);
  *
- * 		传授.实例对象源于此类(二维矢量)
+ * 		传授().实例对象源于此类(二维矢量)
  * 			.视作('二维位置')
  * 			.构建时依据({
  * 				x: 3,
@@ -116,7 +117,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 			})
  * 			.予(this);
  *
- * 		传授.实例对象源于此类(二维矢量)
+ * 		传授().实例对象源于此类(二维矢量)
  * 			.视作('二维力')
  * 			.且设以下直接可用之属性({
  * 				强度: '受力强度',
@@ -134,7 +135,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	};
  *
  * 	var 一个字面量对象用作受体 = { 姓名: '吴乐川', 电子邮件地址: 'wulechuan@live.com' };
- * 	传授.对象(My2DParticle).予(一个字面量对象用作受体);
+ * 	传授().对象(My2DParticle).予(一个字面量对象用作受体);
  * 
  * 
  * 进而不难想见，所谓“普通对象”，亦可被用作传授源体，其属性和方法可传授予“受体”对象。
@@ -144,7 +145,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	};
  *
  * 	var 一个字面量对象用作受体 = { 姓名: '吴乐川', 电子邮件地址: 'wulechuan@live.com' };
- * 	传授.对象(My2DParticle).予(一个字面量对象用作受体);
+ * 	传授().对象(My2DParticle).予(一个字面量对象用作受体);
  * 
  * 
  * 
@@ -161,7 +162,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * Now, add pre-defined profiles for easier impartations.
  * 
  * As one might imagine, a 2d vector can be used in different ways,
- * such as as a 2d position, a 2d force, or a 2d velocity.
+ * such as a 2d position, a 2d force, or a 2d velocity.
  * 
  * Some people love to use abstract across different things.
  * Thus, as an example, they are often happy to use
@@ -216,19 +217,19 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	}
  *
  * 	function My2DPoint() {
- * 		impart.anInstanceOfClass(My2DVector).as('position2D').to(this);
+ * 		impart().anInstanceOfClass(My2DVector).as('position2D').to(this);
  * 	}
  *
  * 	function My2DParticle() {
- * 		impart.anInstanceOfClass(My2DVector).as('position2D').renamedAs('pos').to(this);
+ * 		impart().anInstanceOfClass(My2DVector).as('position2D').renamedAs('pos').to(this);
  *
- * 		impart.anInstanceOfClass(My2DVector).as('velocity2D').renamedAs({
+ * 		impart().anInstanceOfClass(My2DVector).as('velocity2D').renamedAs({
  * 			speed: 'velocityLength',
  * 			speed2: 'squareSpeed'
  * 			velocityDirection: 'movingDirection'
  * 		}).to(this);
  *
- * 		impart.anInstanceOfClass(My2DVector)
+ * 		impart().anInstanceOfClass(My2DVector)
  * 			.as('position2D')
  * 			.buildAccordingTo({
  * 				x: 3,
@@ -241,7 +242,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 			})
  * 			.to(this);
  *
- * 		impart.anInstanceOfClass(My2DVector)
+ * 		impart().anInstanceOfClass(My2DVector)
  * 			.usingThisProfile('force2D')
  * 			.withCustomizedPropertyNames({
  * 				strength: 's',
@@ -261,7 +262,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	};
  *
  * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
- * 	impart.anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
+ * 	impart().anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
  * 
  * 
  * One can imagine that an object literal can also treated
@@ -295,19 +296,19 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 
-	var methodNames_pickAClass_zhCN = [
+	var methodNames_anInstanceOfClass_zhCN = [
 		'实例对象源于此类'
 	];
-	var methodNames_pickAClass_enUS = [
+	var methodNames_anInstanceOfClass_enUS = [
 		'anInstanceOfClass'
 	];
 
 
 
-	var methodNames_pickAnObject_zhCN = [
+	var methodNames_theObject_zhCN = [
 		'对象'
 	];
-	var methodNames_pickAnObject_enUS = [
+	var methodNames_theObject_enUS = [
 		'theObject'
 	];
 
@@ -442,6 +443,7 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 		var theConstructionOptions;
 		var allImpartationProfiles;
 
+		var theSourceObject;
 		var usedProfile;
 		var usedPropertyNamesCustomization = {};
 
@@ -453,9 +455,9 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 			'en-US': methodName_startToImpart
 		});
 
-		stagesOfClassRoute.addStage(pickAClass, {
-			'zh-CN': methodNames_pickAClass_zhCN,
-			'en-US': methodNames_pickAClass_enUS
+		stagesOfClassRoute.addStage(anInstanceOfClass, {
+			'zh-CN': methodNames_anInstanceOfClass_zhCN,
+			'en-US': methodNames_anInstanceOfClass_enUS
 		});
 
 		stagesOfClassRoute.addStage(usingThisProfile, true, {
@@ -471,6 +473,11 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 		stagesOfClassRoute.addStage(withCustomizedPropertyNames, true, {
 			'zh-CN': methodNames_withCustomizedPropertyNames_zhCN,
 			'en-US': methodNames_withCustomizedPropertyNames_enUS
+		});
+
+		stagesOfClassRoute.addStage(addDirectAccessingProperties, true, {
+			'zh-CN': methodNames_addDirectAccessingProperties_zhCN,
+			'en-US': methodNames_addDirectAccessingProperties_enUS
 		});
 
 		stagesOfClassRoute.addStage(towards, {
@@ -490,14 +497,19 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 			'en-US': methodName_startToImpart
 		});
 
-		stagesOfObjectRoute.addStage(pickAnObject, {
-			'zh-CN': methodNames_pickAnObject_zhCN,
-			'en-US': methodNames_pickAnObject_enUS
+		stagesOfObjectRoute.addStage(theObject, {
+			'zh-CN': methodNames_theObject_zhCN,
+			'en-US': methodNames_theObject_enUS
 		});
 
 		stagesOfObjectRoute.addStage(withCustomizedPropertyNames, true, {
 			'zh-CN': methodNames_withCustomizedPropertyNames_zhCN,
 			'en-US': methodNames_withCustomizedPropertyNames_enUS
+		});
+
+		stagesOfObjectRoute.addStage(addDirectAccessingProperties, true, {
+			'zh-CN': methodNames_addDirectAccessingProperties_zhCN,
+			'en-US': methodNames_addDirectAccessingProperties_enUS
 		});
 
 		stagesOfObjectRoute.addStage(towards, {
@@ -567,15 +579,20 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 		/**
-		 * Step 1 - to accept the function treated as a class, instances of which will be imparted.
+		 * This stage simply provides two possible routes:
+		 * the object route and the class route.
+		 */
+		function startToImpart(shouldNotThrowErrors) {
+			shouldThrowErrors = !shouldNotThrowErrors;
+		}
+
+
+		/**
+		 * To accept the function treated as a class, instances of which will be imparted.
 		 *
 		 * @param {!function} theGivenFunction
-		 * @param {?boolean} shouldNotThrowErrors
 		 */
-		function startToImpart(theGivenFunction, shouldNotThrowErrors) {
-			shouldThrowErrors = !shouldNotThrowErrors;
-
-
+		function anInstanceOfClass(theGivenFunction) {
 			if (typeof theGivenFunction !== 'function') {
 				switch (usingLanguage) {
 					case languageCode_zhCN:
@@ -620,12 +637,47 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 		}
 
 		/**
-		 * Step 2 - to accept the name of the desired variant to use.
+		 * To accept the function treated as a class, instances of which will be imparted.
+		 *
+		 * @param {!object} theSourceObject
+		 */
+		function theObject(sourceObject) {
+			if (_the(sourceObject).isNeitherAnObjectNorAnArray()) {
+				switch (usingLanguage) {
+					case languageCode_zhCN:
+						currentErrorMessage =
+							'首个参数必须为一个非空对象，可以为数组对象。'+
+							'\n而实际提供的首个参数是一个'+typeof sourceObject + '。'
+							;
+						break;
+
+					case languageCode_enUS:
+						currentErrorMessage =
+							'The provided source must be an object that is not a null. '+
+							'An array object is allowed. '+
+							'\nWhat\'s actually provided was of type: '+
+							typeof theGivenFunction + '.'
+							;
+						break;
+				}
+
+				_dealWithCurrentError();
+			} else {
+				theSourceObject = sourceObject;
+			}
+
+
+			allImpartationProfiles = {};
+			// allImpartationProfiles[propertyName_defaultProfile] = null;
+		}
+
+		/**
+		 * To accept the name of the desired variant to use.
 		 *
 		 * @param {!string} variantName
 		 */
 		function usingThisProfile(profileName) {
-			if (errorAlreadyOcurred) return thisOperator;
+			if (errorAlreadyOcurred) return;
 
 			var _foundProfile;
 			var _theFoundProfileIsInvalid = true;
@@ -669,17 +721,24 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 		 * @param {?object} constructionOptions
 		 */
 		function buildAccordingTo(constructionOptions) {
+			if (errorAlreadyOcurred) return;
+
 			theConstructionOptions = constructionOptions;
 		}
 
 		function withCustomizedPropertyNames(propertyNamesCustomization) {
-			if (errorAlreadyOcurred) return thisOperator;
+			if (errorAlreadyOcurred) return;
 
 			if (_the(propertyNamesCustomization).isNotAValidObject()) {
 				errorAlreadyOcurred = true;
 			} else {
 				usedPropertyNamesCustomization = propertyNamesCustomization;
 			}
+		}
+
+		function addDirectAccessingProperties(directAccessingPropertyDefinitions) {
+			if (errorAlreadyOcurred) return;
+			
 		}
 
 		function towards(granteeOfMethods, granteeOfProperties) {
@@ -732,7 +791,7 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 				var shouldSkip = false;
 				if (shouldSkip) continue;
 
-				var customizedImpartationMethod = _configurations[attributeName];
+				var customizedImpartationMethod = usedProfile[attributeName];
 
 				if (typeof customizedImpartationMethod === 'function') {
 					customizedImpartationMethod(intanceObjectToImpart, granteeOfMethods);

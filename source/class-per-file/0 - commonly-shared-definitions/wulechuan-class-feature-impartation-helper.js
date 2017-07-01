@@ -58,7 +58,7 @@
 	 * I also suggest but not force to take at most only one argument per stage method.
 	 * Besides, this is a good way, I personally think, to make statements look more like
 	 * natrual language sentences.
-	 * Let's take another example:
+	 * Let\'s take another example:
 	 * @example
 	 * 	var gift = I
 	 * 		.drawOutKey(theKeyInstance)
@@ -66,7 +66,15 @@
 	 * 		.driveTo(destination)
 	 * 		.acceptGiftFrom(anotherPerson);
 	 * 
-	 * In th example above, ... // to be completed
+	 * In the example above, the custom program that consumes the object "I"
+	 * is *NOT* able to invoke methods of the "I" disobeying the pre-designed order.
+	 * Before the invocation of the "unlockBike" method, the subsequence ones
+	 * such as "driveTo" are not even available to the program.
+	 * Also, assuming the "acceptGiftFrom" method happens to be the last one that is
+	 * added as a stage, then the returning value, no matter what it is,
+	 * will be transferred to the "outside world", which is the custom program mentioned above.
+	 * While those returning values of any other methods are simply ignored
+	 * inside of the invokaction chain scopes.
 	 * 
 	 * Usually you want to use an instance of this helper class inside another class,
 	 * to decorate each and every instance of the later class.

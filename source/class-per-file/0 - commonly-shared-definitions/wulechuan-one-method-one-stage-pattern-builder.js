@@ -32,7 +32,7 @@
  * 	var 结果 = 对象.方法函数1(参数1).方法函数2(参数2).方法函数3(参数3)；
  * 
  * ”，并建议（但不强迫）每个阶段仅接受至多一个参数。
- * 此方式亦有助于构造更为逼近自然语言之程序语句。
+ * 此方式亦有助于构造更为逼近自然语言之计算机程序语句。
  * 例如：
  * @example
  * 	var 礼物 = 我.掏出钥匙(钥匙实例).解锁自行车(自行车实例).骑行至(目的地).获取礼物自(赠与人);
@@ -76,8 +76,10 @@
  * 	var result = anObject.method1(arg1).method2(arg2).method3(arg3);
  * 
  * I also suggest but not force to take at most only one argument per stage method.
- * Besides, this is a good way, I personally think, to make statements look more like
- * natrual language sentences.
+ * Besides, this is a good way, I personally think,
+ * to help making computer programming statements
+ * look more like natrual language sentences.
+ * 
  * Let''s take another example:
  * @example
  * 	var gift = I

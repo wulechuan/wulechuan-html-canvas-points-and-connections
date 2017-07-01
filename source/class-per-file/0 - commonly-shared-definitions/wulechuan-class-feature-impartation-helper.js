@@ -78,19 +78,18 @@
 	 * 
 	 * Usually you want to use an instance of this helper class inside another class,
 	 * to decorate each and every instance of the later class.
-	 * @param {!object} stagesOperator
 	 * 
 	 * @example
 	 * 	function Soldier() {
 	 * 
 	 * 		var stagesBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
 	 * 
-	 * 		stagesBuilder.addStage(methodAsStage1, {
+	 * 		stagesBuilder.addStage(methodAsStage1, true, {
 	 * 			'zh-CN': [ '第一步', '预备', '准备' ],
 	 * 			'en-US': [ 'prepare', 'getReady', 'methodAsStage1', 'firstOfAll' ]
 	 * 		});
 	 * 
-	 * 		stagesBuilder.addStage(shoot, {
+	 * 		stagesBuilder.addStage(shoot, true, {
 	 * 			'zh-CN': [ '发射子弹', '开火', '开火！' ],
 	 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
 	 * 		});
@@ -138,6 +137,8 @@
 	 * 
 	 * 	// If below were in English: var killedEnemiesBySecondSoldier = secondSoldier.getReady().fire();
 	 * 	var 被打死的敌人 = secondSoldier.预备().开火！();
+	 * 
+	 * @param {!object} stagesOperator - The object to apply staged-methods pattern to.
 	 */
 	function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 		var methodName_addStage = 'addStage';
@@ -164,9 +165,13 @@
 
 		/**
 		 * 
-		 * @param {!object} stageAction 
-		 * @param {!boolean} isAnOptionalStage 
-		 * @param {!object} actionAliases 
+		 * @param {!object} stageAction - A function that will be added to the operator as its method at correct stage.
+		 * @param {!boolean} isAnOptionalStage - True means the stage being added is an optional stage, so that the method
+		 * 	after this optional stage should also be exposed at the previous stage of this optional stage.
+		 * @param {!object} actionAliases - An object that takes several arrays, each contains aliases in a specific language.
+		 * -	@param {?array} actionAliases['zh-CN'] - An array that contains aliases of the method that presenting a stage, in Chinese.
+		 * -	@param {?array} actionAliases[languageCode1] - An array that contains aliases of the method that presenting a stage, in a specific language.
+		 * -	@param {?array} actionAliases[languageCode2] - An array that contains aliases of the method that presenting a stage, in a specific language.
 		 */
 		function addStage(stageAction, allowsToSkipThisStage, actionAliases) {
 			if (typeof stageAction !== 'function') {
@@ -218,10 +223,10 @@
 			return newStage;
 		}
 
-		function addFirstStage(stageAction, actionAliases) {
+		function addFirstStage(stageAction, alwaysFalse, actionAliases) {
 			// The first stage is ALWAYS required,
 			// it doesn't make any sense if it is allowed to skip.
-			addStage(stageAction, true, actionAliases);
+			addStage(stageAction, false, actionAliases);
 			thisManagerOfStages[methodName_addStage] = addStage;
 			thisManagerOfStages[methodName_setPreferredNaturalLanguageTo] = setPreferredNaturalLanguageTo;
 			_tryToExposeFirstStageSoThatTheOperatorIsUsable();
@@ -305,7 +310,7 @@
 			var endingExclusiveStageIndex = allStages.length;
 
 			var si, stage;
-			for (si = startingStageIndex; si < allStages.length; si++) {
+			for (si = startingStageIndex; si < allStages.length-1; si++) {
 				stage = allStages[si];
 				if (!stage.allowsToSkip) {
 					endingExclusiveStageIndex = si+1;
@@ -535,22 +540,22 @@
 
 			var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternTo(thisOperator);
 
-			stagesForMethods.addStage(startToImpart, {
+			stagesForMethods.addStage(startToImpart, false, {
 				'zh-CN': methodName_startToImpart,
 				'en-US': methodName_startToImpart
 			});
 
-			stagesForMethods.addStage(usingThisProfile, {
+			stagesForMethods.addStage(usingThisProfile, true, {
 				'zh-CN': methodNames_usingThisProfile_zhCN,
 				'en-US': methodNames_usingThisProfile_enUS
 			});
 
-			stagesForMethods.addStage(buildAccordingTo, {
+			stagesForMethods.addStage(buildAccordingTo, true, {
 				'zh-CN': methodNames_buildAccordingTo_zhCN,
 				'en-US': methodNames_buildAccordingTo_enUS
 			});
 
-			stagesForMethods.addStage(withCustomizedPropertyNames, {
+			stagesForMethods.addStage(withCustomizedPropertyNames, true, {
 				'zh-CN': methodNames_withCustomizedPropertyNames_zhCN,
 				'en-US': methodNames_withCustomizedPropertyNames_enUS
 			});

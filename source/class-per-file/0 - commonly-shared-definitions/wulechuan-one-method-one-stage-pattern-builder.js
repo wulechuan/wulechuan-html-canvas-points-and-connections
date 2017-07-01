@@ -16,6 +16,10 @@
  * 每当“执行链”行至这些可省略的步骤的前一步骤时，凡代表这些可省略步骤后第一个必经步骤之方法函数
  * 亦被一通曝露，否则，“可跳过”步骤名不副实。
  * 最末步骤则为特例，因其负责返回执行链之结果。何况，“曝露其后续步骤”亦无从谈起。
+ * 例如：
+ * @example
+ * 	设有“步骤丙”、“步骤丁”及“步骤戊”三者，其中丁为“可省略”步骤，其余两者为“必经”步骤。
+ * 	则，当丙结束时，非但代表丁的方法函数会被曝露，戊之对应方法函数亦会一同被曝露。
  * 
  * 一言以蔽之，大体上，不执行完早期方法函数，则后续方法函数是隐藏的，无从执行。据此，各个方法之调用次序无从违背。
  * 
@@ -34,10 +38,10 @@
  * 	var 礼物 = 我.掏出钥匙(钥匙实例).解锁自行车(自行车实例).骑行至(目的地).获取礼物自(赠与人);
  * 
  * 在上例中，依据“不执行完早期方法函数，则后续方法函数无从执行”之规则，
- * 客户程序调用对象“我”之方法时，不允许违背规定顺序。
+ * 客户程序调用对象“我”之方法函数时，不允许违背规定顺序。
  * 若不调用“解锁自行车”，或虽调用但有错误抛出，则无法进入“骑行至”方法函数。
  * 假定其中“获取礼物自”方法函数，是应用该程序设计模式时最末添加的阶段所对应之方法，
- * 那么，该原始方法函数之返回值回被传递病最终返回至“外界”；
+ * 那么，该原始方法函数之返回值回被传递并最终返回至“外界”；
  * 而其余各阶段则之原始函数的返回值均会被忽略于调用链内部。
  * 
  * 通常，我建议奖该程序设计模式应用于“类”之定义内（针对JavaScript，亦即应用于另一个函数内部），
@@ -199,9 +203,9 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 				'which not only does some demonded work '+
 				'but also exposes subsequence stages '+
 				'and hides past stages for a given stages operator. '+
-				'Among them, the demonded work is provided by you developer, '+
+				'Among them, the demonded work is provided by you developer via the first argument, '+
 				'So, when defining a stage, the first argument must be a function, '+
-				'\nwhile the input was of type "'+typeof stageAction+'".'
+				'\nwhile the provided value was of type "'+typeof stageAction+'".'
 			);
 		}
 

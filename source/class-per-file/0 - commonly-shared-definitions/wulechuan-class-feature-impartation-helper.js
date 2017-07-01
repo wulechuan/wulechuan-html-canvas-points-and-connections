@@ -47,9 +47,23 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
  * These type of people turn to choose different terms for different things,
  * even though the core concept behind these things are exactly the same.
  * Still take the 2d vector as an example, they might be happier with:
- * -	for a 2d force, expose "force2D.strength" instead of "force2D.length";
- * -	for a 2d velocity, expose "velocity2D.speed" instead of "velocity2D.speed";
+ * -	for a 2d force, expose "force.strength" instead of "force2D.length";
+ * -	for a 2d velocity, expose "velocity.speed" instead of "velocity2D.speed";
  * -	for a 2d position, does not expose the "length" at all.
+ * 
+ * What's more, there are cases in which we want to impart some properties or methods
+ * directly into a grantee object. Which means, we want not only:
+ * @example
+ * 	particle2d.force.strength
+ * 	particle2d.velocity.speed
+ * 
+ * but also:
+ * @example
+ * 	particle2d.forceStrength // an imparted property directly under the grantee itself
+ * 	particle2d.speed // another imparted property directly under the grantee itself
+ * 
+ * In this situation, keeping the same term for properties of each and every imparted properties
+ * is impossible. We need a solution.
  * 
  * This is why I design so-called "profiles" for
  * a class(a function in JavaScript world, of course).
@@ -59,9 +73,9 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
  * 
  * @example
  * 	My2DVector.wulechuanImpartationProfiles = {
- * 		position2D: { instanceChiefName: 'position', ... },
- * 		force2D:    { instanceChiefName: 'force', ... },
- * 		velocity2D: { instanceChiefName: 'velocity', ... }
+ * 		position2D: { __chiefName__: 'position', ... },
+ * 		force2D:    { __chiefName__: 'force', ... },
+ * 		velocity2D: { __chiefName__: 'velocity', ... }
  * 	}
  *
  * 	function My2DPoint() {

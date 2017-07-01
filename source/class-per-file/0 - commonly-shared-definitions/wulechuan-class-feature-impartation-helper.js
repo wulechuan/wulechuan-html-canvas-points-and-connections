@@ -6,9 +6,34 @@
 	 * 每个方法函数对应一个执行阶段。
 	 * 自此时起，仅第一个执行阶段所对应的方法函数被公开（或称“曝露”），
 	 * 其余后续阶段之方法函数均被隐藏，直至其各自前导执行阶段完成，这些方法函数才会陆续公开。
+	 * 一言以蔽之，不执行完早期方法函数，则后续方法函数是隐藏的，无从执行。从而严格限定各个方法之调用次序。
+	 * 
+	 * 任何“执行阶段”，凡非最终者，其对应之方法函数均返回“受体”对象本身，以实现对其各个方法函数的链式调用；
+	 * 而最终“执行阶段”则负责返回程序作者对执行整个执行链所期望之结果。
+	 * 
+	 * 此番改造之根本目的在于，将传统的形如：
+	 * @example
+	 * 	“var 结果 = 对象.传统方法函数(参数1, 参数2, 参数3);”
+	 * 
+	 * 之调用方式，转变为我之特色方式，形如：
+	 * @example
+	 * 	“var 结果 = 对象.方法函数1(参数1).方法函数2(参数2).方法函数3(参数3)；”，
+	 * 
+	 * 并建议（但不强迫）每个阶段仅接受至多一个参数。
+	 * 此方式亦有助于构造更为逼近自然语言之程序语句。
+	 * 例如：
+	 * @example
+	 * 	var 礼物 = 我.掏出钥匙(钥匙实例).解锁自行车(自行车实例).骑行至(目的地).获取礼物自(赠与人);
+	 * 
+	 * 在上例中，依据“不执行完早期方法函数，则后续方法函数无从执行”之规则，
+	 * 客户程序调用对象“我”之方法时，不允许违背规定顺序。
+	 * 若不调用“解锁自行车”，或虽调用但有错误抛出，则无法进入“骑行至”方法函数。
+	 * 假定其中“获取礼物自”方法函数，是应用该程序设计模式时最末添加的阶段所对应之方法，
+	 * 那么，该原始方法函数之返回值回被传递病最终返回至“外界”；
+	 * 而其余各阶段则之原始函数的返回值均会被忽略于调用链内部。
 	 * 
 	 * 通常，我建议奖该程序设计模式应用于“类”之定义内（针对JavaScript，亦即应用于另一个函数内部），
-	 * 以此方式自动改造每一个由该类构造的实例对象。
+	 * 以此方式自动改造每一个由该类构造的实例对象。见例。
 	 * 
 	 * Instances of this helper class is to apply a programming pattern design by me
 	 * to a given object.
@@ -17,12 +42,38 @@
 	 * And from then on, only the first method is exposed.
 	 * All other methods are hidden untill the first method gets invoked and not thrown.
 	 * 
+	 * Any stage other than the last one, when invoked,
+	 * returns the instance itself, so that we can chain the invocations.
+	 * This way we can easily design natural-language-like invocation chain.
+	 * 
+	 * The purpose of applying such a pattern to a given object,
+	 * is to change the traditional statement like:
+	 * @example
+	 * 	var result = anObject.traditionalMethod(arg1, arg2, arg3);
+	 * 
+	 * into another format as:
+	 * @example
+	 * 	var result = anObject.method1(arg1).method2(arg2).method3(arg3);
+	 * 
+	 * I also suggest but not force to take at most only one argument per stage method.
+	 * Besides, this is a good way, I personally think, to make statements look more like
+	 * natrual language sentences.
+	 * Let's take another example:
+	 * @example
+	 * 	var gift = I
+	 * 		.drawOutKey(theKeyInstance)
+	 * 		.unlockBike(theBikeInstance)
+	 * 		.driveTo(destination)
+	 * 		.acceptGiftFrom(anotherPerson);
+	 * 
+	 * In th example above, ... // to be completed
+	 * 
 	 * Usually you want to use an instance of this helper class inside another class,
 	 * to decorate each and every instance of the later class.
 	 * @param {!object} stagesOperator
 	 * 
 	 * @example
-	 * 	function myLovelyClass() {
+	 * 	function Soldier() {
 	 * 
 	 * 		var stagesBuilder = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(this);
 	 * 
@@ -32,7 +83,7 @@
 	 * 		});
 	 * 
 	 * 		stagesBuilder.addStage(shoot, {
-	 * 			'zh-CN': [ '发射', '开火', '开火！' ],
+	 * 			'zh-CN': [ '发射子弹', '开火', '开火！' ],
 	 * 			'en-US': [ 'shoot', 'shootThem', 'fire' ]
 	 * 		});
 	 * 
@@ -52,31 +103,35 @@
 	 * 		}
 	 * 	}
 	 * 
-	 * 	var myLovelyInstance = new myLovelyClass;
+	 * 	var firstSoldier = new Soldier;
 	 * 	
-	 * 	// Now the "myLovelyInstance" object has only methods
-	 * 	// which are mapped to the "methodAsStage1" function,
-	 * 	// in all three Chinese aliases, of course.
-	 * 	// The methods which are mapped to the "shoot" function
+	 * 	// Now the "firstSoldier" object has only those methods
+	 * 	// which are mapped onto the "methodAsStage1" function,
+	 * 	// in all three Chinese aliases, of course,
+	 * 	// since the usingLanguage has been set to 'zh-CN'.
+	 * 	// Those which are mapped onto the "shoot" function
 	 * 	// is *NOT* available at this time.
 	 * 
-	 * 	myLovelyInstance.第一步();
+	 * 	firstSoldier.第一步(); // In English, this should have been firstSoldier.prepare();
+	 * 
+	 * 	// Note that: firstSoldier === firstSoldier.第一步(),
+	 * 	// because non-terminal stage methods return the decorared object itself.
 	 * 
 	 * 	// From now on, the three aliases for the "methodAsStage1"
-	 * 	// are hidden (removed from the instance),
+	 * 	// are hidden (removed from the instance), since the stage1 is now a past stage.
 	 * 	// while the three aliases for the "shoot" function are available now.
 	 * 
+	 * 	// If below were in English: var killedEnemies = firstSoldier.shoot();
+	 * 	var killedEnemies = firstSoldier.发射子弹();
 	 * 
-	 * 
-	 * 
-	 * 	Note that any stage, as long as it is *NOT* the last stage, when invoked,
-	 * 	returns the instance itself, so that we can chain the invocations.
-	 * 	This way we can easily design natural-language-like invocation chain.
 	 * @example:
-	 * 	var mySecondeInstance = new myLovelyClass;
-	 * 	var 被打死的敌人 = myLovelyInstance.预备().开火！();
+	 * 	// Chaining invocations:
+	 * 	var secondSoldier = new Soldier;
+	 * 
+	 * 	// If below were in English: var killedEnemiesBySecondSoldier = secondSoldier.getReady().fire();
+	 * 	var 被打死的敌人 = secondSoldier.预备().开火！();
 	 */
-	function WulechuanApplyOneStageOneMethodProgrammingPatternFor(stagesOperator) {
+	function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 		var methodName_addStage = 'addStage';
 		var methodName_setPreferredNaturalLanguageTo = 'setPreferredNaturalLanguageTo';
 		var methodName_startFromFirstStage = 'startFromFirstStage';
@@ -470,7 +525,7 @@
 			var usedPropertyNamesCustomization = {};
 
 
-			var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(thisOperator);
+			var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternTo(thisOperator);
 
 			stagesForMethods.addStage(startToImpart, {
 				'zh-CN': methodName_startToImpart,

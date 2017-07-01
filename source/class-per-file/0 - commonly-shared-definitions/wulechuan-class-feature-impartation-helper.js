@@ -18,8 +18,8 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * @description
  * # 简介
  * 
- * 此为一所谓“工厂函数”，用于构建一个对象，该对象保护若干属性，每一属性均为一个函数。
- * 这些函数之功能之逻辑上严格等同，但却操持不同人类语言，以便熟悉这些语言之一者采用。
+ * 此为一所谓“工厂函数”，用于构建一个对象。该对象包含若干属性，每一属性均为一函数。
+ * 这些函数之功能在逻辑上严格等同，但却操持不同人类语言，以便熟悉这些语言之一者采用。
  * 
  * # Introduction
  * 
@@ -31,38 +31,108 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 
  * 
  * ## 范例（ 简体中文）
- * 首先，创建一个类（即一个函数）。稍后将由该类创建一个实例对象，并把实例对象的属性“传授予”某个“受体”对象。
+ * 首先，创建一个类（即一个函数）。稍后将由该类创建一个实例对象，
+ * 并把实例对象的属性“传授予”某个称之为“受体”度对象。
  * 
  * @example
  * 	function 二维矢量() {
  * 		// 此处为具体内容
  * 	}
  * 
- * 接着，不妨定义一些所谓“变体”，以便日后遵照一些个性化要求“传授”该类之实例对象的属性及方法。
+ * 接着，不妨定义一些所谓“变体”，以便日后遵照一些个性化要
+ * 求“传授”该类之实例对象的属性及方法。
  * 为什么要定义这些“变体”呢？有何益处？且听分解。
  * 
- * 在上例中，二维矢量之实例可以表达多种意图，或者说可以有多种变体。诸如“二维位置”、“二维力矢量”及“二维速度矢量”等。
+ * 在上例中，二维矢量之实例可以表达多种意图，或者说可以有多种变体。
+ * 诸如“二维位置”、“二维力矢量”及“二维速度矢量”等。
  * 
- * 变形程序来反映现实世界之现象或关系时，有人喜欢抽象，尽可能高度的抽象，并为其所达高度而自豪。
- * 针对本例，此类人可能完全满足于将“模”一词通用于“二维位置”、“二维力”以及“二维速度”，以表达这些矢量之“大小”。
- * 具体为：“二维力.模”、“二维速度.模”，乃至“二维位置”也同样有“模”，虽然用处不大。
+ * 变形程序来反映现实世界之现象或关系时，有人喜欢抽象——尽可能高
+ * 度的抽象，并为其所达高度而自豪。
+ * 针对本例，此类人可能完全满足于将“模”一词通用于“二维位置”、
+ * “二维力”以及“二维速度”，以表达这些矢量之“大小”。
+ * 具体为：“二维力.模”、“二维速度.模”，
+ * 乃至“二维位置”也同样有“模”，虽然用处不大。
  * 
- * 另有一些人，包括笔者，则热衷于尽可能模仿真实事物的特性，乃至命名习惯，以求更容易将其所写程序对应于其所欲描述之真实。
- * 于本例而言，这类人或许更希望在其代码中如此表达：
+ * 另有一些人，包括笔者，则热衷于尽可能模仿真实事物的特性，
+ * 乃至命名习惯，以求更容易将其所写程序对应于所欲描述之真实。
+ * 于本例而言，这类人或许更愿意在其代码中如此表达：
  * -	于“二维力”，将“模”更名为“强度”，即有“二维力.强度”；
  * -	于“二维速度”，将“模”更名为“速率”，即有“二维速度.速率”；
  * -	于“二维位置”，隐去“模”属性，不允许外界访问；
  * 
- * 由此可见，统一的幕后概念，在不同场合应有不同表达。这些不同表达即为所谓“变体”。
+ * 由此可见，统一的幕后概念，在不同场合应有不同表达。这些
+ * 不同表达即为所谓“变体”。
  * 
- * 另外，有时，为使用之方便，亦须将“获受”的属性或方法至今挂载于受体对象下。形如：
- * 既有“二维粒子.受力.强度”，同时亦有“二维粒子.受力强度”；
- * 既有“二维粒子.速度.速率”，同时亦有“二维粒子.速率”；
+ * 另外，有时，为使用之方便，亦须将“获受”的属性或方法
+ * 直接挂载于受体对象下。形如：
+ * 	既有“二维粒子.受力.强度”，同时亦有“二维粒子.受力强度”；
+ * 	既有“二维粒子.速度.速率”，同时亦有“二维粒子.速率”；
  * 如此种种，以为方便。
  * 
- * 此种情形之下，仍坚持令所有“获受”之实例各自保留原版属性名称，显然行不通。
- * 程序员当然可以手工解决此问题。只是此时虽然容易，却颇为繁琐。
+ * 此种情形之下，仍坚持令所有“获受”之实例在“受体”上各自保留
+ * 原版属性名称，显然行不通。
+ * 程序员当然可以手工解决此问题。
+ * 只是，此事虽然容易，却颇为令人厌烦。
  * 为行方便，应有更佳方案自动实现之。
+ * 
+ * @example
+ * 	二维矢量.wulechuanImpartationProfiles = {
+ * 		'二维位置': { __chiefName__: '位置', ... },
+ * 		'二维力':   { __chiefName__: '受力', ... },
+ * 		'二维速度': { __chiefName__: '速度', ... }
+ * 	}
+ *
+ * 	function 二维点() {
+ * 		传授.实例对象源于此类(二维矢量).视作('二维位置').予(this);
+ * 	}
+ *
+ * 	function 二维粒子() {
+ * 		传授.实例对象源于此类(二维矢量).视作('二维位置').且定名为('方位').予(this); // 此例中故意将“位置”改称“方位”。
+ *
+ * 		传授.实例对象源于此类(二维矢量)
+ * 			.视作('二维速度')
+ * 			.并更名以下属性({
+ * 				速率2: '速率之平方'     // 此处有意改称之，以为示例。
+ * 			})
+ * 			.且设以下直接可用之属性({
+ * 				速率: '',             // 此处采用默认名称即可，因而取值留空。
+ * 				速率2: '速率之平方'	// 此处采有意改称之，以为示例。
+ * 				方向: '移动方向'       // 此处有意将速度之“方向”改称“移动方向”。
+ * 			}).予(this);
+ *
+ * 		传授.实例对象源于此类(二维矢量)
+ * 			.视作('二维位置')
+ * 			.构建时依据({
+ * 				x: 3,
+ * 				y: -19
+ * 			})
+ * 			.并更名以下属性({
+ * 				__chiefName__: '中心点',
+ * 				x: '水平位置',
+ * 				y: '垂直位置'
+ * 			})
+ * 			.予(this);
+ *
+ * 		传授.实例对象源于此类(二维矢量)
+ * 			.视作('二维力')
+ * 			.且设以下直接可用之属性({
+ * 				强度: '受力强度',
+ * 				方向: '受力方向'
+ * 			})
+ * 			.予(this);
+ * 	}
+ * 
+ * 
+ * 不难想见，将非源于特定“类”的所谓“普通”对象，
+ * 如“明文对象（一译‘字面量对象’）”，传授予某“受体”对象亦是可行的。
+ * “受体”可因此获得“传授源”的属性与方法函数。
+ * @example
+ * 	二维粒子.wulechuanImpartationProfiles = {
+ * 		default: { __chiefName__: '二维粒子', ... }
+ * 	};
+ *
+ * 	var 一个字面量对象用作受体 = { 姓名: '吴乐川', 电子邮件地址: 'wulechuan@live.com' };
+ * 	传授.对象(My2DParticle).予(一个字面量对象用作受体);
  * 
  * 
  * 
@@ -173,11 +243,11 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * Thus the object literal gains new properties and methods.
  * @example
  * 	My2DParticle.wulechuanImpartationProfiles = {
- * 		default: { instanceChiefName: 'particle2D', ... }
+ * 		default: { __chiefName__: 'particle2D', ... }
  * 	};
  *
  * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
- * 	impart.anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
+ * 	impart.theObject(My2DParticle).to(myLovelyObjectLiteral);
  */
 function createWulechuanImpartationFunctionsInMultipleLanguages() {
 	var languageCode_zhCN = 'zh-CN';
@@ -195,7 +265,7 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 	var methodNames_pickAClass_zhCN = [
-		'类'
+		'实例对象源于此类'
 	];
 	var methodNames_pickAClass_enUS = [
 		'anInstanceOfClass'
@@ -213,7 +283,7 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 	var methodNames_usingThisProfile_zhCN = [
-		'并视作'
+		'视作'
 	];
 	var methodNames_usingThisProfile_enUS = [
 		'as',
@@ -223,7 +293,7 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 	var methodNames_buildAccordingTo_zhCN = [
-		'之实例，构建时依据'
+		'构建时依据'
 	];
 	var methodNames_buildAccordingTo_enUS = [
 		'buildAccordingTo'
@@ -232,11 +302,21 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 	var methodNames_withCustomizedPropertyNames_zhCN = [
-		'并变更以下属性'
+		'且定名为',     // 用于仅更改主名称（__chiefName__）时较为符合汉语习惯。
+		'并更名以下属性' // 用于更改多种属性名称时，较为符合汉语习惯。
 	];
 	var methodNames_withCustomizedPropertyNames_enUS = [
-		'withCustomizedPropertyNames',
-		'renamedAs'
+		'renamedAs',
+		'withCustomizedPropertyNames'
+	];
+
+
+
+	var methodNames_addDirectAccessingProperties_zhCN = [
+		'且设以下直接可用之属性',
+	];
+	var methodNames_addDirectAccessingProperties_enUS = [
+		'addDirectAccessingProperties'
 	];
 
 
@@ -248,7 +328,7 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 	var propertyName_wulechuanImpartationProfiles = 'wulechuanImpartationProfiles';
 	var propertyName_defaultProfile = 'default';
-	var propertyName_instanceChiefName = 'instanceChiefName';
+	var propertyName_instanceChiefName = '__chiefName__';
 
 
 

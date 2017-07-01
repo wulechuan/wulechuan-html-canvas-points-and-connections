@@ -1,15 +1,23 @@
 /**
  * @author 吴乐川 <wulechuan@live.com>
  * 
- * 凡由本辅助类构建的实例对象，可用于将本人设计的一种程序设计模式应用至另一“受体”对象。
- * “受体”因而被改造，所涉及的其各个方法函数均被依次对应于各自的所谓“执行阶段”，
- * 每个方法函数对应一个执行阶段。
- * 自此时起，仅第一个执行阶段所对应的方法函数被公开（或称“曝露”），
- * 其余后续阶段之方法函数均被隐藏，直至其各自前导执行阶段完成，这些方法函数才会陆续公开。
- * 一言以蔽之，不执行完早期方法函数，则后续方法函数是隐藏的，无从执行。从而严格限定各个方法之调用次序。
+ * ## 中文介绍
  * 
- * 任何“执行阶段”，凡非最终者，其对应之方法函数均返回“受体”对象本身，以实现对其各个方法函数的链式调用；
- * 而最终“执行阶段”则负责返回程序作者对执行整个执行链所期望之结果。
+ * 凡由本辅助类构建的实例对象，可用于将本人设计的一种程序设计模式应用至另一“受体”对象。
+ * “受体”因而被改造，所涉及的其各个方法函数均被依次对应于各自的所谓“执行阶段”，亦可称“步骤”，
+ * 每个方法函数对应一个步骤。
+ * 自此时起，仅第一个步骤所对应的方法函数被公开（或称“曝露”），
+ * 其余后续步骤之方法函数均被隐藏，直至各自前导执行阶段完成，这些方法函数才会陆续公开。
+ * 
+ * 任何“步骤，凡非最终者，其对应之方法函数均返回“受体”对象本身，以实现对其各个方法函数的链式调用；
+ * 而最末步骤则负责返回程序作者对执行整个执行链所期望之结果。
+ * 
+ * 某些步骤允许被设置为“可省略”，或称“可跳过”。不可省略的步骤则可称为“必经”步骤。
+ * 每当“执行链”行至这些可省略的步骤的前一步骤时，凡代表这些可省略步骤后第一个必经步骤之方法函数
+ * 亦被一通曝露，否则，“可跳过”步骤名不副实。
+ * 最末步骤则为特例，因其负责返回执行链之结果。何况，“曝露其后续步骤”亦无从谈起。
+ * 
+ * 一言以蔽之，大体上，不执行完早期方法函数，则后续方法函数是隐藏的，无从执行。据此，各个方法之调用次序无从违背。
  * 
  * 此番改造之根本目的在于，将传统的形如：“
  * @example
@@ -35,6 +43,10 @@
  * 通常，我建议奖该程序设计模式应用于“类”之定义内（针对JavaScript，亦即应用于另一个函数内部），
  * 以此方式自动改造每一个由该类构造的实例对象。见例。
  * 
+ * 
+ * 
+ * ## Introduction
+ * 
  * Instances of this helper class is to apply a programming pattern design by me
  * to a given object.
  * The object is thus decorated, so that, all involved methods of the object
@@ -45,6 +57,10 @@
  * Any stage other than the last one, when invoked,
  * returns the instance itself, so that we can chain the invocations.
  * This way we can easily design natural-language-like invocation chain.
+ * 
+ * All stages might be configured as skippable, a.k.a. optional.
+ * While for the last stage, this configuration is simply ignored.
+ * Cause anyway we need to invoke it to return what we want.
  * 
  * The purpose of applying such a pattern to a given object,
  * is to change the traditional statement like:
@@ -175,7 +191,7 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 	 * -	@param {?array} actionAliases[languageCode2] - An array that contains aliases of the method that presenting a stage, in a specific language.
 	 * -	@param {?array} actionAliases['zh-CN'] - An array that contains aliases of the method that presenting a stage, in Chinese.
 	 */
-	function addStage(stageAction, allowsToSkipThisStage, actionAliases) {
+	function addStage(stageAction, thisStageCanBeSkipped, actionAliasesInAllLanguages) {
 		if (typeof stageAction !== 'function') {
 			throw TypeError(
 				'A so-called stage is basically a function, '+
@@ -191,23 +207,23 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 
 
 		if (arguments.length === 2) {
-			actionAliases = allowsToSkipThisStage;
-			allowsToSkipThisStage = false;
+			actionAliasesInAllLanguages = thisStageCanBeSkipped;
+			thisStageCanBeSkipped = false;
 		}
 
 
 		// This line below might throw an error if the provided actionAliases is not valid.
-		_examineProvidedActionAliases(actionAliases);
+		_examineProvidedActionAliases(actionAliasesInAllLanguages);
 
 
 		var indexOfThisStage = allStages.length;
 
-		actionAliases.stageIndex = indexOfThisStage;
-		actionAliases.usingLanguage = '';
+		actionAliasesInAllLanguages.stageIndex = indexOfThisStage;
+		actionAliasesInAllLanguages.usingLanguage = '';
 
 		var newStage = {
-			actionAliases: actionAliases,
-			allowsToSkip: allowsToSkipThisStage,
+			actionAliases: actionAliasesInAllLanguages,
+			allowsToSkip: thisStageCanBeSkipped,
 			action: function () {
 				currentStageIndex = indexOfThisStage;
 				var resultOfTheStageAction = stageAction.apply(stagesOperator, arguments);
@@ -230,10 +246,8 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 		return newStage;
 	}
 
-	function addFirstStage(stageAction, alwaysFalse, actionAliases) {
-		// The first stage is ALWAYS required,
-		// it doesn't make any sense if it is allowed to skip.
-		addStage(stageAction, false, actionAliases);
+	function addFirstStage(stageAction, thisStageCanBeSkipped, actionAliasesInAllLanguages) {
+		addStage(stageAction, thisStageCanBeSkipped, actionAliasesInAllLanguages);
 		thisManagerOfStages[methodName_addStage] = addStage;
 		thisManagerOfStages[methodName_setPreferredNaturalLanguageTo] = setPreferredNaturalLanguageTo;
 		_tryToExposeFirstStageSoThatTheOperatorIsUsable();
@@ -241,12 +255,15 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 
 	function _examineProvidedActionAliases(actionAliasesInAllLanguages) {
 		var errorMessage1 = 'At least one alias is required for a stage action to publish as a method.';
+		var atLeastOneValidAliasIsProvided = false;
 
 		if (!actionAliasesInAllLanguages || typeof actionAliasesInAllLanguages !== 'object') {
-			throw TypeError(errorMessage1);
+			throw TypeError(
+				'The action aliases argument must be an object, '+
+				'containing at least one alias which is marked as in a specified language.'
+			);
 		}
 
-		var atLeastOneValidAliasIsProvided = false;
 		for (var language in actionAliasesInAllLanguages) {
 			var actionAliasesInASpecificLanguage = actionAliasesInAllLanguages[language];
 

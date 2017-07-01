@@ -191,7 +191,7 @@ function createWulechuanImpartMutilingualMethods() {
 
 		var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternTo(thisOperator);
 
-		stagesForMethods.addStage(startToImpart, false, {
+		stagesForMethods.addStage(startToImpart, {
 			'zh-CN': methodName_startToImpart,
 			'en-US': methodName_startToImpart
 		});

@@ -2,8 +2,8 @@
 	WulechuanApplyOneStageOneMethodProgrammingPatternTo
 */
 
-var nameOfEntranceMethod_zhCN = '吴乐川：拟传授类';
-var nameOfEntranceMethod_enUS = 'wulechuanImpartAnInstanceOf';
+var nameOfEntranceMethod_zhCN = '吴乐川：传授';
+var nameOfEntranceMethod_enUS = 'wulechuanImpart';
 
 window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingualMethods();
 
@@ -149,18 +149,22 @@ function createWulechuanImpartMutilingualMethods() {
 
 
 
-
-
-	var sliceArray = Array.prototype.slice;
-
 	var wulechuanImpartMultilingualMethodsHost = {};
+
 	wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_zhCN] =
-		impart.bind(null, languageCode_zhCN);
+		function() {
+			return impart(languageCode_zhCN);
+		};
 
 	wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_enUS] =
-		impart.bind(null, languageCode_enUS);
+		function() {
+			return impart(languageCode_enUS);
+		};
 
 	return wulechuanImpartMultilingualMethodsHost;
+
+
+
 
 
 
@@ -175,11 +179,9 @@ function createWulechuanImpartMutilingualMethods() {
 	 * and then calls the "startToImpart" method of the instance
 	 * to complete desired impartation process.
 	 */
-	function impart() {
-		var args = sliceArray.apply(arguments);
-		var usingLanguage = args.unshift();
+	function impart(usingLanguage) {
 		var operator = new _WulechuanImpartationOperator(usingLanguage);
-		return operator.startToImpart.apply(operator, args);
+		return operator.startToImpart();
 	}
 
 
@@ -195,7 +197,7 @@ function createWulechuanImpartMutilingualMethods() {
 	 *
 	 * Each time the entrance method is invoked,
 	 * a new instance of this class is created,
-	 * and takes over the imartation process afterwards.
+	 * which then takes over the impartation process afterwards.
 	 *
 	 * @class
 	 * 
@@ -248,6 +250,7 @@ function createWulechuanImpartMutilingualMethods() {
 			'en-US': methodNames_towards_enUS
 		});
 
+		stagesOfClassRoute.setPreferredNaturalLanguageTo(usingLanguage);
 
 
 
@@ -273,6 +276,11 @@ function createWulechuanImpartMutilingualMethods() {
 			'zh-CN': methodNames_towards_zhCN,
 			'en-US': methodNames_towards_enUS
 		});
+
+		stagesOfObjectRoute.setPreferredNaturalLanguageTo(usingLanguage);
+
+
+
 
 
 

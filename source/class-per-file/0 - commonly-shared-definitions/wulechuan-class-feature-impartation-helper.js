@@ -21,6 +21,7 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
 
 /**
  * @author 吴乐川 <wulechuan@live.com>
+ * @requires @wulechuan/apply-one-stage-one-method-pattern
  * 
  * This is the factory function to build up the impartation tool,
  * a.k.a. the object to expose, which is discribed above.
@@ -200,8 +201,6 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 	/**
-	 * @requires @wulechuan/apply-one-stage-one-method-pattern
-	 * 
 	 * The function, the wrapped versions of which are exposed.
 	 * Wrapping is essentially for providing this function
 	 * in multiple human languages.

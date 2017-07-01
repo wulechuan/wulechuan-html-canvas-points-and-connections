@@ -12,14 +12,14 @@
 	 * 而最终“执行阶段”则负责返回程序作者对执行整个执行链所期望之结果。
 	 * 
 	 * 此番改造之根本目的在于，将传统的形如：
-	 * @example
-	 * 	“var 结果 = 对象.传统方法函数(参数1, 参数2, 参数3);”
+	 * “@example
+	 * 	var 结果 = 对象.传统方法函数(参数1, 参数2, 参数3);
 	 * 
-	 * 之调用方式，转变为我之特色方式，形如：
-	 * @example
-	 * 	“var 结果 = 对象.方法函数1(参数1).方法函数2(参数2).方法函数3(参数3)；”，
+	 * ”之调用方式，转变为我之特色方式，形如：
+	 * “@example
+	 * 	var 结果 = 对象.方法函数1(参数1).方法函数2(参数2).方法函数3(参数3)；
 	 * 
-	 * 并建议（但不强迫）每个阶段仅接受至多一个参数。
+	 * ”，并建议（但不强迫）每个阶段仅接受至多一个参数。
 	 * 此方式亦有助于构造更为逼近自然语言之程序语句。
 	 * 例如：
 	 * @example
@@ -58,7 +58,7 @@
 	 * I also suggest but not force to take at most only one argument per stage method.
 	 * Besides, this is a good way, I personally think, to make statements look more like
 	 * natrual language sentences.
-	 * Let\'s take another example:
+	 * Let''s take another example:
 	 * @example
 	 * 	var gift = I
 	 * 		.drawOutKey(theKeyInstance)

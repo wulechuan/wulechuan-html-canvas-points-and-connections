@@ -16,6 +16,13 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * -	<https://github.com/wulechuan/javascript-wulechuan-apply-one-stage-one-method-pattern>
  * 
  * @description
+ * # 简介
+ * 
+ * 此为一所谓“工厂函数”，用于构建一个对象，该对象保护若干属性，每一属性均为一个函数。
+ * 这些函数之功能之逻辑上严格等同，但却操持不同人类语言，以便熟悉这些语言之一者采用。
+ * 
+ * # Introduction
+ * 
  * This is the factory function to build up the impartation tool,
  * a.k.a. the object to expose and use, which is discribed below.
  * 
@@ -23,7 +30,46 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 						in different language versions. {@link ~wulechuanImpartationFunctionsHost}
  * 
  * 
+ * ## 范例（ 简体中文）
+ * 首先，创建一个类（即一个函数）。稍后将由该类创建一个实例对象，并把实例对象的属性“传授予”某个“受体”对象。
  * 
+ * @example
+ * 	function 二维矢量() {
+ * 		// 此处为具体内容
+ * 	}
+ * 
+ * 接着，不妨定义一些所谓“变体”，以便日后遵照一些个性化要求“传授”该类之实例对象的属性及方法。
+ * 为什么要定义这些“变体”呢？有何益处？且听分解。
+ * 
+ * 在上例中，二维矢量之实例可以表达多种意图，或者说可以有多种变体。诸如“二维位置”、“二维力矢量”及“二维速度矢量”等。
+ * 
+ * 变形程序来反映现实世界之现象或关系时，有人喜欢抽象，尽可能高度的抽象，并为其所达高度而自豪。
+ * 针对本例，此类人可能完全满足于将“模”一词通用于“二维位置”、“二维力”以及“二维速度”，以表达这些矢量之“大小”。
+ * 具体为：“二维力.模”、“二维速度.模”，乃至“二维位置”也同样有“模”，虽然用处不大。
+ * 
+ * 另有一些人，包括笔者，则热衷于尽可能模仿真实事物的特性，乃至命名习惯，以求更容易将其所写程序对应于其所欲描述之真实。
+ * 于本例而言，这类人或许更希望在其代码中如此表达：
+ * -	于“二维力”，将“模”更名为“强度”，即有“二维力.强度”；
+ * -	于“二维速度”，将“模”更名为“速率”，即有“二维速度.速率”；
+ * -	于“二维位置”，隐去“模”属性，不允许外界访问；
+ * 
+ * 由此可见，统一的幕后概念，在不同场合应有不同表达。这些不同表达即为所谓“变体”。
+ * 
+ * 另外，有时，为使用之方便，亦须将“获受”的属性或方法至今挂载于受体对象下。形如：
+ * 既有“二维粒子.受力.强度”，同时亦有“二维粒子.受力强度”；
+ * 既有“二维粒子.速度.速率”，同时亦有“二维粒子.速率”；
+ * 如此种种，以为方便。
+ * 
+ * 此种情形之下，仍坚持令所有“获受”之实例各自保留原版属性名称，显然行不通。
+ * 程序员当然可以手工解决此问题。只是此时虽然容易，却颇为繁琐。
+ * 为行方便，应有更佳方案自动实现之。
+ * 
+ * 
+ * 
+ * 
+ * ## An example in English:
+ * First, let's write a function as a class.
+ * Later, we will impart properties of an instance of this class to some grantee.
  * 
  * @example
  * 	function My2DVector() {
@@ -34,6 +80,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 
  * As one might imagine, a 2d vector can be used in different ways,
  * such as as a 2d position, a 2d force, or a 2d velocity.
+ * 
  * Some people love to use abstract across different things.
  * Thus, as an example, they are often happy to use
  * the single term "legnth" across all possible applications,
@@ -49,6 +96,18 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * -	for a 2d velocity, expose "velocity.speed" instead of "velocity2D.speed";
  * -	for a 2d position, does not expose the "length" at all.
  * 
+ * All these means that despite the shared concept behinds, we need different
+ * ways to express things in different siuations. And these ways,
+ * I call them "profiles" of a concept.
+ * A profile describs how a core/raw class should be imparted to a grantee.
+ * Take the example above, the "position2d", "force2d", as well as the "velocity2d"
+ * are all impartation profiles of the My2DVector class.
+ * 
+ * Note:
+ * 	Being a non-native English speaker, I might NOT pick the
+ * 	accurate word by using the term "profile".
+ * 	And I'm glad to recieve suggestions upon this.
+ * 
  * What's more, there are cases in which we want to impart some properties or methods
  * directly into a grantee object. Which means, we want not only:
  * @example
@@ -61,13 +120,11 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	particle2d.speed // another imparted property directly under the grantee itself
  * 
  * In this situation, keeping the same term for properties of each and every imparted properties
- * is impossible. We need a solution.
+ * is impossible.
+ * As programmers, we can solve these problems by hands. But that's not a perfect way.
+ * So we need a solution, hopefully a slightly better one.
  * 
- * This is why I design so-called "profiles" for
- * a class(a function in JavaScript world, of course).
- * A profile describs how a core/raw class should be imparted to a grantee.
- * Take the example above, the "position2d", "force2d", as well as the "velocity2d"
- * are all impartation profiles of the My2DVector class.
+ * 
  * 
  * @example
  * 	My2DVector.wulechuanImpartationProfiles = {

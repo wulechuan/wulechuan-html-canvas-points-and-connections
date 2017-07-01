@@ -12,12 +12,15 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
 
 /**
  * @author 吴乐川 <wulechuan@live.com>
- * @requires @wulechuan/apply-one-stage-one-method-pattern <https://github.com/wulechuan/javascript-wulechuan-apply-one-stage-one-method-pattern>
+ * @requires @wulechuan/apply-one-stage-one-method-pattern
+ * -	<https://github.com/wulechuan/javascript-wulechuan-apply-one-stage-one-method-pattern>
  * 
+ * @description
  * This is the factory function to build up the impartation tool,
  * a.k.a. the object to expose and use, which is discribed below.
  * 
- * @returns {object} - The object that hosts basically the same methods but in different language versions.
+ * @returns {object} - The object that hosts basically the same methods but
+ * 						in different language versions. {@link ~wulechuanImpartMultilingualMethodsHost}
  * 	{
  * 		'传授': <the wrapped impart function, taking the 'zh-CN' as the preferred language>,
  * 		'impart': <the wrapped impart function, taking the 'en-US' as the preferred language>
@@ -199,6 +202,11 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 
+	/**
+	 * @namespace <wulechuanImpartMultilingualMethodsHost>
+	 * @property {function} 传授 - 此为impart函数的包裹函数，其将impart函数的优选语言定位“简体中文”。
+	 * @property {function} impart - the wrapped impart function, taking the 'en-US' as the preferred language
+	 */
 	var wulechuanImpartMultilingualMethodsHost = {};
 
 	wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_zhCN] =

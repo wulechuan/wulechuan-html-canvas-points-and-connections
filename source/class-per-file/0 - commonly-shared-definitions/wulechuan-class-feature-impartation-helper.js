@@ -30,7 +30,7 @@
 	 * 
 	 * 
 	 * 		// This line below is essential and required.
-	 * 		stagesBuilder.setUsedNaturalLanguageTo('zh-CN');
+	 * 		stagesBuilder.setPreferredNaturalLanguageTo('zh-CN');
 	 * 
 	 * 
 	 * 
@@ -69,7 +69,7 @@
 	 */
 	function WulechuanApplyOneStageOneMethodProgrammingPatternFor(stagesOperator) {
 		var methodName_addStage = 'addStage';
-		var methodName_setUsedNaturalLanguageTo = 'setUsedNaturalLanguageTo';
+		var methodName_setPreferredNaturalLanguageTo = 'setPreferredNaturalLanguageTo';
 		var methodName_startFromFirstStage = 'startFromFirstStage';
 
 		var thisManagerOfStages = this;
@@ -78,10 +78,16 @@
 		var currentStageIndex = NaN;
 		var usingLanguage;
 
-		thisManagerOfStages[methodName_addStage] = defineFirstStage;
-		thisManagerOfStages[methodName_setUsedNaturalLanguageTo] = setUsedNaturalLanguageTo;
+		thisManagerOfStages[methodName_addStage] = addFirstStage;
+		thisManagerOfStages[methodName_setPreferredNaturalLanguageTo] = setPreferredNaturalLanguageTo;
 
 
+
+
+
+		function _isAUsableArray(subject) {
+			return Array.isArray(subject) && subject.length > 1;
+		}
 
 
 		/**
@@ -132,41 +138,53 @@
 				}
 			};
 
+			actionAliases.stageIndex = indexOfThisStage;
+			actionAliases.usingLanguage = '';
+
 			allStages.push(newStage);
 
 			return newStage;
 		}
 
-		function defineFirstStage(stageAction, actionAliases) {
+		function addFirstStage(stageAction, actionAliases) {
 			// The first stage is ALWAYS required,
 			// it doesn't make any sense if it is allowed to skip.
 			addStage(stageAction, true, actionAliases);
 			thisManagerOfStages[methodName_addStage] = addStage;
-			thisManagerOfStages[methodName_setUsedNaturalLanguageTo] = setUsedNaturalLanguageTo;
+			thisManagerOfStages[methodName_setPreferredNaturalLanguageTo] = setPreferredNaturalLanguageTo;
 			_tryToExposeFirstStageSoThatTheOperatorIsUsable();
 		}
 
-		function setUsedNaturalLanguageTo(language) {
+		function _getActionAliasesBetterInThisLanguage(actionAliasesInAllLanguages, preferredLanguage) {
+			var foundActionAliases = actionAliasesInAllLanguages[preferredLanguage];
+			if (_isAUsableArray(foundActionAliases)) {
+				actionAliasesInAllLanguages.usingLanguage = preferredLanguage;
+				return foundActionAliases;
+			}
+
+			for (var language in actionAliasesInAllLanguages) {
+				foundActionAliases = actionAliasesInAllLanguages[language];
+				if (_isAUsableArray(foundActionAliases)) {
+					actionAliasesInAllLanguages.usingLanguage = language;
+					return foundActionAliases;
+				}
+			}
+
+			if (!_isAUsableArray(foundActionAliases)) {
+				throw ReferenceError(
+					'No valid aliases in any language for stage '+
+					actionAliasesInAllLanguages.stageIndex+
+					'!'
+				);
+			}
+		}
+
+		function setPreferredNaturalLanguageTo(language) {
 			if (!language) {
 				throw TypeError('Must specify the natural language to use.');
 			}
 			usingLanguage = language;
 			_tryToExposeFirstStageSoThatTheOperatorIsUsable();
-		}
-
-		function _tryToExposeFirstStageSoThatTheOperatorIsUsable() {
-			if (allStages.length < 1) return;
-			if (!usingLanguage) return;
-
-			// Expose it with the common name.
-			thisManagerOfStages[methodName_startFromFirstStage] = startFromFirstStage;
-
-			// Also expose it with specified aliases of first stage.
-			var actionAliasesInCurrentLanuageToExpose = allStages[0].actionAliases[usingLanguage];
-			for (var ai=0; ai< actionAliasesInCurrentLanuageToExpose.length; ai++) {
-				var alias = actionAliasesInCurrentLanuageToExpose[ai];
-				thisManagerOfStages[alias] = startFromFirstStage;
-			}
 		}
 
 		function startFromFirstStage() {
@@ -181,42 +199,63 @@
 			currentStage.action.apply(stagesOperator, arguments);
 
 			if (currentStageIndex === 0) {
-				_exposeMethodsOfAllStagesStartingWithIndex(1);
+				_exposeMethodsOfAllStagesStartingWithIndexTillFirstRequiredStage(1);
 			}
 		}
 
 		function _hideMethodsOfAllPastOrSkippedStages() {
 			for (var si = 0; si <= currentStageIndex; si++) {
 				var stage = allStages[si];
-				var actionAliasesInCurrentLanuage = stage.actionAliases[usingLanguage];
-				for (var ai = 0; ai < actionAliasesInCurrentLanuage.language; ai++) {
-					var alias = actionAliasesInCurrentLanuage[ai];
+				var actionAliasesInAllLanguages = stage.actionAliases;
+				var actionAliasesInActuallyUsingLanuage =
+					actionAliasesInAllLanguages[actionAliasesInAllLanguages.usingLanguage];
+
+				for (var ai = 0; ai < actionAliasesInActuallyUsingLanuage.length; ai++) {
+					var alias = actionAliasesInActuallyUsingLanuage[ai];
 					delete stagesOperator[alias];
 				}
 			}
 		}
 
-		function _exposeMethodsOfAllStagesStartingWithIndex(startingStageIndex) {
-			var allForwardsOptionalStagesTillFirstRequiredStage = [];
+		function _tryToExposeFirstStageSoThatTheOperatorIsUsable() {
+			if (allStages.length < 1) return;
+			if (!usingLanguage) return;
+
+			// Expose the method of the first stage with the common name,
+			// a.k.a. the "startFromFirstStage" by default configuration.
+			thisManagerOfStages[methodName_startFromFirstStage] = startFromFirstStage;
+
+			// Also expose it with aliases.
+			_exposeMethodsOfStagesWithIndexBetween(0, 1);
+		}
+
+		function _exposeMethodsOfAllStagesStartingWithIndexTillFirstRequiredStage(startingStageIndex) {
+			var endingExclusiveStageIndex = allStages.length;
 
 			var si, stage;
 			for (si = startingStageIndex; si < allStages.length; si++) {
 				stage = allStages[si];
-				allForwardsOptionalStagesTillFirstRequiredStage.push(stage);
 				if (!stage.allowsToSkip) {
+					endingExclusiveStageIndex = si+1;
 					break;
 				}
 			}
 
-			for (si = 0; si < allForwardsOptionalStagesTillFirstRequiredStage.length; si++) {
-				stage = allForwardsOptionalStagesTillFirstRequiredStage[si];
+			_exposeMethodsOfStagesWithIndexBetween(startingStageIndex, endingExclusiveStageIndex);
+		}
 
-				var stageActionToExpose = stage.action;
+		function _exposeMethodsOfStagesWithIndexBetween(startingStageIndex, endingExclusiveStageIndex) {
+			for (var si = startingStageIndex; si < endingExclusiveStageIndex; si++) {
+				var stage = allStages[si];
 
-				var actionAliasesInCurrentLanuage = stage.actionAliases[usingLanguage];
-				for (var ai = 0; ai < actionAliasesInCurrentLanuage.language; ai++) {
-					var alias = actionAliasesInCurrentLanuage[ai];
-					stagesOperator[alias] = stageActionToExpose;
+				var actionToExpose = stage.action;
+
+				var actionAliasesInActuallyUsingLanuage =
+					_getActionAliasesBetterInThisLanguage(stage.actionAliases, usingLanguage);
+
+				for (var ai = 0; ai < actionAliasesInActuallyUsingLanuage.length; ai++) {
+					var alias = actionAliasesInActuallyUsingLanuage[ai];
+					stagesOperator[alias] = actionToExpose;
 				}
 			}
 		}

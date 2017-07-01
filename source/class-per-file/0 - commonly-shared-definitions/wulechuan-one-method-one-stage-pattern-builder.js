@@ -202,6 +202,9 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 
 		var indexOfThisStage = allStages.length;
 
+		actionAliases.stageIndex = indexOfThisStage;
+		actionAliases.usingLanguage = '';
+
 		var newStage = {
 			actionAliases: actionAliases,
 			allowsToSkip: allowsToSkipThisStage,
@@ -221,9 +224,6 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 				}
 			}
 		};
-
-		actionAliases.stageIndex = indexOfThisStage;
-		actionAliases.usingLanguage = '';
 
 		allStages.push(newStage);
 
@@ -278,21 +278,31 @@ function WulechuanApplyOneStageOneMethodProgrammingPatternTo(stagesOperator) {
 			return foundActionAliases;
 		}
 
-		for (var language in actionAliasesInAllLanguages) {
+		var aValidAlternativeHasBeenFound = false;
+		var language;
+		for (language in actionAliasesInAllLanguages) {
 			foundActionAliases = actionAliasesInAllLanguages[language];
 			if (_isAUsableArray(foundActionAliases)) {
+				aValidAlternativeHasBeenFound = true;
 				actionAliasesInAllLanguages.usingLanguage = language;
-				return foundActionAliases;
+				break;
 			}
 		}
 
-		if (!_isAUsableArray(foundActionAliases)) {
+		if ( ! aValidAlternativeHasBeenFound) {
 			throw ReferenceError(
 				'No valid aliases in any language for stage '+
 				actionAliasesInAllLanguages.stageIndex+
 				'!'
 			);
 		}
+
+		console.warn('For stage', actionAliasesInAllLanguages.stageIndex,
+			', none of the aliases is in the preferred language ("'+preferredLanguage+'").',
+			'\nInstead, aliases in "'+language+'" are exposed as methods.'
+		);
+
+		return foundActionAliases;
 	}
 
 	function setPreferredNaturalLanguageTo(language) {

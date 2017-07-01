@@ -87,7 +87,10 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	}
  *
  * 	function 二维粒子() {
- * 		传授.实例对象源于此类(二维矢量).视作('二维位置').且定名为('方位').予(this); // 此例中故意将“位置”改称“方位”。
+ * 		传授.实例对象源于此类(二维矢量)
+ * 			.视作('二维位置')
+ * 			.且定名为('方位')    // 此例中故意将默认配置中的主名称“位置”改称“方位”。
+ * 			.予(this); 
  *
  * 		传授.实例对象源于此类(二维矢量)
  * 			.视作('二维速度')
@@ -123,9 +126,18 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	}
  * 
  * 
- * 不难想见，将非源于特定“类”的所谓“普通”对象，
- * 如“明文对象（一译‘字面量对象’）”，传授予某“受体”对象亦是可行的。
- * “受体”可因此获得“传授源”的属性与方法函数。
+ * 尽管上例均以另一“类”作为“受体”，准确的说是以该类之任何实例分别作为受体，
+ * 采用所谓“普通对象”，如“明文对象（一译‘字面量对象’）”，作为“受体”对象亦是可行的。
+ * @example
+ * 	二维粒子.wulechuanImpartationProfiles = {
+ * 		default: { __chiefName__: '二维粒子', ... }
+ * 	};
+ *
+ * 	var 一个字面量对象用作受体 = { 姓名: '吴乐川', 电子邮件地址: 'wulechuan@live.com' };
+ * 	传授.对象(My2DParticle).予(一个字面量对象用作受体);
+ * 
+ * 
+ * 进而不难想见，所谓“普通对象”，亦可被用作传授源体，其属性和方法可传授予“受体”对象。
  * @example
  * 	二维粒子.wulechuanImpartationProfiles = {
  * 		default: { __chiefName__: '二维粒子', ... }
@@ -237,9 +249,11 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 			})
  * 			.to(this);
  * 	}
- *
  * 
- * Obviously, we can impart something into an object literal as well.
+ * 
+ * Although we were using other classes like "My2DParticle"
+ * as the grantees, it shouldn't be suprising that we
+ * can impart things into an object literal as well.
  * Thus the object literal gains new properties and methods.
  * @example
  * 	My2DParticle.wulechuanImpartationProfiles = {
@@ -247,7 +261,24 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * 	};
  *
  * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
- * 	impart.theObject(My2DParticle).to(myLovelyObjectLiteral);
+ * 	impart.anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
+ * 
+ * 
+ * One can imagine that an object literal can also treated
+ * as an impartation source object, just like those who
+ * are instantiated from a given class.
+ * Still, the grantee can be any other object,
+ * be it an instance, or another object literal.
+ * @example
+ * 	var myObjectAsImpartationSource = {
+ * 		property1: 'I love SOFTIMAGE XSI',
+ * 		isAbleToFly: true
+ * 	};
+ *
+ * 	var myObjectLiteralAsGrantee = { name: '吴乐川', email: 'wulechuan@live.com' };
+ * 	impart
+ * 		.theObject(myObjectAsImpartationSource)
+ * 		.to(myObjectLiteralAsGrantee);
  */
 function createWulechuanImpartationFunctionsInMultipleLanguages() {
 	var languageCode_zhCN = 'zh-CN';

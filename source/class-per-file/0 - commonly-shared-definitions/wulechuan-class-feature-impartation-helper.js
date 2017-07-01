@@ -2,19 +2,10 @@
 	WulechuanApplyOneStageOneMethodProgrammingPatternTo
 */
 
-var nameOfEntranceMethod_zhCN = '吴乐川：传授';
-var nameOfEntranceMethod_enUS = 'wulechuanImpart';
+var nameOfEntranceMethod_zhCN = '传授';
+var nameOfEntranceMethod_enUS = 'impart';
 
-/**
- * The exposed object that hosts basically the same methods but in different language versions.
- * That is, the object looks like this:
- * @example
- * 	{
- * 		'吴乐川：传授': <a function, taking the 'zh-CN' as the preferred language>,
- * 		'wulechuanImpart': <a function, taking the 'en-US' as the preferred language>
- * 	}
- */
-window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMultipleLanguages();
+window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsInMultipleLanguages();
 
 
 
@@ -23,9 +14,19 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
  * @author 吴乐川 <wulechuan@live.com>
  * @requires @wulechuan/apply-one-stage-one-method-pattern <https://github.com/wulechuan/javascript-wulechuan-apply-one-stage-one-method-pattern>
  * 
- * 
  * This is the factory function to build up the impartation tool,
- * a.k.a. the object to expose, which is discribed above.
+ * a.k.a. the object to expose and use, which is discribed below.
+ * 
+ * @returns {object} - The object that hosts basically the same methods but in different language versions.
+ * 	{
+ * 		'传授': <the wrapped impart function, taking the 'zh-CN' as the preferred language>,
+ * 		'impart': <the wrapped impart function, taking the 'en-US' as the preferred language>
+ * 	}
+ * 
+ * 
+ * 
+ * 
+ * 
  * 
  * @example
  * 	function My2DVector() {
@@ -79,19 +80,19 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
  * 	}
  *
  * 	function My2DPoint() {
- * 		wulechuanImpart.anInstanceOfClass(My2DVector).as('position2D').to(this);
+ * 		impart.anInstanceOfClass(My2DVector).as('position2D').to(this);
  * 	}
  *
  * 	function My2DParticle() {
- * 		wulechuanImpart.anInstanceOfClass(My2DVector).as('position2D').renamedAs('pos').to(this);
+ * 		impart.anInstanceOfClass(My2DVector).as('position2D').renamedAs('pos').to(this);
  *
- * 		wulechuanImpart.anInstanceOfClass(My2DVector).as('velocity2D').renamedAs({
+ * 		impart.anInstanceOfClass(My2DVector).as('velocity2D').renamedAs({
  * 			speed: 'velocityLength',
  * 			speed2: 'squareSpeed'
  * 			velocityDirection: 'movingDirection'
  * 		}).to(this);
  *
- * 		wulechuanImpart.anInstanceOfClass(My2DVector)
+ * 		impart.anInstanceOfClass(My2DVector)
  * 			.as('position2D')
  * 			.buildAccordingTo({
  * 				x: 3,
@@ -104,7 +105,7 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
  * 			})
  * 			.to(this);
  *
- * 		wulechuanImpart.anInstanceOfClass(My2DVector)
+ * 		impart.anInstanceOfClass(My2DVector)
  * 			.usingThisProfile('force2D')
  * 			.withCustomizedPropertyNames({
  * 				strength: 's',
@@ -113,13 +114,16 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
  * 			.to(this);
  * 	}
  *
+ * 
+ * Obviously, we can impart something into an object literal as well.
+ * Thus the object literal gains new properties and methods.
  * @example
  * 	My2DParticle.wulechuanImpartationProfiles = {
  * 		default: { instanceChiefName: 'particle2D', ... }
  * 	};
  *
  * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
- * 	wulechuanImpart.anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
+ * 	impart.anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
  */
 function createWulechuanImpartationFunctionsInMultipleLanguages() {
 	var languageCode_zhCN = 'zh-CN';
@@ -242,14 +246,16 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 	 * for a given class(a.k.a. a function) or an object.
 	 *
 	 * Each time the entrance method is invoked,
-	 * a new instance of this operator class is created,
+	 * a new instance object of this operator class is created,
 	 * which then takes over the impartation process afterwards.
+	 * 
 	 * If the operator is used through its class impartation route,
 	 * an instance object of the provided class is created
-	 * via the new operator, and this instance is the object
-	 * to impart properties from;
+	 * via the javascript "new" operator, and this instance is
+	 * the object to impart properties from;
+	 * 
 	 * if otherwise the object route is taken,
-	 * the object itself it the one to impart properties from.
+	 * the provided input object itself it the one to impart properties from.
 	 *
 	 * @class
 	 * 

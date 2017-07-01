@@ -1,10 +1,19 @@
 	/**
 	 * @author 吴乐川 <wulechuan@live.com>
 	 * 
+	 * 凡由本辅助类构建的实例对象，可用于将本人设计的一种程序设计模式应用至另一“受体”对象。
+	 * “受体”因而被改造，所涉及的其各个方法函数均被依次对应于各自的所谓“执行阶段”，
+	 * 每个方法函数对应一个执行阶段。
+	 * 自此时起，仅第一个执行阶段所对应的方法函数被公开（或称“曝露”），
+	 * 其余后续阶段之方法函数均被隐藏，直至其各自前导执行阶段完成，这些方法函数才会陆续公开。
+	 * 
+	 * 通常，我建议奖该程序设计模式应用于“类”之定义内（针对JavaScript，亦即应用于另一个函数内部），
+	 * 以此方式自动改造每一个由该类构造的实例对象。
+	 * 
 	 * Instances of this helper class is to apply a programming pattern design by me
 	 * to a given object.
-	 * The object is thus decorated, so that, all methods of the object are mapped into
-	 * so-called stages, each method a stage.
+	 * The object is thus decorated, so that, all involved methods of the object
+	 * are mapped into so-called stages, each method a stage.
 	 * And from then on, only the first method is exposed.
 	 * All other methods are hidden untill the first method gets invoked and not thrown.
 	 * 
@@ -222,7 +231,7 @@
 			if (!usingLanguage) return;
 
 			// Expose the method of the first stage with the common name,
-			// a.k.a. the "startFromFirstStage" by default configuration.
+			// a.k.a. the "startFromFirstStage" according to the default configuration.
 			thisManagerOfStages[methodName_startFromFirstStage] = startFromFirstStage;
 
 			// Also expose it with aliases.
@@ -343,35 +352,59 @@
 	 * but in mutliple human languages.
 	 */
 	function createWulechuanImpartMutilingualMethods() {
-		// This method name below will NOT be public
-		// because we are wrapping it with an outer function,
+		var languageCode_zhCN = 'zh-CN';
+		var languageCode_enUS = 'en-US';
+
+
+
+		// This method name below, which is the first method to invoke,
+		// will NOT be public.
+		// Because we are wrapping it with an outer function,
 		// so that we can easily decide the using langugae.
 		// Thus, only one alias is enough for it to use inside this scope.
-		var methodName_startToImpart = 'startToImpart';
+		var methodName_startToImpart = ['startToImpart'];
 
-		var methodName_usingThisProfile_zhCN0 = '并视作';
-		var methodName_usingThisProfile_enUS0 = 'as';
-		var methodName_usingThisProfile_enUS1 = 'usingThisProfile';
 
-		var methodName_buildAccordingTo_zhCN0 = '之实例，构建时依据';
-		var methodName_buildAccordingTo_enUS0 = 'buildAccordingTo';
 
-		var methodName_withCustomizedPropertyNames_zhCN0 = '并变更以下属性';
-		var methodName_withCustomizedPropertyNames_enUS0 = 'withCustomizedPropertyNames';
-		var methodName_withCustomizedPropertyNames_enUS1 = 'renamedAs';
+		var methodNames_usingThisProfile_zhCN = [
+			'并视作'
+		];
+		var methodNames_usingThisProfile_enUS = [
+			'as',
+			'usingThisProfile'
+		];
 
-		var methodName_towards_zhCN0 = '予';
-		var methodName_towards_enUS0 = 'to';
+
+
+		var methodNames_buildAccordingTo_zhCN = [
+			'之实例，构建时依据'
+		];
+		var methodNames_buildAccordingTo_enUS = [
+			'buildAccordingTo'
+		];
+
+
+
+		var methodNames_withCustomizedPropertyNames_zhCN = [
+			'并变更以下属性'
+		];
+		var methodNames_withCustomizedPropertyNames_enUS = [
+			'withCustomizedPropertyNames',
+			'renamedAs'
+		];
+
+
+
+		var methodNames_towards_zhCN = ['予'];
+		var methodNames_towards_enUS = ['to'];
+
+
 
 		var propertyName_profilesForWulechuanImpartation = 'profilesForWulechuanImpartation';
 		var propertyName_defaultProfile = 'default';
 		var propertyName_instanceChiefName = 'instanceChiefName';
 
 
-
-
-		var languageCode_zhCN = 'zh-CN';
-		var languageCode_enUS = 'en-US';
 
 
 
@@ -440,50 +473,28 @@
 			var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternFor(thisOperator);
 
 			stagesForMethods.addStage(startToImpart, {
-				'zh-CN': [
-					methodName_startToImpart
-				],
-				'en-US': [
-					methodName_startToImpart
-				]
+				'zh-CN': methodName_startToImpart,
+				'en-US': methodName_startToImpart
 			});
 
 			stagesForMethods.addStage(usingThisProfile, {
-				'zh-CN': [
-					methodName_usingThisProfile_zhCN0
-				],
-				'en-US': [
-					methodName_usingThisProfile_enUS0,
-					methodName_usingThisProfile_enUS1
-				]
+				'zh-CN': methodNames_usingThisProfile_zhCN,
+				'en-US': methodNames_usingThisProfile_enUS
 			});
 
 			stagesForMethods.addStage(buildAccordingTo, {
-				'zh-CN': [
-					methodName_buildAccordingTo_zhCN0
-				],
-				'en-US': [
-					methodName_buildAccordingTo_enUS0
-				]
+				'zh-CN': methodNames_buildAccordingTo_zhCN,
+				'en-US': methodNames_buildAccordingTo_enUS
 			});
 
 			stagesForMethods.addStage(withCustomizedPropertyNames, {
-				'zh-CN': [
-					methodName_withCustomizedPropertyNames_zhCN0
-				],
-				'en-US': [
-					methodName_withCustomizedPropertyNames_enUS0,
-					methodName_withCustomizedPropertyNames_enUS1
-				]
+				'zh-CN': methodNames_withCustomizedPropertyNames_zhCN,
+				'en-US': methodNames_withCustomizedPropertyNames_enUS
 			});
 
 			stagesForMethods.addStage(towards, {
-				'zh-CN': [
-					methodName_towards_zhCN0
-				],
-				'en-US': [
-					methodName_towards_enUS0
-				]
+				'zh-CN': methodNames_towards_zhCN,
+				'en-US': methodNames_towards_enUS
 			});
 
 

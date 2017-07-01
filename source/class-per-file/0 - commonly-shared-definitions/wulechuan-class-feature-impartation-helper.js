@@ -27,7 +27,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * a.k.a. the object to expose and use, which is discribed below.
  * 
  * @returns {object} - The object that hosts basically the same methods but
- * 						in different language versions. {@link ~wulechuanImpartationFunctionsHost}
+ *                     in different language versions. {@link ~wulechuanImpartationFunctionsHost}
  * 
  * 
  * ## 范例（ 简体中文）

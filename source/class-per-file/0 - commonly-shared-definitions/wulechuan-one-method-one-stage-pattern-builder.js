@@ -25,11 +25,11 @@
  * 
  * 此番改造之根本目的在于，将传统的形如：“
  * @example
- * 	var 结果 = 对象.传统方法函数(参数1, 参数2, 参数3);
+ * 	var 结果 = 对象.传统方法函数(参数子, 参数丑, 参数寅);
  * 
  * ”之调用方式，转变为我之特色方式，形如：“
  * @example
- * 	var 结果 = 对象.方法函数1(参数1).方法函数2(参数2).方法函数3(参数3)；
+ * 	var 结果 = 对象.方法函数甲(参数子).方法函数乙(参数丑).方法函数丙(参数寅)；
  * 
  * ”，并建议（但不强迫）每个阶段仅接受至多一个参数。
  * 此方式亦有助于构造更为逼近自然语言之计算机程序语句。
@@ -73,7 +73,7 @@
  * 
  * into another format as:
  * @example
- * 	var result = anObject.method1(arg1).method2(arg2).method3(arg3);
+ * 	var result = anObject.methodA(arg1).methodB(arg2).methodC(arg3);
  * 
  * I also suggest but not force to take at most only one argument per stage method.
  * Besides, this is a good way, I personally think,

@@ -21,7 +21,8 @@ window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMult
 
 /**
  * @author 吴乐川 <wulechuan@live.com>
- * @requires @wulechuan/apply-one-stage-one-method-pattern
+ * @requires @wulechuan/apply-one-stage-one-method-pattern <https://github.com/wulechuan/javascript-wulechuan-apply-one-stage-one-method-pattern>
+ * 
  * 
  * This is the factory function to build up the impartation tool,
  * a.k.a. the object to expose, which is discribed above.

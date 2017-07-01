@@ -5,36 +5,77 @@
 var nameOfEntranceMethod_zhCN = '吴乐川：传授';
 var nameOfEntranceMethod_enUS = 'wulechuanImpart';
 
-window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingualMethods();
+/**
+ * The exposed object that hosts basically the same methods but in different language versions.
+ * That is, the object looks like this:
+ * @example
+ * 	{
+ * 		'吴乐川：传授': <a function, taking the 'zh-CN' as the preferred language>,
+ * 		'wulechuanImpart': <a function, taking the 'en-US' as the preferred language>
+ * 	}
+ */
+window.wulechuanImpartationFunctions = createWulechuanImpartationFunctionsInMultipleLanguages();
+
+
+
 
 /**
  * @author 吴乐川 <wulechuan@live.com>
  * 
+ * This is the factory function to build up the impartation tool,
+ * a.k.a. the object to expose, which is discribed above.
+ * 
  * @example
  * 	function My2DVector() {
- * 		...
+ * 		// The definitions go here.
  * 	}
  *
- * 	My2DVector.profilesForWulechuanImpartation = {
+ * Now, add pre-defined profiles for easier impartations.
+ * 
+ * As one might imagine, a 2d vector can be used in different ways,
+ * such as as a 2d position, a 2d force, or a 2d velocity.
+ * Some people love to use abstract across different things.
+ * Thus, as an example, they are often happy to use
+ * the single term "legnth" across all possible applications,
+ * or we can say profiles, or variants. That is, they live with
+ * "force2D.length", "position2D.length" as well as "velocity2D.length".
+ * 
+ * While there are another type of people, they love to describ things
+ * in there programs in a way that matches real world as much as possible.
+ * These type of people turn to choose different terms for different things,
+ * even though the core concept behind these things are exactly the same.
+ * Still take the 2d vector as an example, they might be happier with:
+ * -	for a 2d force, expose "force2D.strength" instead of "force2D.length";
+ * -	for a 2d velocity, expose "velocity2D.speed" instead of "velocity2D.speed";
+ * -	for a 2d position, does not expose the "length" at all.
+ * 
+ * This is why I design so-called "profiles" for
+ * a class(a function in JavaScript world, of course).
+ * A profile describs how a core/raw class should be imparted to a grantee.
+ * Take the example above, the "position2d", "force2d", as well as the "velocity2d"
+ * are all impartation profiles of the My2DVector class.
+ * 
+ * @example
+ * 	My2DVector.wulechuanImpartationProfiles = {
  * 		position2D: { instanceChiefName: 'position', ... },
  * 		force2D:    { instanceChiefName: 'force', ... },
  * 		velocity2D: { instanceChiefName: 'velocity', ... }
  * 	}
  *
  * 	function My2DPoint() {
- * 		wulechuanImpart.theClass(My2DVector).as('position2D').to(this);
+ * 		wulechuanImpart.anInstanceOfClass(My2DVector).as('position2D').to(this);
  * 	}
  *
  * 	function My2DParticle() {
- * 		wulechuanImpart.theClass(My2DVector).as('position2D').renamedAs('pos').to(this);
+ * 		wulechuanImpart.anInstanceOfClass(My2DVector).as('position2D').renamedAs('pos').to(this);
  *
- * 		wulechuanImpart.theClass(My2DVector).as('velocity2D').renamedAs({
+ * 		wulechuanImpart.anInstanceOfClass(My2DVector).as('velocity2D').renamedAs({
  * 			speed: 'velocityLength',
  * 			speed2: 'squareSpeed'
  * 			velocityDirection: 'movingDirection'
  * 		}).to(this);
  *
- * 		wulechuanImpart.theClass(My2DVector)
+ * 		wulechuanImpart.anInstanceOfClass(My2DVector)
  * 			.as('position2D')
  * 			.buildAccordingTo({
  * 				x: 3,
@@ -47,7 +88,7 @@ window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingual
  * 			})
  * 			.to(this);
  *
- * 		wulechuanImpart.theClass(My2DVector)
+ * 		wulechuanImpart.anInstanceOfClass(My2DVector)
  * 			.usingThisProfile('force2D')
  * 			.withCustomizedPropertyNames({
  * 				strength: 's',
@@ -57,25 +98,14 @@ window.wulechuanImpartMultilingualMethodsHost = createWulechuanImpartMutilingual
  * 	}
  *
  * @example
- * 	My2DParticle.profilesForWulechuanImpartation = {
+ * 	My2DParticle.wulechuanImpartationProfiles = {
  * 		default: { instanceChiefName: 'particle2D', ... }
  * 	};
  *
  * 	var myLovelyObjectLiteral = { name: '吴乐川', email: 'wulechuan@live.com' };
- *  wulechuanImpart.theClass(My2DParticle).to(myLovelyObjectLiteral);
+ * 	wulechuanImpart.anInstanceOfClass(My2DParticle).to(myLovelyObjectLiteral);
  */
-
-
-
-
-/**
- * @author 吴乐川 <wulechuan@live.com>
- * 
- * This is the factory function to build up the impartation tool,
- * returning some methods which are virtually the same to each other,
- * but in mutliple human languages.
- */
-function createWulechuanImpartMutilingualMethods() {
+function createWulechuanImpartationFunctionsInMultipleLanguages() {
 	var languageCode_zhCN = 'zh-CN';
 	var languageCode_enUS = 'en-US';
 
@@ -94,7 +124,7 @@ function createWulechuanImpartMutilingualMethods() {
 		'类'
 	];
 	var methodNames_pickAClass_enUS = [
-		'theClass'
+		'anInstanceOfClass'
 	];
 
 
@@ -142,7 +172,7 @@ function createWulechuanImpartMutilingualMethods() {
 
 
 
-	var propertyName_profilesForWulechuanImpartation = 'profilesForWulechuanImpartation';
+	var propertyName_wulechuanImpartationProfiles = 'wulechuanImpartationProfiles';
 	var propertyName_defaultProfile = 'default';
 	var propertyName_instanceChiefName = 'instanceChiefName';
 
@@ -383,7 +413,7 @@ function createWulechuanImpartMutilingualMethods() {
 			}
 
 
-			var _allImpartationProfiles = theConstructor[propertyName_profilesForWulechuanImpartation];
+			var _allImpartationProfiles = theConstructor[propertyName_wulechuanImpartationProfiles];
 			if (_the(_allImpartationProfiles).isNotAValidObject()) {
 				_allImpartationProfiles = {};
 				_allImpartationProfiles[propertyName_defaultProfile] = {};

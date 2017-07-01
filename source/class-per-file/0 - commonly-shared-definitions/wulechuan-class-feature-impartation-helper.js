@@ -20,13 +20,7 @@ window.wulechuanImpartationFunctionsHost = createWulechuanImpartationFunctionsIn
  * a.k.a. the object to expose and use, which is discribed below.
  * 
  * @returns {object} - The object that hosts basically the same methods but
- * 						in different language versions. {@link ~wulechuanImpartMultilingualMethodsHost}
- * 	{
- * 		'传授': <the wrapped impart function, taking the 'zh-CN' as the preferred language>,
- * 		'impart': <the wrapped impart function, taking the 'en-US' as the preferred language>
- * 	}
- * 
- * 
+ * 						in different language versions. {@link ~wulechuanImpartationFunctionsHost}
  * 
  * 
  * 
@@ -203,23 +197,23 @@ function createWulechuanImpartationFunctionsInMultipleLanguages() {
 
 
 	/**
-	 * @namespace <wulechuanImpartMultilingualMethodsHost>
+	 * @namespace <wulechuanImpartationFunctionsHost>
 	 * @property {function} 传授 - 此为impart函数的包裹函数，其将impart函数的优选语言定位“简体中文”。
 	 * @property {function} impart - the wrapped impart function, taking the 'en-US' as the preferred language
 	 */
-	var wulechuanImpartMultilingualMethodsHost = {};
+	var wulechuanImpartationFunctionsHost = {};
 
-	wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_zhCN] =
+	wulechuanImpartationFunctionsHost[nameOfEntranceMethod_zhCN] =
 		function() {
 			return impart(languageCode_zhCN);
 		};
 
-	wulechuanImpartMultilingualMethodsHost[nameOfEntranceMethod_enUS] =
+	wulechuanImpartationFunctionsHost[nameOfEntranceMethod_enUS] =
 		function() {
 			return impart(languageCode_enUS);
 		};
 
-	return wulechuanImpartMultilingualMethodsHost;
+	return wulechuanImpartationFunctionsHost;
 
 
 

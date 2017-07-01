@@ -84,6 +84,24 @@ function createWulechuanImpartMutilingualMethods() {
 
 
 
+	var methodNames_pickAClass_zhCN = [
+		'类'
+	];
+	var methodNames_pickAClass_enUS = [
+		'theClass'
+	];
+
+
+
+	var methodNames_pickAnObject_zhCN = [
+		'对象'
+	];
+	var methodNames_pickAnObject_enUS = [
+		'theObject'
+	];
+
+
+
 	var methodNames_usingThisProfile_zhCN = [
 		'并视作'
 	];
@@ -189,29 +207,60 @@ function createWulechuanImpartMutilingualMethods() {
 		var usedPropertyNamesCustomization = {};
 
 
-		var stagesForMethods = new WulechuanApplyOneStageOneMethodProgrammingPatternTo(thisOperator);
+		var stagesOfClassRoute = new WulechuanApplyOneStageOneMethodProgrammingPatternTo(thisOperator);
 
-		stagesForMethods.addStage(startToImpart, {
+		stagesOfClassRoute.addStage(startToImpart, {
 			'zh-CN': methodName_startToImpart,
 			'en-US': methodName_startToImpart
 		});
 
-		stagesForMethods.addStage(usingThisProfile, true, {
+		stagesOfClassRoute.addStage(pickAClass, {
+			'zh-CN': methodNames_pickAClass_zhCN,
+			'en-US': methodNames_pickAClass_enUS
+		});
+
+		stagesOfClassRoute.addStage(usingThisProfile, true, {
 			'zh-CN': methodNames_usingThisProfile_zhCN,
 			'en-US': methodNames_usingThisProfile_enUS
 		});
 
-		stagesForMethods.addStage(buildAccordingTo, true, {
+		stagesOfClassRoute.addStage(buildAccordingTo, true, {
 			'zh-CN': methodNames_buildAccordingTo_zhCN,
 			'en-US': methodNames_buildAccordingTo_enUS
 		});
 
-		stagesForMethods.addStage(withCustomizedPropertyNames, true, {
+		stagesOfClassRoute.addStage(withCustomizedPropertyNames, true, {
 			'zh-CN': methodNames_withCustomizedPropertyNames_zhCN,
 			'en-US': methodNames_withCustomizedPropertyNames_enUS
 		});
 
-		stagesForMethods.addStage(towards, {
+		stagesOfClassRoute.addStage(towards, {
+			'zh-CN': methodNames_towards_zhCN,
+			'en-US': methodNames_towards_enUS
+		});
+
+
+
+
+
+		var stagesOfObjectRoute = new WulechuanApplyOneStageOneMethodProgrammingPatternTo(thisOperator);
+
+		stagesOfObjectRoute.addStage(startToImpart, {
+			'zh-CN': methodName_startToImpart,
+			'en-US': methodName_startToImpart
+		});
+
+		stagesOfObjectRoute.addStage(pickAnObject, {
+			'zh-CN': methodNames_pickAnObject_zhCN,
+			'en-US': methodNames_pickAnObject_enUS
+		});
+
+		stagesOfObjectRoute.addStage(withCustomizedPropertyNames, true, {
+			'zh-CN': methodNames_withCustomizedPropertyNames_zhCN,
+			'en-US': methodNames_withCustomizedPropertyNames_enUS
+		});
+
+		stagesOfObjectRoute.addStage(towards, {
 			'zh-CN': methodNames_towards_zhCN,
 			'en-US': methodNames_towards_enUS
 		});

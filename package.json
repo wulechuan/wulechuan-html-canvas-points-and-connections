@@ -21,6 +21,6 @@
     "pump": "^1.0.2"
   },
   "dependencies": {
-    "@wulechuan/apply-one-stage-one-method-pattern": "^1.0.1"
+    "@wulechuan/apply-one-stage-one-method-pattern": "^1.0.5"
   }
 }

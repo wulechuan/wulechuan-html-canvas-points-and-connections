@@ -19,9 +19,9 @@
     normalize-path "^2.0.1"
     through2 "^2.0.3"
 
-"@wulechuan/apply-one-stage-one-method-pattern@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@wulechuan/apply-one-stage-one-method-pattern/-/apply-one-stage-one-method-pattern-1.0.1.tgz#33b730305b15e559cd2e4e07b0ba6d4d47d4553c"
+"@wulechuan/apply-one-stage-one-method-pattern@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@wulechuan/apply-one-stage-one-method-pattern/-/apply-one-stage-one-method-pattern-1.0.5.tgz#61377b32bbe4270e59c8b69b357340cccc67e90f"
 
 accord@^0.26.3:
   version "0.26.4"

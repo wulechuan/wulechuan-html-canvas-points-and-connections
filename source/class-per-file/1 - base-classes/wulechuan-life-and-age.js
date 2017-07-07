@@ -17,7 +17,7 @@
 		nowInSeconds
 	*/
 
-	function wulechuanImpartLifeTo(methodsGrantee, propertiesGrantee, customizedPropertyNames) {
+	function WulechuanLifeAndAge(methodsGrantee, propertiesGrantee, customizedPropertyNames) {
 		if (typeof methodsGrantee !== 'object' || !methodsGrantee) {
 			throw TypeError(
 				'The grantee to impart methods and properties to' +

@@ -17,9 +17,67 @@
 		nowInSeconds
 	*/
 
-	wulechuan2DVector.impartationConfigration = {};
+	Wulechuan2DVector.wulechuanImpartationProfiles = {
+		force2D: {
+			chiefPropertyNameForTheObjectItself: 'force',
+			chiefPropertySetter: function (theForceInstanceItself, newValue) {
+				// Note that any instance of vector2D has a property named "value",
+				// defined far below inside the vector2D class(constructor) body.
+				theForceInstanceItself.value = newValue;
+			},
+			attributesAliasesToAdd: {
+				length: 'strength',
+				length2: 'strength2'
+			},
+			attributesToAddDirectlyUnderGrantee: {
+				length: '${ChiefName}Strength',
+				length2: '${ChiefName}Strength2'
+			}
+		},
 
-	function wulechuan2DVector(constructorOptions) {
+		position2D: {
+			chiefPropertyNameForTheObjectItself: 'position',
+			chiefPropertySetter: function (theForceInstanceItself, newValue) {
+				// Note that any instance of vector2D has a property named "value",
+				// defined far below inside the vector2D class(constructor) body.
+				theForceInstanceItself.value = newValue;
+			},
+			attributesAliasesToAdd: {},
+			attributesToAddDirectlyUnderGrantee: {
+				x: 'x',
+				y: 'y'
+			}
+		},
+
+		velocity2D: {
+			chiefPropertyNameForTheObjectItself: 'velocity',
+			chiefPropertySetter: function (theForceInstanceItself, newValue) {
+				// Note that any instance of vector2D has a property named "value",
+				// defined far below inside the vector2D class(constructor) body.
+				theForceInstanceItself.value = newValue;
+			},
+			attributesAliasesToAdd: {
+				length: 'speed',
+				length2: 'speed2',
+				turnBy: function (degrees) {
+					this.direction += degrees;
+				},
+				turnByRadians: function(radians) {
+					this.directionRadian += radians;
+				}
+			},
+			attributesToAddDirectlyUnderGrantee: {
+				length: 'speed',
+				length2: 'speed2',
+				direction: '${ChiefName}Direction',
+				directionRadian: '${ChiefName}DirectionRadian',
+				turnBy: 'turnBy',
+				turnByRadians: 'turnByRadians'
+			}
+		}
+	};
+
+	function Wulechuan2DVector(constructorOptions) {
 		var thisVector = this;
 
 		var epsilon = tooSmallAbsoluteValue;
@@ -280,7 +338,7 @@
 			var newX = NaN;
 			var newY = NaN;
 
-			if (a instanceof wulechuan2DVector) {
+			if (a instanceof Wulechuan2DVector) {
 				newX = a.x;
 				newY = a.y;
 			} else if (Array.isArray(a)) {
@@ -393,7 +451,7 @@
 
 
 		function getNewVectorOfSwappedComponents() {
-			return new wulechuan2DVector({
+			return new Wulechuan2DVector({
 				value: getNewArrayOfSwappedComponents()
 			});
 		}
@@ -403,7 +461,7 @@
 		}
 
 		function getNewVectorAddedBy(a, b) {
-			return new wulechuan2DVector({
+			return new Wulechuan2DVector({
 				value: _addOrSubtract(a, b, false)
 			});			
 		}
@@ -413,20 +471,20 @@
 		}
 
 		function getNewVectorSubtractedBy(a, b) {
-			return new wulechuan2DVector({
+			return new Wulechuan2DVector({
 				value: _addOrSubtract(a, b, true)
 			});			
 		}
 
 		function getNewVectorMultipliedByScalar(scalar) {
-			return new wulechuan2DVector({
+			return new Wulechuan2DVector({
 				value: getNewArrayMultipliedByScalar(scalar)
 			});			
 		}
 
 		function getNewVectorRotatedBy(degrees) {
 			var newDirection = _rotateBy(degrees);
-			return new wulechuan2DVector({
+			return new Wulechuan2DVector({
 				length: length,
 				direction: newDirection
 			});
@@ -434,7 +492,7 @@
 
 		function getNewVectorRotatedByRadians(radians) {
 			var newDirectionRadian = _rotateByRadians(radians);
-			return new wulechuan2DVector({
+			return new Wulechuan2DVector({
 				length: length,
 				directionRadian: newDirectionRadian
 			});

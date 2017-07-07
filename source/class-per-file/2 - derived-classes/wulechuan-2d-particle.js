@@ -16,25 +16,25 @@
 		ratioBetween
 		nowInSeconds
 
-		wulechuan2DVector
+		Wulechuan2DVector
 	*/
 
-	function wulechuan2DParticle(constructorOptions) {
-		var propertyName_velocity = 'velocity';
-		var propertyName_force = 'force';
-		var propertyName_life = 'age';
+	function Wulechuan2DParticle(constructorOptions) {
+		var WulechuanImpartationOperator =
+			require('@wulechuan/impart-features-to-object');
+
 
 		var thisParticle = this;
 
 		var mass = 1; // mass
-		var position = new wulechuan2DVector();
 
-
+		var position;
+		var force;
+		var velocity;
+		var age;
 
 		init(constructorOptions);
 
-		var velocity = thisParticle[propertyName_velocity];
-		var force = thisParticle[propertyName_force];
 		var bearOn = thisParticle.bearOn;
 
 
@@ -48,19 +48,28 @@
 			// Being public means being writable.
 			buildGettersAndSettersForPublicProperties();
 
-			wulechuanImpartVelocityTo(thisParticle, null, {
-				velocity: propertyName_velocity,
-				// speed: 'ssppeeeedd',
-				// turnBy: 'turnDirectionByDegrees'
-			});
+			var _tempImpartationOperator;
 
-			wulechuanImpartForceTo(thisParticle, null, propertyName_force);
 
-			wulechuanImpartLifeTo(thisParticle, null, {
-				age: propertyName_life,
-				// isDead: 'hasDied',
-				bearOn: 'bearOn'
-			});
+			_tempImpartationOperator = new WulechuanImpartationOperator;
+			position = _tempImpartationOperator
+				.impart.anInstanceOf(Wulechuan2DVector).as('position2D').to(thisParticle);
+
+
+			_tempImpartationOperator = new WulechuanImpartationOperator;
+			force = _tempImpartationOperator
+				.impart.anInstanceOf(Wulechuan2DVector).as('force2D').to(thisParticle);
+
+
+			_tempImpartationOperator = new WulechuanImpartationOperator;
+			velocity = _tempImpartationOperator
+				.impart.anInstanceOf(Wulechuan2DVector).as('velocity2D').to(thisParticle);
+
+
+			_tempImpartationOperator = new WulechuanImpartationOperator;
+			age = _tempImpartationOperator
+				.impart.anInstanceOf(WulechuanLifeAndAge).as('age').to(thisParticle);
+
 
 			config(initOptions);
 
@@ -113,36 +122,6 @@
 					// if (mass < tooSmallAbsoluteValue) {
 					// 	console.warn('The mass of Point2D is too low!');
 					// }
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'x', {
-				enumerable: true,
-				get: function () {
-					return position.x;
-				},
-				set: function (newPosX) {
-					position.x = newPosX;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'y', {
-				enumerable: true,
-				get: function () {
-					return position.y;
-				},
-				set: function (newPosY) {
-					position.y = newPosY;
-				}
-			});
-
-			Object.defineProperty(thisParticle, 'position', {
-				enumerable: true,
-				get: function () {
-					return position;
-				},
-				set: function (newPosition) {
-					position.value = newPosition;
 				}
 			});
 		}

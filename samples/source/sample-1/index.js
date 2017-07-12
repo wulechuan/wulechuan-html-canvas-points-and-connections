@@ -3,7 +3,7 @@
 })(function buildWhatWeWant(wulechuanCanvasPointsAndConnections) {
 	var shoudSlowDownForTesting = false;
 	var frameRate = 30;
-	var particleCounts = 60;
+	var particleCounts = 80;
 	if (shoudSlowDownForTesting) {
 		frameRate = 1;
 		particleCounts = 2; // must greater than 1, otherwise no connection is needed.
@@ -29,9 +29,9 @@
 
 
 	var canvas = document.querySelector('#test-canvas');
-	var requestAnimationFrame = function (func) {
-		window.setTimeout(func, 1000 / frameRate);
-	};
+	// var requestAnimationFrame = function (func) {
+	// 	window.setTimeout(func, 1000 / frameRate);
+	// };
 
 
 
@@ -40,13 +40,13 @@
 		maxDistanceToMakeConnection: 60,
 		lineWidthDrawingThreshold: 0.25,
 		pointsCount: particleCounts,
-		thickestLineWidth: 1,
-		pointColorRGB: '0, 64, 190',
-		lineColorRGB: '0, 128, 160',
-		speedMin: 6,
-		speedMax: 50,
-		// generateOnePoint: generateOnePointAroundACircle,
-		// updateOnePointOnIteration: updateOnePointOnIteration
+		thickestLineWidth: 2,
+		pointColorRGB: '51, 87, 256',
+		lineColorRGB: '64, 192, 219',
+		// speedMin: 6,
+		// speedMax: 50,
+		generateOnePoint: generateOnePointAroundACircle,
+		updateOnePointOnIteration: updateOnePointOnIteration
 	});
 
 	function generateOnePointAroundACircle(point) {

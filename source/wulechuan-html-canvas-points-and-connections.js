@@ -1249,7 +1249,7 @@
 
 
 		var lineWidthDrawingThreshold = 0.2;
-		var pointSize = 2;
+		var pointSize = 5;
 		var thickestLineWidth = 2;
 		var maxDistanceToMakeConnection = 160;
 		var pointsCount = 60;
